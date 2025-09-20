@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/image-upload";
 import {
   Camera,
@@ -22,6 +23,7 @@ import {
   Sparkles,
   Filter,
   ArrowLeft,
+  ArrowRight,
   Repeat2,
   ChevronDown,
   ChevronRight,
@@ -45,12 +47,20 @@ export default function PhotographyPage() {
   // Keep last uploaded image to restore quickly
   const [lastUploadedImage, setLastUploadedImage] = useState("");
 
+  // Image history management
+  const [imageHistory, setImageHistory] = useState<string[]>([]);
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1);
+
   // Photo editing controls
   const [brightness, setBrightness] = useState([0]);
   const [contrast, setContrast] = useState([0]);
   const [saturation, setSaturation] = useState([0]);
   const [sharpness, setSharpness] = useState([0]);
   const [exposure, setExposure] = useState([0]);
+
+  // Manual adjustments state
+  const [hasManualAdjustments, setHasManualAdjustments] = useState(false);
+  const [isApplyingManual, setIsApplyingManual] = useState(false);
 
   // UI toggles for collapsible groups
   const [openPresets, setOpenPresets] = useState(true);
@@ -60,6 +70,118 @@ export default function PhotographyPage() {
 
   // Custom enhancement
   const [customEnhancePrompt, setCustomEnhancePrompt] = useState("");
+
+  // Image type selection for API calls
+  const [useEnhancedImage, setUseEnhancedImage] = useState(true);
+
+  // Helper function to create CSS filter string from slider values
+  const getCSSFilters = () => {
+    const filters = [];
+
+    // Convert slider values to CSS filter values
+    if (brightness[0] !== 0) {
+      const brightnessValue = 1 + brightness[0] / 100; // -100 to 100 -> 0 to 2
+      filters.push(`brightness(${brightnessValue})`);
+    }
+
+    if (contrast[0] !== 0) {
+      const contrastValue = 1 + contrast[0] / 100; // -100 to 100 -> 0 to 2
+      filters.push(`contrast(${contrastValue})`);
+    }
+
+    if (saturation[0] !== 0) {
+      const saturationValue = 1 + saturation[0] / 100; // -100 to 100 -> 0 to 2
+      filters.push(`saturate(${saturationValue})`);
+    }
+
+    if (exposure[0] !== 0) {
+      // Exposure affects brightness in a different way
+      const exposureValue = 1 + exposure[0] / 200; // -100 to 100 -> 0.5 to 1.5
+      filters.push(`brightness(${exposureValue})`);
+    }
+
+    // Note: CSS doesn't have a sharpness filter, but we can simulate with contrast
+    if (sharpness[0] !== 0) {
+      const sharpnessValue = 1 + sharpness[0] / 200; // Subtle effect
+      filters.push(`contrast(${sharpnessValue})`);
+    }
+
+    return filters.join(" ");
+  };
+
+  // Check if any manual adjustments are active
+  const checkManualAdjustments = () => {
+    const hasAdjustments =
+      brightness[0] !== 0 ||
+      contrast[0] !== 0 ||
+      saturation[0] !== 0 ||
+      sharpness[0] !== 0 ||
+      exposure[0] !== 0;
+
+    setHasManualAdjustments(hasAdjustments);
+    return hasAdjustments;
+  };
+
+  // Apply manual adjustments by capturing the filtered image
+  const applyManualAdjustments = async () => {
+    if (!uploadedImage) return;
+
+    const hasAdjustments = checkManualAdjustments();
+    if (!hasAdjustments) return;
+
+    setIsApplyingManual(true);
+
+    try {
+      // Get the base image (either original or last processed)
+      const baseImage = processedImage || uploadedImage;
+
+      // Create a canvas to apply filters and generate new image
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        throw new Error("Failed to get canvas context");
+      }
+
+      const img = new Image();
+
+      img.crossOrigin = "anonymous";
+
+      await new Promise((resolve, reject) => {
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Apply filters to context
+          ctx.filter = getCSSFilters();
+          ctx.drawImage(img, 0, 0);
+
+          // Convert canvas to blob
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const url = URL.createObjectURL(blob);
+                addToHistory(url);
+                resolve(url);
+              } else {
+                reject(new Error("Failed to create blob from canvas"));
+              }
+            },
+            "image/jpeg",
+            0.9
+          );
+        };
+
+        img.onerror = () => reject(new Error("Failed to load image"));
+        img.src = baseImage;
+      });
+    } catch (error) {
+      console.error("Failed to apply manual adjustments:", error);
+      alert("Failed to apply manual adjustments. Please try again.");
+    } finally {
+      setIsApplyingManual(false);
+    }
+  };
 
   // Updated presets with preview images
   const presets = useMemo(
@@ -110,13 +232,60 @@ export default function PhotographyPage() {
     []
   ); // Background previews per Tailwind background utilities. [web:67]
 
+  // Check manual adjustments on mount and when slider values change
+  useEffect(() => {
+    checkManualAdjustments();
+  }, [brightness, contrast, saturation, sharpness, exposure]);
+
   const handleAfterUpload = (url: string) => {
     setUploadedImage(url);
     setLastUploadedImage(url);
     setProcessedImage("");
+    setImageHistory([]); // Clear history for new image
+    setCurrentHistoryIndex(-1);
     setCustomEnhancePrompt(""); // Clear custom prompt for new image
     setStep("EDIT");
   }; // Progressive flow without reload. [web:67]
+
+  // Helper function to add new image to history
+  const addToHistory = (newImage: string) => {
+    const newHistory = [...imageHistory];
+
+    // If we're not at the end of history, remove everything after current position
+    if (currentHistoryIndex < imageHistory.length - 1) {
+      newHistory.splice(currentHistoryIndex + 1);
+    }
+
+    // Add new image to history
+    newHistory.push(newImage);
+    setImageHistory(newHistory);
+    setCurrentHistoryIndex(newHistory.length - 1);
+    setProcessedImage(newImage);
+  };
+
+  // Navigation functions
+  const goBackInHistory = () => {
+    if (currentHistoryIndex > 0) {
+      const newIndex = currentHistoryIndex - 1;
+      setCurrentHistoryIndex(newIndex);
+      setProcessedImage(imageHistory[newIndex]);
+    }
+  };
+
+  const goForwardInHistory = () => {
+    if (currentHistoryIndex < imageHistory.length - 1) {
+      const newIndex = currentHistoryIndex + 1;
+      setCurrentHistoryIndex(newIndex);
+      setProcessedImage(imageHistory[newIndex]);
+    }
+  };
+
+  const resetToOriginal = () => {
+    setProcessedImage("");
+    setImageHistory([]);
+    setCurrentHistoryIndex(-1);
+    resetControls();
+  };
 
   const handleEnhance = async () => {
     if (!uploadedImage) return;
@@ -125,13 +294,17 @@ export default function PhotographyPage() {
     setActivePreset(null);
 
     try {
+      // Determine which image to use based on selection
+      const imageToUse =
+        useEnhancedImage && processedImage ? processedImage : uploadedImage;
+
       const response = await fetch("/api/photography-enhance", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          imageUrl: uploadedImage,
+          imageUrl: imageToUse,
           enhancementType: "overall",
           intensity: "medium",
         }),
@@ -144,7 +317,7 @@ export default function PhotographyPage() {
       }
 
       if (result.success && result.enhancedImage) {
-        setProcessedImage(result.enhancedImage);
+        addToHistory(result.enhancedImage);
       } else {
         throw new Error("No enhanced image received");
       }
@@ -168,13 +341,17 @@ export default function PhotographyPage() {
     setActivePreset(presetName);
 
     try {
+      // Determine which image to use based on selection
+      const imageToUse =
+        useEnhancedImage && processedImage ? processedImage : uploadedImage;
+
       const response = await fetch("/api/photography-presets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          imageUrl: uploadedImage,
+          imageUrl: imageToUse,
           presetName: presetName,
         }),
       });
@@ -186,7 +363,7 @@ export default function PhotographyPage() {
       }
 
       if (result.success && result.styledImage) {
-        setProcessedImage(result.styledImage);
+        addToHistory(result.styledImage);
       } else {
         throw new Error("No styled image received");
       }
@@ -211,13 +388,17 @@ export default function PhotographyPage() {
     setActivePreset(null);
 
     try {
+      // Determine which image to use based on selection
+      const imageToUse =
+        useEnhancedImage && processedImage ? processedImage : uploadedImage;
+
       const response = await fetch("/api/photography-enhance", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          imageUrl: uploadedImage,
+          imageUrl: imageToUse,
           enhancementType: "custom",
           customPrompt: customEnhancePrompt.trim(),
           intensity: "medium",
@@ -231,7 +412,7 @@ export default function PhotographyPage() {
       }
 
       if (result.success && result.enhancedImage) {
-        setProcessedImage(result.enhancedImage);
+        addToHistory(result.enhancedImage);
       } else {
         throw new Error("No enhanced image received");
       }
@@ -254,7 +435,9 @@ export default function PhotographyPage() {
     setSaturation([0]);
     setSharpness([0]);
     setExposure([0]);
+    setHasManualAdjustments(false);
     setCustomEnhancePrompt(""); // Clear custom prompt when resetting
+    setUseEnhancedImage(true); // Reset to default enhanced image selection
   }; // Slider reset helper. [web:67]
 
   // Navigation actions
@@ -268,6 +451,8 @@ export default function PhotographyPage() {
     if (lastUploadedImage) {
       setUploadedImage(lastUploadedImage);
       setProcessedImage("");
+      setImageHistory([]);
+      setCurrentHistoryIndex(-1);
       setStep("EDIT");
     }
   }; // Restore instantly. [web:67]
@@ -360,13 +545,30 @@ export default function PhotographyPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => {
-                          setProcessedImage("");
-                          resetControls();
-                        }}
+                        onClick={goBackInHistory}
+                        disabled={currentHistoryIndex <= 0}
+                        title="Previous version"
                       >
-                        <RotateCcw className="h-4 w-4 mr-2" />
-                        Reset edits
+                        <ArrowLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={resetToOriginal}
+                        title="Reset to original"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={goForwardInHistory}
+                        disabled={
+                          currentHistoryIndex >= imageHistory.length - 1
+                        }
+                        title="Next version"
+                      >
+                        <ArrowRight className="h-4 w-4" />
                       </Button>
                       <Button
                         size="sm"
@@ -406,12 +608,19 @@ export default function PhotographyPage() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Badge
-                          variant="default"
-                          className="w-full justify-center rounded-full"
-                        >
-                          {isProcessing ? "Processing..." : "Enhanced"}
-                        </Badge>
+                        <div className="flex items-center justify-center gap-2">
+                          <Badge variant="default" className="rounded-full">
+                            {isProcessing ? "Processing..." : "Enhanced"}
+                          </Badge>
+                          {imageHistory.length > 0 && (
+                            <Badge
+                              variant="outline"
+                              className="text-xs rounded-full"
+                            >
+                              {currentHistoryIndex + 1} / {imageHistory.length}
+                            </Badge>
+                          )}
+                        </div>
                         <div className="rounded-lg border bg-background">
                           {isProcessing ? (
                             <div className="w-full h-[440px] md:h-[520px] grid place-items-center text-sm text-muted-foreground">
@@ -430,11 +639,33 @@ export default function PhotographyPage() {
                               </div>
                             </div>
                           ) : processedImage ? (
-                            <img
-                              src={processedImage}
-                              alt="Enhanced"
-                              className="w-full h-[440px] md:h-[520px] object-contain"
-                            />
+                            /* eslint-disable-next-line react/forbid-dom-props */
+                            <div
+                              className="w-full h-[440px] md:h-[520px] relative"
+                              style={
+                                hasManualAdjustments
+                                  ? { filter: getCSSFilters() }
+                                  : undefined
+                              }
+                            >
+                              <img
+                                src={processedImage}
+                                alt="Enhanced"
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+                          ) : uploadedImage && hasManualAdjustments ? (
+                            /* eslint-disable-next-line react/forbid-dom-props */
+                            <div
+                              className="w-full h-[440px] md:h-[520px] relative"
+                              style={{ filter: getCSSFilters() }}
+                            >
+                              <img
+                                src={uploadedImage}
+                                alt="Enhanced"
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
                           ) : (
                             <div className="w-full h-[440px] md:h-[520px] grid place-items-center text-sm text-muted-foreground">
                               Enhanced preview will appear here
@@ -599,6 +830,53 @@ export default function PhotographyPage() {
                       className="resize-none"
                       disabled={step !== "EDIT" || !uploadedImage}
                     />
+
+                    {/* Image Selection Checkboxes */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Source Image Selection
+                      </label>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="use-enhanced"
+                            checked={useEnhancedImage}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setUseEnhancedImage(true);
+                              }
+                            }}
+                            disabled={step !== "EDIT" || !uploadedImage}
+                          />
+                          <label
+                            htmlFor="use-enhanced"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Use enhanced image{" "}
+                            {processedImage ? "(available)" : "(not available)"}
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="use-original"
+                            checked={!useEnhancedImage}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setUseEnhancedImage(false);
+                              }
+                            }}
+                            disabled={step !== "EDIT" || !uploadedImage}
+                          />
+                          <label
+                            htmlFor="use-original"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Use original image
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
                     <p className="text-xs text-muted-foreground">
                       💡 <strong>Pro tip:</strong> Be specific about what you
                       want to enhance. The AI works best with clear, descriptive
@@ -664,7 +942,10 @@ export default function PhotographyPage() {
                     </div>
                     <Slider
                       value={brightness}
-                      onValueChange={setBrightness}
+                      onValueChange={(value) => {
+                        setBrightness(value);
+                        setTimeout(checkManualAdjustments, 0);
+                      }}
                       max={100}
                       min={-100}
                       step={1}
@@ -683,7 +964,10 @@ export default function PhotographyPage() {
                     </div>
                     <Slider
                       value={contrast}
-                      onValueChange={setContrast}
+                      onValueChange={(value) => {
+                        setContrast(value);
+                        setTimeout(checkManualAdjustments, 0);
+                      }}
                       max={100}
                       min={-100}
                       step={1}
@@ -702,7 +986,10 @@ export default function PhotographyPage() {
                     </div>
                     <Slider
                       value={saturation}
-                      onValueChange={setSaturation}
+                      onValueChange={(value) => {
+                        setSaturation(value);
+                        setTimeout(checkManualAdjustments, 0);
+                      }}
                       max={100}
                       min={-100}
                       step={1}
@@ -721,7 +1008,10 @@ export default function PhotographyPage() {
                     </div>
                     <Slider
                       value={sharpness}
-                      onValueChange={setSharpness}
+                      onValueChange={(value) => {
+                        setSharpness(value);
+                        setTimeout(checkManualAdjustments, 0);
+                      }}
                       max={100}
                       min={-100}
                       step={1}
@@ -740,7 +1030,10 @@ export default function PhotographyPage() {
                     </div>
                     <Slider
                       value={exposure}
-                      onValueChange={setExposure}
+                      onValueChange={(value) => {
+                        setExposure(value);
+                        setTimeout(checkManualAdjustments, 0);
+                      }}
                       max={100}
                       min={-100}
                       step={1}
@@ -758,17 +1051,20 @@ export default function PhotographyPage() {
                       disabled={step !== "EDIT"}
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
-                      Reset
+                      Reset Sliders
                     </Button>
                     <Button
                       size="sm"
-                      onClick={handleEnhance}
+                      onClick={applyManualAdjustments}
                       disabled={
-                        step !== "EDIT" || !uploadedImage || isProcessing
+                        step !== "EDIT" ||
+                        !uploadedImage ||
+                        isApplyingManual ||
+                        !hasManualAdjustments
                       }
                       className="flex-1"
                     >
-                      {isProcessing && processingType === "enhance" ? (
+                      {isApplyingManual ? (
                         <>
                           <Zap className="h-4 w-4 mr-2 animate-spin" />
                           Applying...
@@ -776,7 +1072,7 @@ export default function PhotographyPage() {
                       ) : (
                         <>
                           <Zap className="h-4 w-4 mr-2" />
-                          Apply
+                          Apply Manual
                         </>
                       )}
                     </Button>

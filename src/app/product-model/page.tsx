@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { WorkflowSteps } from "@/components/workflow-steps";
-import { AutomationForm } from "@/components/automation-form";
+import { ProductModelForm } from "@/components/product-model-form";
 
-export default function AutomationPage() {
+export default function ProductModelPage() {
   const [activeStep, setActiveStep] = useState("input");
   const [isFirstStepCompleted, setIsFirstStepCompleted] = useState(false);
 
@@ -29,8 +29,8 @@ export default function AutomationPage() {
           isFirstStepCompleted={isFirstStepCompleted}
         />
 
-        {/* Automation Form */}
-        <AutomationForm
+        {/* Product Model Form */}
+        <ProductModelForm
           activeStep={activeStep}
           onStepChange={setActiveStep}
           onUploadComplete={handleUploadComplete}

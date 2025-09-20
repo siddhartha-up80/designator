@@ -63,7 +63,7 @@ enum ProjectType {
   IMAGE_UPSCALE
   VIDEO_CREATION
   PROMPT_GENERATION
-  AUTOMATION
+  PRODUCT_MODEL
 }
 
 enum Status {

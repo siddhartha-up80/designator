@@ -27,17 +27,17 @@ import {
 } from "lucide-react";
 import { ImageUpload } from "@/components/image-upload";
 
-interface AutomationFormProps {
+interface ProductModelFormProps {
   activeStep: string;
   onStepChange: (step: string) => void;
   onUploadComplete?: (uploadedImageUrl: string) => void;
 }
 
-export function AutomationForm({
+export function ProductModelForm({
   activeStep,
   onStepChange,
   onUploadComplete,
-}: AutomationFormProps) {
+}: ProductModelFormProps) {
   const [mode, setMode] = useState("fully-automatic");
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [styleInstructions, setStyleInstructions] = useState("");

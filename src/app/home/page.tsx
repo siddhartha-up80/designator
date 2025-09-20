@@ -10,8 +10,6 @@ import {
   Sparkles,
   Camera,
   Shirt,
-  Video,
-  ArrowUpCircle,
   FileImage,
   TrendingUp,
   Users,
@@ -29,7 +27,7 @@ const quickActions = [
     icon: Upload,
     title: "Upload Images",
     description: "Start by uploading your product images",
-    href: "/automation",
+    href: "/product-model",
     color: "bg-blue-500",
   },
   {
@@ -38,20 +36,6 @@ const quickActions = [
     description: "Virtual fashion try-on with AI models",
     href: "/fashion-try-on",
     color: "bg-purple-500",
-  },
-  {
-    icon: ArrowUpCircle,
-    title: "Upscale Images",
-    description: "Enhance image quality with AI",
-    href: "/upscale",
-    color: "bg-green-500",
-  },
-  {
-    icon: Video,
-    title: "Create Video",
-    description: "Generate promotional videos",
-    href: "/video",
-    color: "bg-red-500",
   },
 ];
 
@@ -118,7 +102,7 @@ const features = [
     icon: Sparkles,
     title: "AI Model Generation",
     description: "Create realistic model photos with your products",
-    href: "/automation",
+    href: "/product-model",
   },
   {
     icon: Camera,
@@ -131,18 +115,6 @@ const features = [
     title: "Virtual Try-On",
     description: "See how clothes look on different models",
     href: "/fashion-try-on",
-  },
-  {
-    icon: Video,
-    title: "Video Creation",
-    description: "Generate promotional videos from images",
-    href: "/video",
-  },
-  {
-    icon: ArrowUpCircle,
-    title: "Image Upscaling",
-    description: "Enhance resolution and quality",
-    href: "/upscale",
   },
   {
     icon: FileImage,
@@ -332,7 +304,7 @@ export default function HomePage() {
                   <ImageIcon className="h-4 w-4 mr-2" />
                   View Gallery
                 </Button>
-                <Button onClick={() => router.push("/automation")}>
+                <Button onClick={() => router.push("/product-model")}>
                   <PlayCircle className="h-4 w-4 mr-2" />
                   Start Creating
                 </Button>
