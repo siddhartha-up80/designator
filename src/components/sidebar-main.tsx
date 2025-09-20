@@ -30,10 +30,10 @@ const sidebarItems = [
   { icon: Home, label: "Home", href: "/home" },
   { icon: ImageIcon, label: "Gallery", href: "/gallery" },
   { icon: Sparkles, label: "Product Model", href: "/product-model" },
+  { icon: Wand2, label: "Prompt to Image", href: "/prompt-to-image" },
+  { icon: FileImage, label: "Img to Prompt", href: "/img-to-prompt" },
   { icon: Camera, label: "Photography", href: "/photography" },
   { icon: Shirt, label: "Fashion Try On", href: "/fashion-try-on" },
-  { icon: FileImage, label: "Img to Prompt", href: "/img-to-prompt" },
-  { icon: Wand2, label: "Prompt to Image", href: "/prompt-to-image" },
   { icon: DollarSign, label: "Pricing", href: "/pricing" },
 ];
 

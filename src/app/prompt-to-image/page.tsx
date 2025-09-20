@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { ImageUpload } from "@/components/image-upload";
 import { MultiImageUpload } from "@/components/multi-image-upload";
 import {
   Wand2,
@@ -22,29 +21,11 @@ import {
   Image as ImageIcon,
   FileText,
   Palette,
-  Camera,
   ArrowLeft,
-  Repeat2,
   RotateCcw,
-  Layers,
   Zap,
   Trash2,
 } from "lucide-react";
-
-const generationModes = [
-  {
-    id: "text-to-image",
-    name: "Text to Image",
-    description: "Generate from text prompt",
-    icon: FileText,
-  },
-  {
-    id: "image-to-image",
-    name: "Image to Image",
-    description: "Transform existing image",
-    icon: ImageIcon,
-  },
-];
 
 const imageStyles = [
   {
@@ -112,13 +93,10 @@ export default function PromptToImagePage() {
 
   // Flow state
   const [step, setStep] = useState<Step>("INPUT");
-  const [generationMode, setGenerationMode] = useState("text-to-image");
 
   // Input states
   const [textPrompt, setTextPrompt] = useState("");
   const [negativePrompt, setNegativePrompt] = useState("");
-  const [referenceImage, setReferenceImage] = useState("");
-  const [lastReferenceImage, setLastReferenceImage] = useState("");
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
 
   // Generation settings
@@ -134,7 +112,6 @@ export default function PromptToImagePage() {
   const [error, setError] = useState("");
 
   // UI toggles for collapsible groups
-  const [openGenerationMode, setOpenGenerationMode] = useState(true);
   const [openStyles, setOpenStyles] = useState(true);
   const [openSettings, setOpenSettings] = useState(true);
   const [openAdvanced, setOpenAdvanced] = useState(false);
@@ -145,21 +122,10 @@ export default function PromptToImagePage() {
     const promptFromUrl = searchParams.get("prompt");
     if (promptFromUrl) {
       setTextPrompt(decodeURIComponent(promptFromUrl));
-      // Set to text-to-image mode and keep on INPUT step so user can click generate
-      setGenerationMode("text-to-image");
+      // Keep on INPUT step so user can click generate
       setStep("INPUT");
     }
   }, [searchParams]);
-
-  const handleAfterImageUpload = (url: string) => {
-    setReferenceImage(url);
-    setLastReferenceImage(url);
-    setGeneratedImages([]); // Clear previous results
-    setError(""); // Clear any errors
-    if (generationMode === "image-to-image") {
-      setStep("GENERATE");
-    }
-  };
 
   // Navigation actions
   const goToInput = () => {
@@ -168,29 +134,9 @@ export default function PromptToImagePage() {
     setStep("INPUT");
   };
 
-  const restorePrevious = () => {
-    if (lastReferenceImage) {
-      setReferenceImage(lastReferenceImage);
-      setGeneratedImages([]);
-      setError("");
-      if (generationMode === "image-to-image") {
-        setStep("GENERATE");
-      }
-    }
-  };
-
   const handleGenerate = async () => {
-    if (
-      generationMode === "text-to-image" &&
-      !textPrompt.trim() &&
-      uploadedImages.length === 0
-    ) {
+    if (!textPrompt.trim() && uploadedImages.length === 0) {
       alert("Please enter a text prompt or upload at least one image");
-      return;
-    }
-
-    if (generationMode === "image-to-image" && !referenceImage) {
-      alert("Please upload a reference image");
       return;
     }
 
@@ -205,16 +151,11 @@ export default function PromptToImagePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          generationMode,
+          generationMode: "text-to-image",
           textPrompt: textPrompt.trim(),
           negativePrompt: negativePrompt.trim(),
-          referenceImageUrl:
-            generationMode === "image-to-image" ? referenceImage : undefined,
           // Add support for multiple reference images in text-to-image mode
-          referenceImages:
-            generationMode === "text-to-image"
-              ? uploadedImages.map((img) => img.url)
-              : undefined,
+          referenceImages: uploadedImages.map((img) => img.url),
           imageStyle: selectedStyle,
           aspectRatio,
           numberOfImages: numberOfImages[0],
@@ -263,7 +204,6 @@ export default function PromptToImagePage() {
   const resetAll = () => {
     setTextPrompt("");
     setNegativePrompt("");
-    setReferenceImage("");
     setUploadedImages([]);
     setGeneratedImages([]);
     setError("");
@@ -300,14 +240,9 @@ export default function PromptToImagePage() {
                 New Generation
               </Button>
             ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={restorePrevious}
-                disabled={!lastReferenceImage}
-              >
-                <Repeat2 className="h-4 w-4 mr-2" />
-                Use previous image
+              <Button variant="outline" size="sm" onClick={resetAll}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Reset All
               </Button>
             )}
           </div>
@@ -319,145 +254,70 @@ export default function PromptToImagePage() {
           <div className="space-y-4">
             {step === "INPUT" && (
               <>
-                {/* Generation Mode Selection */}
+                {/* Text Prompt Input - Updated to include multi-image upload */}
                 <Card>
                   <CardHeader className="py-3">
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      <Sparkles className="h-5 w-5" />
-                      Generation Mode
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <FileText className="h-5 w-5" />
+                      Text & Image Input
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {generationModes.map((mode) => (
-                        <div
-                          key={mode.id}
-                          className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                            generationMode === mode.id
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
-                          }`}
-                          onClick={() => setGenerationMode(mode.id)}
-                        >
-                          <div className="flex items-center gap-3 mb-2">
-                            <mode.icon className="h-5 w-5 text-primary" />
-                            <div className="font-medium text-sm">
-                              {mode.name}
-                            </div>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {mode.description}
-                          </div>
-                        </div>
-                      ))}
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Describe what you want to generate
+                      </label>
+                      <Textarea
+                        placeholder="A beautiful sunset over mountains, photorealistic, high quality, detailed landscape..."
+                        value={textPrompt}
+                        onChange={(e) => setTextPrompt(e.target.value)}
+                        rows={4}
+                        className="resize-none"
+                      />
+                    </div>
+
+                    {/* Multi-Image Upload */}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Reference Images (Optional)
+                        {uploadedImages.length > 0 && (
+                          <Badge variant="secondary" className="text-xs">
+                            {uploadedImages.length} uploaded
+                          </Badge>
+                        )}
+                      </label>
+                      <MultiImageUpload
+                        uploadedImages={uploadedImages}
+                        onImagesChange={setUploadedImages}
+                        maxImages={5}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {uploadedImages.length > 0
+                          ? `Using ${uploadedImages.length} reference image${
+                              uploadedImages.length > 1 ? "s" : ""
+                            } to guide generation along with your text prompt.`
+                          : "Add reference images to guide the generation. Works great with text prompts!"}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Negative Prompt (Optional)
+                      </label>
+                      <Textarea
+                        placeholder="What you don't want in the image: blurry, low quality, distorted..."
+                        value={negativePrompt}
+                        onChange={(e) => setNegativePrompt(e.target.value)}
+                        rows={2}
+                        className="resize-none"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Describe what you want to avoid in the generated image
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Text Prompt Input - Updated to include multi-image upload */}
-                {generationMode === "text-to-image" && (
-                  <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <FileText className="h-5 w-5" />
-                        Text & Image Input
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Describe what you want to generate
-                        </label>
-                        <Textarea
-                          placeholder="A beautiful sunset over mountains, photorealistic, high quality, detailed landscape..."
-                          value={textPrompt}
-                          onChange={(e) => setTextPrompt(e.target.value)}
-                          rows={4}
-                          className="resize-none"
-                        />
-                      </div>
-
-                      {/* Multi-Image Upload */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2">
-                          <ImageIcon className="h-4 w-4" />
-                          Reference Images (Optional)
-                          {uploadedImages.length > 0 && (
-                            <Badge variant="secondary" className="text-xs">
-                              {uploadedImages.length} uploaded
-                            </Badge>
-                          )}
-                        </label>
-                        <MultiImageUpload
-                          uploadedImages={uploadedImages}
-                          onImagesChange={setUploadedImages}
-                          maxImages={5}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          {uploadedImages.length > 0
-                            ? `Using ${uploadedImages.length} reference image${
-                                uploadedImages.length > 1 ? "s" : ""
-                              } to guide generation along with your text prompt.`
-                            : "Add reference images to guide the generation. Works great with text prompts!"}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Negative Prompt (Optional)
-                        </label>
-                        <Textarea
-                          placeholder="What you don't want in the image: blurry, low quality, distorted..."
-                          value={negativePrompt}
-                          onChange={(e) => setNegativePrompt(e.target.value)}
-                          rows={2}
-                          className="resize-none"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Describe what you want to avoid in the generated image
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {/* Reference Image Upload */}
-                {generationMode === "image-to-image" && (
-                  <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="flex items-center gap-2 text-base">
-                        <Camera className="h-5 w-5" />
-                        Reference Image
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <ImageUpload
-                        onImageUploaded={handleAfterImageUpload}
-                        uploadedImageUrl={referenceImage}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Upload an image to transform or use as reference for
-                        generation
-                      </p>
-                      {lastReferenceImage && (
-                        <div className="flex items-center gap-2">
-                          <img
-                            src={lastReferenceImage}
-                            alt="Last upload"
-                            className="h-12 w-12 rounded object-cover border"
-                          />
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={restorePrevious}
-                          >
-                            Restore last uploaded
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
 
                 {/* Generate Button */}
                 <Card>
@@ -467,10 +327,7 @@ export default function PromptToImagePage() {
                       onClick={handleGenerate}
                       disabled={
                         isGenerating ||
-                        (generationMode === "text-to-image" &&
-                          !textPrompt.trim() &&
-                          uploadedImages.length === 0) ||
-                        (generationMode === "image-to-image" && !referenceImage)
+                        (!textPrompt.trim() && uploadedImages.length === 0)
                       }
                     >
                       {isGenerating ? (
@@ -491,8 +348,7 @@ export default function PromptToImagePage() {
                     {/* Clear All Button */}
                     {(textPrompt.trim() ||
                       uploadedImages.length > 0 ||
-                      negativePrompt.trim() ||
-                      referenceImage) && (
+                      negativePrompt.trim()) && (
                       <Button
                         variant="outline"
                         className="w-full"
@@ -513,11 +369,7 @@ export default function PromptToImagePage() {
                 {/* Input Preview Card */}
                 <Card className="overflow-hidden">
                   <div className="flex items-center justify-between px-4 pt-4">
-                    <h3 className="text-base font-medium">
-                      {generationMode === "text-to-image"
-                        ? "Input Used"
-                        : "Reference Image"}
-                    </h3>
+                    <h3 className="text-base font-medium">Input Used</h3>
                     <Button
                       size="sm"
                       onClick={handleGenerate}
@@ -538,54 +390,44 @@ export default function PromptToImagePage() {
                   </div>
 
                   <CardContent className="pt-4">
-                    {generationMode === "text-to-image" ? (
-                      <div className="space-y-4">
-                        {textPrompt && (
-                          <div className="p-4 bg-muted/50 rounded-lg">
-                            <p className="text-sm leading-relaxed">
-                              {textPrompt}
-                            </p>
-                            {negativePrompt && (
-                              <div className="mt-3 pt-3 border-t">
-                                <p className="text-xs text-muted-foreground">
-                                  <strong>Negative:</strong> {negativePrompt}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {uploadedImages.length > 0 && (
-                          <div>
-                            <p className="text-xs font-medium mb-2 text-muted-foreground">
-                              Reference Images ({uploadedImages.length})
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {uploadedImages.map((image) => (
-                                <div
-                                  key={image.id}
-                                  className="w-20 h-20 rounded-lg overflow-hidden border bg-background"
-                                >
-                                  <img
-                                    src={image.url}
-                                    alt={`Reference ${image.file.name}`}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              ))}
+                    <div className="space-y-4">
+                      {textPrompt && (
+                        <div className="p-4 bg-muted/50 rounded-lg">
+                          <p className="text-sm leading-relaxed">
+                            {textPrompt}
+                          </p>
+                          {negativePrompt && (
+                            <div className="mt-3 pt-3 border-t">
+                              <p className="text-xs text-muted-foreground">
+                                <strong>Negative:</strong> {negativePrompt}
+                              </p>
                             </div>
+                          )}
+                        </div>
+                      )}
+
+                      {uploadedImages.length > 0 && (
+                        <div>
+                          <p className="text-xs font-medium mb-2 text-muted-foreground">
+                            Reference Images ({uploadedImages.length})
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {uploadedImages.map((image) => (
+                              <div
+                                key={image.id}
+                                className="w-20 h-20 rounded-lg overflow-hidden border bg-background"
+                              >
+                                <img
+                                  src={image.url}
+                                  alt={`Reference ${image.file.name}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ))}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="rounded-lg border bg-background">
-                        <img
-                          src={referenceImage}
-                          alt="Reference"
-                          className="w-full h-[300px] object-contain"
-                        />
-                      </div>
-                    )}
+                        </div>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -613,7 +455,7 @@ export default function PromptToImagePage() {
                               <img
                                 src={imageUrl}
                                 alt={`Generated ${index + 1}`}
-                                className="w-full aspect-square object-cover"
+                                className="w-full h-full object-cover"
                               />
                               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                 <Button
@@ -711,55 +553,6 @@ export default function PromptToImagePage() {
 
           {/* Right rail: sticky, narrower, grouped */}
           <div className="xl:sticky xl:top-4 h-fit space-y-4">
-            {/* Generation Mode (collapsed in GENERATE step) */}
-            {step === "INPUT" && (
-              <Card>
-                <CardHeader
-                  className="py-3 cursor-pointer select-none"
-                  onClick={() => setOpenGenerationMode((v) => !v)}
-                >
-                  <CardTitle className="flex items-center justify-between text-base">
-                    <span className="flex items-center gap-2">
-                      <Layers className="h-5 w-5" />
-                      Mode
-                    </span>
-                    {openGenerationMode ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </CardTitle>
-                </CardHeader>
-                {openGenerationMode && (
-                  <CardContent>
-                    <div className="space-y-2">
-                      {generationModes.map((mode) => (
-                        <div
-                          key={mode.id}
-                          className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                            generationMode === mode.id
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
-                          }`}
-                          onClick={() => setGenerationMode(mode.id)}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <mode.icon className="h-4 w-4 text-primary" />
-                            <div className="font-medium text-sm">
-                              {mode.name}
-                            </div>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {mode.description}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                )}
-              </Card>
-            )}
-
             {/* Style Selection */}
             <Card>
               <CardHeader
