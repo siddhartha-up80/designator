@@ -7,6 +7,13 @@ export async function GET() {
     const isDevelopment = process.env.NODE_ENV === "development";
     console.log("Is development:", isDevelopment);
 
+    // Test the Pexels service
+    const { pexelsService } = await import("@/lib/pexels-service");
+    console.log("Testing Pexels service...");
+
+    const pexelsImages = await pexelsService.getFashionModelImages(2);
+    console.log("Pexels images fetched:", pexelsImages.length);
+
     // Test the dev response helpers
     const { devResponseHelpers } = await import("@/lib/dev-responses");
     console.log(
@@ -19,17 +26,45 @@ export async function GET() {
         await devResponseHelpers.getFakeFashionTryOnResponse();
       console.log("Fake response generated successfully");
 
+      // Test model generation with Pexels
+      const modelResponse =
+        await devResponseHelpers.getFakeModelGenerationResponse(1);
+      console.log("Model generation response generated");
+
       return NextResponse.json({
         test: "success",
-        environment: process.env.NODE_ENV,
+        environment: process.env.NODE_ENV || "undefined",
         isDevelopment: devResponseHelpers.isDevelopment,
-        fakeResponse,
+        pexelsImagesCount: pexelsImages.length,
+        pexelsSample: pexelsImages.slice(0, 1).map((img) => ({
+          id: img.id,
+          photographer: img.photographer,
+          dimensions: `${img.width}x${img.height}`,
+          availableSizes: {
+            original: img.src.original,
+            large2x: img.src.large2x,
+            large: img.src.large,
+            medium: img.src.medium,
+            small: img.src.small,
+          },
+          selectedUrl: pexelsService.getBestQualityUrl(img),
+        })),
+        fakeResponse: {
+          success: fakeResponse.success,
+          hasResultImageUrl: !!fakeResponse.resultImageUrl,
+          message: fakeResponse.message,
+        },
+        modelResponse: {
+          success: modelResponse.success,
+          imageCount: modelResponse.generatedImages?.length || 0,
+          message: modelResponse.message,
+        },
       });
     } else {
       return NextResponse.json({
         test: "success",
         environment: process.env.NODE_ENV,
-        isDevelopment: devResponseHelpers.isDevelopment,
+        isDevelopment: false,
         message: "Not in development mode",
       });
     }

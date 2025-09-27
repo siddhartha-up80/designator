@@ -1,3 +1,5 @@
+import { pexelsService } from "./pexels-service";
+
 const isDevelopment = process.env.NODE_ENV === "development";
 
 // Sample text responses for different contexts
@@ -18,22 +20,34 @@ const sampleTexts = {
     "Professional photography enhancement applied with studio-grade lighting corrections. Color temperature adjustments, exposure optimization, and professional retouching techniques implemented. Advanced post-processing effects including skin smoothing, background enhancement, and artistic filtering create magazine-quality results with commercial photography standards.",
 };
 
-// Get random model images from public/images
-const getRandomModelImages = (count: number = 1): string[] => {
-  const modelImages = [
-    "model1.png",
-    "model1_2.png",
-    "model1_3.png",
-    "model2.png",
-    "model5.png",
-    "model6.png",
-    "model7.png",
+// Get random model images from Pexels (fallback to local images)
+const getRandomModelImages = async (count: number = 1): Promise<string[]> => {
+  try {
+    // Try to get images from Pexels
+    const pexelsImages = await pexelsService.getFashionModelImages(count);
+
+    if (pexelsImages && pexelsImages.length > 0) {
+      return pexelsImages.map((img) => pexelsService.getBestQualityUrl(img));
+    }
+  } catch (error) {
+    console.warn("Failed to fetch Pexels images, using local fallback:", error);
+  }
+
+  // Fallback to local images
+  const localImages = [
+    "/images/model1.png",
+    "/images/model1_2.png",
+    "/images/model1_3.png",
+    "/images/model2.png",
+    "/images/model5.png",
+    "/images/model6.png",
+    "/images/model7.png",
   ];
 
   const selectedImages = [];
   for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * modelImages.length);
-    selectedImages.push(`/images/${modelImages[randomIndex]}`);
+    const randomIndex = Math.floor(Math.random() * localImages.length);
+    selectedImages.push(localImages[randomIndex]);
   }
 
   return selectedImages;
@@ -57,9 +71,61 @@ const getRandomProductImages = (count: number = 1): string[] => {
   return selectedImages;
 };
 
-// Convert local image path to base64 data
-const imagePathToBase64 = async (imagePath: string): Promise<string> => {
+// Get random photography images from Pexels (fallback to local images)
+const getRandomPhotographyImages = async (
+  count: number = 1
+): Promise<string[]> => {
   try {
+    // Try to get images from Pexels
+    const pexelsImages = await pexelsService.getPhotographyImages(count);
+
+    if (pexelsImages && pexelsImages.length > 0) {
+      return pexelsImages.map((img) => pexelsService.getBestQualityUrl(img));
+    }
+  } catch (error) {
+    console.warn(
+      "Failed to fetch Pexels photography images, using local fallback:",
+      error
+    );
+  }
+
+  // Fallback to local images
+  const localImages = [
+    "/images/model1.png",
+    "/images/model1_2.png",
+    "/images/model1_3.png",
+    "/images/model2.png",
+    "/images/model5.png",
+    "/images/model6.png",
+    "/images/model7.png",
+  ];
+
+  const selectedImages = [];
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * localImages.length);
+    selectedImages.push(localImages[randomIndex]);
+  }
+
+  return selectedImages;
+};
+
+// Convert local image path to base64 data
+const imageUrlToBase64 = async (imageUrl: string): Promise<string> => {
+  try {
+    // Check if it's a Pexels URL (external URL)
+    if (imageUrl.startsWith("http")) {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Return just the base64 string - frontend will add the data URL prefix
+      return buffer.toString("base64");
+    }
+
     // In server environment, read file directly from filesystem
     if (typeof window === "undefined") {
       const fs = await import("fs");
@@ -68,7 +134,7 @@ const imagePathToBase64 = async (imagePath: string): Promise<string> => {
       const fullPath = path.join(
         process.cwd(),
         "public",
-        imagePath.replace(/^\//, "")
+        imageUrl.replace(/^\//, "")
       );
       const imageBuffer = fs.readFileSync(fullPath);
 
@@ -76,7 +142,7 @@ const imagePathToBase64 = async (imagePath: string): Promise<string> => {
       return imageBuffer.toString("base64");
     } else {
       // In browser environment, fetch from the server
-      const response = await fetch(imagePath);
+      const response = await fetch(imageUrl);
       if (!response.ok) {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
       }
@@ -91,8 +157,8 @@ const imagePathToBase64 = async (imagePath: string): Promise<string> => {
     console.error(
       "Error converting image to base64:",
       error,
-      "for path:",
-      imagePath
+      "for URL:",
+      imageUrl
     );
     console.log("Falling back to placeholder image");
 
@@ -106,12 +172,12 @@ export const devResponseHelpers = {
 
   // Get fake model generation response
   getFakeModelGenerationResponse: async (numberOfOutputs: number = 1) => {
-    const modelImages = getRandomModelImages(numberOfOutputs);
+    const modelImages = await getRandomModelImages(numberOfOutputs);
     const generatedImages = [];
     const textResponses = [];
 
-    for (const imagePath of modelImages) {
-      const base64 = await imagePathToBase64(imagePath);
+    for (const imageUrl of modelImages) {
+      const base64 = await imageUrlToBase64(imageUrl);
       generatedImages.push(base64);
       textResponses.push(sampleTexts.fashion);
     }
@@ -129,8 +195,8 @@ export const devResponseHelpers = {
 
   // Get fake fashion try-on response
   getFakeFashionTryOnResponse: async () => {
-    const modelImages = getRandomModelImages(1);
-    const base64 = await imagePathToBase64(modelImages[0]);
+    const modelImages = await getRandomModelImages(1);
+    const base64 = await imageUrlToBase64(modelImages[0]);
 
     return {
       success: true,
@@ -144,11 +210,11 @@ export const devResponseHelpers = {
 
   // Get fake prompt-to-image response
   getFakePromptToImageResponse: async (numberOfImages: number = 1) => {
-    const imagePaths = getRandomModelImages(numberOfImages);
+    const imagePaths = await getRandomModelImages(numberOfImages);
     const images = [];
 
-    for (const imagePath of imagePaths) {
-      const base64 = await imagePathToBase64(imagePath);
+    for (const imageUrl of imagePaths) {
+      const base64 = await imageUrlToBase64(imageUrl);
       // Convert to data URL format that frontend expects
       const dataUrl = `data:image/png;base64,${base64}`;
       images.push(dataUrl);
@@ -190,8 +256,8 @@ export const devResponseHelpers = {
 
   // Get fake photography enhancement response
   getFakePhotographyEnhanceResponse: async () => {
-    const images = getRandomModelImages(1);
-    const base64 = await imagePathToBase64(images[0]);
+    const images = await getRandomPhotographyImages(1);
+    const base64 = await imageUrlToBase64(images[0]);
 
     return {
       success: true,
@@ -207,8 +273,8 @@ export const devResponseHelpers = {
 
   // Get fake photography presets response
   getFakePhotographyPresetsResponse: async () => {
-    const images = getRandomModelImages(1);
-    const base64 = await imagePathToBase64(images[0]);
+    const images = await getRandomPhotographyImages(1);
+    const base64 = await imageUrlToBase64(images[0]);
 
     return {
       success: true,
