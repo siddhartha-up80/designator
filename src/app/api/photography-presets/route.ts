@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { devResponseHelpers } from "@/lib/dev-responses";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || "",
@@ -24,6 +25,14 @@ export async function POST(request: Request) {
       return Response.json(
         { error: "Preset name is required" },
         { status: 400 }
+      );
+    }
+
+    // Return fake response in development mode
+    if (devResponseHelpers.isDevelopment) {
+      console.log("Using development mode - returning fake response");
+      return Response.json(
+        await devResponseHelpers.getFakePhotographyPresetsResponse()
       );
     }
 

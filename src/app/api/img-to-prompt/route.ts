@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
+import { devResponseHelpers } from "@/lib/dev-responses";
 
 // Helper function to convert image URL to base64
 async function imageUrlToBase64(imageUrl: string): Promise<string> {
@@ -58,6 +59,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: "Number of prompts must be between 1 and 5" },
         { status: 400 }
+      );
+    }
+
+    // Return fake response in development mode
+    if (devResponseHelpers.isDevelopment) {
+      console.log("Using development mode - returning fake response");
+      return NextResponse.json(
+        devResponseHelpers.getFakeImageToPromptResponse(numberOfPrompts)
       );
     }
 

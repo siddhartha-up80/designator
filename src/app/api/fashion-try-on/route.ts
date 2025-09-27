@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
-import {
-  tryOnService,
-  userService,
-  usageService,
-  galleryService,
-} from "@/lib/db-services";
-import { Status } from "@prisma/client";
+import { devResponseHelpers } from "@/lib/dev-responses";
 
 // Helper function to convert image URL to base64
 async function imageUrlToBase64(imageUrl: string): Promise<string> {
@@ -64,6 +58,40 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Return fake response in development mode
+    if (devResponseHelpers.isDevelopment) {
+      console.log("Using development mode - returning fake response");
+
+      try {
+        const fakeResponse =
+          await devResponseHelpers.getFakeFashionTryOnResponse();
+        console.log("Fake response generated successfully");
+        return NextResponse.json({
+          ...fakeResponse,
+          resultImageUrl: fakeResponse.tryOnImageUrl, // Add the expected property
+          tryOnId: "dev-mode-id",
+        });
+      } catch (devError) {
+        console.error("Error generating fake response:", devError);
+        // Return a simple fallback response
+        return NextResponse.json({
+          success: true,
+          tryOnImageBase64:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+          tryOnImageUrl: "/images/model1.png",
+          resultImageUrl: "/images/model1.png", // Add the expected property
+          message:
+            "Fashion try-on completed successfully [DEV MODE - FALLBACK]",
+          textResponse: "Development mode active",
+          tryOnId: "dev-mode-id",
+        });
+      }
+    }
+
+    // Import database services only for production mode
+    const { tryOnService, userService, usageService, galleryService } =
+      await import("@/lib/db-services");
 
     // Create try-on record in database
     try {
@@ -332,6 +360,8 @@ export async function POST(request: NextRequest) {
     // Update try-on record with error status
     if (tryOnRecord) {
       try {
+        // Import database services for error handling
+        const { tryOnService } = await import("@/lib/db-services");
         await tryOnService.updateTryOnResult(tryOnRecord.id, {
           resultImageUrl: "",
           status: "FAILED",
@@ -350,6 +380,9 @@ export async function POST(request: NextRequest) {
       {
         error: "Failed to process fashion try-on request",
         details: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+        isDevelopment: devResponseHelpers.isDevelopment,
+        nodeEnv: process.env.NODE_ENV,
       },
       { status: 500 }
     );
