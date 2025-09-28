@@ -131,7 +131,7 @@ const SignInPage = () => {
     <div className="h-screen flex overflow-hidden relative">
       {/* Auth Header */}
       <AuthHeader currentPage="signin" />
-      
+
       {/* Left side - Carousel */}
       <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50 pt-20">
         {/* Carousel container */}
