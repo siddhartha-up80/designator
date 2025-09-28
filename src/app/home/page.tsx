@@ -19,6 +19,7 @@ import {
   MessageSquare,
   FileImage,
 } from "lucide-react";
+import { LoaderThree } from "@/components/ui/loader";
 
 const aiTools = [
   {
@@ -131,7 +132,6 @@ export default function HomePage() {
             Choose your preferred workflow to get started
           </p>
         </div>
-
         {/* AI Tools Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {aiTools.map((tool, index) => {

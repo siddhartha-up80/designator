@@ -12,7 +12,8 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
 
   // Landing page route - no sidebar/header
-  const isLandingPage = pathname === "/";
+  const isLandingPage =
+    pathname === "/" || pathname === "/signup" || pathname === "/signin";
 
   if (isLandingPage) {
     // Landing page layout - full screen, no sidebar/header

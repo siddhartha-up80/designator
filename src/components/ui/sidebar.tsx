@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 interface Links {
   label: string;
@@ -163,11 +165,17 @@ export const SidebarLink = ({
   className?: string;
 }) => {
   const { open, animate } = useSidebar();
+  const pathname = usePathname();
+  const isActive = pathname === link.href;
+
   return (
-    <a
+    <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors",
+        "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md transition-colors",
+        isActive
+          ? "bg-orange-100 dark:bg-orange-950 text-orange-900 dark:text-orange-100"
+          : "hover:bg-gray-50 dark:hover:bg-neutral-800",
         className
       )}
       {...props}
@@ -179,10 +187,15 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-base font-medium group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className={cn(
+          "text-base font-medium group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
+          isActive
+            ? "text-orange-900 dark:text-orange-100"
+            : "text-neutral-700 dark:text-neutral-200"
+        )}
       >
         {link.label}
       </motion.span>
-    </a>
+    </Link>
   );
 };

@@ -10,9 +10,9 @@ export function LandingHeader() {
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <div className="flex items-center gap-1">
-          <Heart className="h-6 w-6 text-red-500 fill-red-500" />
+          <Heart className="h-6 w-6 text-orange-500 fill-orange-500" />
           <span className="text-xl font-bold text-black">
-            PHOTO <span className="font-normal">FOX</span>
+            DESIGNATOR <span className="font-normal">AI</span>
           </span>
         </div>
       </Link>
@@ -53,9 +53,16 @@ export function LandingHeader() {
 
       {/* Right Side Actions */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" className="text-gray-700 hover:text-black">
-          Sign In
-        </Button>
+        <Link href="/signin">
+          <Button variant="ghost" className="text-gray-700 hover:text-black">
+            Sign In
+          </Button>
+        </Link>
+        <Link href="/signup">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+            Sign Up
+          </Button>
+        </Link>
       </div>
     </header>
   );
