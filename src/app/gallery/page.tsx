@@ -19,6 +19,9 @@ import {
   Tag,
   User,
   Shirt,
+  MoreVertical,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react";
 
 const mockGalleryItems = [
@@ -33,6 +36,7 @@ const mockGalleryItems = [
     views: 156,
     tags: ["summer", "dress", "female"],
     category: "Fashion Model",
+    featured: true,
   },
   {
     id: 2,
@@ -57,6 +61,7 @@ const mockGalleryItems = [
     views: 234,
     tags: ["evening", "gown", "elegant"],
     category: "Fashion Model",
+    trending: true,
   },
   {
     id: 4,
@@ -93,6 +98,7 @@ const mockGalleryItems = [
     views: 201,
     tags: ["bohemian", "style", "dress"],
     category: "Fashion Model",
+    featured: true,
   },
 ];
 
@@ -135,263 +141,366 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Page Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
-            <ImageIcon className="h-8 w-8 text-primary" />
-            Creative Gallery
-          </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Browse your AI-generated fashion models, try-on results, and
-            creative content. Organize, share, and manage your digital fashion
-            portfolio.
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Modern Header */}
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl shadow-lg mb-4">
+            <ImageIcon className="h-10 w-10 text-white" />
+          </div>
+          <div>
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4">
+              Creative Gallery
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Browse your AI-generated fashion models, try-on results, and
+              creative content. Organize, share, and manage your digital fashion
+              portfolio with style.
+            </p>
+          </div>
         </div>
 
-        {/* Search and Filter Bar */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-4 items-center">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by title, tags, or category..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-
-              <div className="flex gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={
-                      selectedCategory === category ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => handleCategoryFilter(category)}
-                  >
-                    {category === "all" ? "All" : category}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="flex gap-2">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
+        {/* Modern Search and Filter Bar */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
+          <div className="flex flex-col lg:flex-row gap-6 items-center">
+            {/* Search Bar */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search creations..."
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-12 h-12 rounded-2xl border-gray-200 bg-white/50 backdrop-blur-sm focus:bg-white transition-all"
+              />
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Results Count */}
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
-            Showing {filteredItems.length} of {mockGalleryItems.length} items
-          </p>
-          <Badge variant="secondary" className="flex items-center gap-1">
-            <Filter className="h-3 w-3" />
-            {selectedCategory === "all" ? "All Categories" : selectedCategory}
-          </Badge>
+            {/* Category Filters */}
+            <div className="flex gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={
+                    selectedCategory === category ? "default" : "outline"
+                  }
+                  className={`h-12 px-6 rounded-2xl font-semibold transition-all ${
+                    selectedCategory === category
+                      ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                      : "bg-white/50 border-gray-200 hover:bg-gray-50"
+                  }`}
+                  onClick={() => handleCategoryFilter(category)}
+                >
+                  {category === "all" ? "All" : category}
+                </Button>
+              ))}
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex bg-gray-100 rounded-2xl p-1">
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                className={`h-10 px-4 rounded-xl transition-all ${
+                  viewMode === "grid"
+                    ? "bg-white shadow-sm"
+                    : "hover:bg-gray-50"
+                }`}
+                onClick={() => setViewMode("grid")}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                className={`h-10 px-4 rounded-xl transition-all ${
+                  viewMode === "list"
+                    ? "bg-white shadow-sm"
+                    : "hover:bg-gray-50"
+                }`}
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
 
-        {/* Gallery Grid */}
+        {/* Results Info */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <p className="text-lg font-semibold text-gray-700">
+              {filteredItems.length}{" "}
+              {filteredItems.length === 1 ? "creation" : "creations"}
+            </p>
+            <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200 px-4 py-1 rounded-full">
+              <Filter className="h-3 w-3 mr-2" />
+              {selectedCategory === "all" ? "All Categories" : selectedCategory}
+            </Badge>
+          </div>
+          <Button variant="outline" className="rounded-2xl">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Modern Gallery Grid */}
         {viewMode === "grid" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredItems.map((item) => (
-              <Card
+              <div
                 key={item.id}
-                className="group hover:shadow-lg transition-all duration-200"
+                className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
               >
-                <CardContent className="p-0">
+                {/* Image Container */}
+                <div className="relative overflow-hidden">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="w-full h-72 object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                  {/* Floating Action Buttons */}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        size="sm"
+                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
+                      >
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
+                      >
+                        <Share className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Category Badge */}
+                  <div className="absolute top-4 left-4">
+                    <Badge
+                      className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                        item.type === "model"
+                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                          : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                      }`}
+                    >
+                      {item.type === "model" ? (
+                        <>
+                          <User className="h-3 w-3 mr-1" />
+                          Model
+                        </>
+                      ) : (
+                        <>
+                          <Shirt className="h-3 w-3 mr-1" />
+                          Try-On
+                        </>
+                      )}
+                    </Badge>
+                  </div>
+
+                  {/* Special Badges */}
+                  {item.featured && (
+                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        Featured
+                      </Badge>
+                    </div>
+                  )}
+
+                  {item.trending && (
+                    <div className="absolute top-16 left-4">
+                      <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        <TrendingUp className="h-3 w-3 mr-1" />
+                        Trending
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-900 line-clamp-2 leading-tight">
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  {/* Stats Row */}
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-4 text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Heart className="h-4 w-4" />
+                        <span className="font-semibold">{item.likes}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Eye className="h-4 w-4" />
+                        <span className="font-semibold">{item.views}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-400">
+                      <Calendar className="h-3 w-3" />
+                      <span className="text-xs">
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {item.tags.slice(0, 3).map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="text-xs px-2 py-1 rounded-full bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
+                      >
+                        <Tag className="h-2 w-2 mr-1" />
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          /* Modern List View */
+          <div className="space-y-4">
+            {filteredItems.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group"
+              >
+                <div className="flex gap-6">
+                  {/* Image */}
                   <div className="relative">
                     <img
                       src={item.imageUrl}
                       alt={item.title}
-                      className="w-full h-64 object-cover rounded-t-lg"
+                      className="w-24 h-24 object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 rounded-t-lg" />
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <div className="flex gap-1">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="h-8 w-8 p-0"
-                        >
-                          <Heart className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="h-8 w-8 p-0"
-                        >
-                          <Share className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="h-8 w-8 p-0"
-                        >
-                          <Download className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="absolute top-2 left-2">
+                    <div className="absolute -top-2 -right-2">
                       <Badge
-                        variant={
-                          item.type === "model" ? "default" : "secondary"
-                        }
+                        className={`px-2 py-1 rounded-full text-xs font-semibold shadow-lg ${
+                          item.type === "model"
+                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                            : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
+                        }`}
                       >
-                        {item.type === "model" ? (
-                          <User className="h-3 w-3 mr-1" />
-                        ) : (
-                          <Shirt className="h-3 w-3 mr-1" />
-                        )}
-                        {item.category}
+                        {item.type === "model" ? "Model" : "Try-On"}
                       </Badge>
                     </div>
                   </div>
-                  <div className="p-4 space-y-3">
-                    <h3 className="font-semibold text-sm line-clamp-2">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {item.createdAt}
+
+                  {/* Content */}
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-xl text-gray-900">
+                          {item.title}
+                        </h3>
+                        <p className="text-gray-500 mt-1">{item.category}</p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
-                          {item.likes}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {item.views}
-                        </div>
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-10 w-10 p-0 rounded-full"
+                        >
+                          <Heart className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-10 w-10 p-0 rounded-full"
+                        >
+                          <Share className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-10 w-10 p-0 rounded-full"
+                        >
+                          <Download className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {item.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
+
+                    {/* Stats and Date */}
+                    <div className="flex items-center gap-6 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Heart className="h-4 w-4" />
+                        <span className="font-semibold">
+                          {item.likes} likes
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Eye className="h-4 w-4" />
+                        <span className="font-semibold">
+                          {item.views} views
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {item.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="text-xs px-3 py-1 rounded-full bg-gray-50 border-gray-200 text-gray-600"
+                        >
                           <Tag className="h-2 w-2 mr-1" />
                           {tag}
                         </Badge>
                       ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredItems.map((item) => (
-              <Card key={item.id}>
-                <CardContent className="p-4">
-                  <div className="flex gap-4">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-24 h-24 object-cover rounded-lg"
-                    />
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-semibold">{item.title}</h3>
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                          >
-                            <Heart className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0"
-                          >
-                            <Download className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <Badge
-                          variant={
-                            item.type === "model" ? "default" : "secondary"
-                          }
-                        >
-                          {item.category}
-                        </Badge>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {item.createdAt}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Heart className="h-3 w-3" />
-                          {item.likes}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {item.views}
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            <Tag className="h-2 w-2 mr-1" />
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Modern Empty State */}
         {filteredItems.length === 0 && (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No items found</h3>
-              <p className="text-muted-foreground mb-4">
-                Try adjusting your search or filter criteria
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("all");
-                  setFilteredItems(mockGalleryItems);
-                }}
-              >
-                Clear Filters
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="text-center py-20">
+            <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-8">
+              <ImageIcon className="h-16 w-16 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              No creations found
+            </h3>
+            <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg leading-relaxed">
+              We couldn't find any items matching your search criteria. Try
+              adjusting your filters or search terms.
+            </p>
+            <Button
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 h-auto rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedCategory("all");
+                setFilteredItems(mockGalleryItems);
+              }}
+            >
+              Clear All Filters
+            </Button>
+          </div>
         )}
       </div>
     </div>

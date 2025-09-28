@@ -1,330 +1,420 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  ImageIcon,
   Sparkles,
   Camera,
   Shirt,
-  FileImage,
-  TrendingUp,
-  Users,
-  Zap,
-  Clock,
-  Star,
-  PlayCircle,
-  Upload,
+  Video,
+  ArrowUpRight,
+  ImageIcon,
   Settings,
-  Plus,
+  CreditCard,
+  Image as ImageIconLucide,
+  File,
+  Triangle,
+  ChevronRight,
+  Wand2,
+  MessageSquare,
+  FileImage,
 } from "lucide-react";
 
-const quickActions = [
+const aiTools = [
   {
-    icon: Upload,
-    title: "Upload Images",
-    description: "Start by uploading your product images",
-    href: "/product-model",
-    color: "bg-blue-500",
-  },
-  {
-    icon: Shirt,
-    title: "Try On Fashion",
-    description: "Virtual fashion try-on with AI models",
-    href: "/fashion-try-on",
-    color: "bg-purple-500",
-  },
-];
-
-const recentProjects = [
-  {
-    id: 1,
-    name: "Summer Collection 2024",
-    type: "Fashion Try-On",
-    images: 24,
-    status: "completed",
-    lastUpdated: "2 hours ago",
-  },
-  {
-    id: 2,
-    name: "Product Photography",
-    type: "AI Enhancement",
-    images: 12,
-    status: "processing",
-    lastUpdated: "5 minutes ago",
-  },
-  {
-    id: 3,
-    name: "Brand Campaign Video",
-    type: "Video Generation",
-    images: 8,
-    status: "completed",
-    lastUpdated: "1 day ago",
-  },
-];
-
-const stats = [
-  {
-    title: "Images Generated",
-    value: "2,847",
-    change: "+12.5%",
-    icon: ImageIcon,
-    color: "text-blue-600",
-  },
-  {
-    title: "Active Projects",
-    value: "23",
-    change: "+4",
+    id: "product-model",
+    title: "Product Model Generation",
+    description:
+      "Generate professional product photos with AI models wearing your designs",
     icon: Sparkles,
-    color: "text-purple-600",
-  },
-  {
-    title: "Processing Time",
-    value: "1.2s",
-    change: "-0.3s",
-    icon: Zap,
-    color: "text-yellow-600",
-  },
-  {
-    title: "Satisfaction",
-    value: "98.5%",
-    change: "+2.1%",
-    icon: Star,
-    color: "text-green-600",
-  },
-];
-
-const features = [
-  {
-    icon: Sparkles,
-    title: "AI Model Generation",
-    description: "Create realistic model photos with your products",
     href: "/product-model",
+    buttonText: "Generate",
+    iconBg: "bg-purple-100",
+    iconColor: "text-purple-500",
+    outputLabels: ["Model", "Product"],
+    previewImage: "/images/product1.png",
   },
   {
+    id: "ai-photography",
+    title: "AI Photography",
+    description:
+      "Enhance and transform your product photos with professional AI photography",
     icon: Camera,
-    title: "Photo Enhancement",
-    description: "Professional photo editing with AI assistance",
     href: "/photography",
+    buttonText: "Enhance",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-500",
+    previewImage: "/images/product2.png",
   },
   {
+    id: "fashion-try-on",
+    title: "Fashion Try On",
+    description:
+      "Let customers virtually try on your garments using AI technology",
     icon: Shirt,
-    title: "Virtual Try-On",
-    description: "See how clothes look on different models",
     href: "/fashion-try-on",
+    buttonText: "Try On",
+    iconBg: "bg-pink-100",
+    iconColor: "text-pink-500",
+    previewImage: "/images/model1.png",
+    modelImages: ["/images/model1_2.png", "/images/model1_3.png"],
   },
   {
-    icon: FileImage,
-    title: "Prompt Generation",
-    description: "Convert images to descriptive prompts",
+    id: "gallery",
+    title: "Creative Gallery",
+    description:
+      "Browse and manage your AI-generated fashion models and creative content",
+    icon: ImageIconLucide,
+    href: "/gallery",
+    buttonText: "Browse",
+    iconBg: "bg-indigo-100",
+    iconColor: "text-indigo-500",
+    previewImage: "/images/product3.png",
+    isGallery: true,
+  },
+  {
+    id: "prompt-to-image",
+    title: "Prompt to Image",
+    description:
+      "Generate stunning fashion and product images from text descriptions",
+    icon: Wand2,
+    href: "/prompt-to-image",
+    buttonText: "Generate",
+    iconBg: "bg-green-100",
+    iconColor: "text-green-500",
+    previewImage: "/images/product5.png",
+  },
+  {
+    id: "img-to-prompt",
+    title: "Image to Prompt",
+    description:
+      "Extract detailed prompts and descriptions from your existing images",
+    icon: MessageSquare,
     href: "/img-to-prompt",
+    buttonText: "Analyze",
+    iconBg: "bg-cyan-100",
+    iconColor: "text-cyan-500",
+    previewImage: "/images/model7.png",
+  },
+];
+
+const quickAccessItems = [
+  {
+    icon: ImageIconLucide,
+    title: "Gallery",
+    href: "/gallery",
+  },
+  {
+    icon: CreditCard,
+    title: "Pricing",
+    href: "/pricing",
+  },
+  {
+    icon: Settings,
+    title: "Settings",
+    href: "/settings",
   },
 ];
 
 export default function HomePage() {
   const router = useRouter();
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
-  };
 
   return (
-    <div className="p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Welcome Section */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold">
-            {getGreeting()}, Welcome to Designator! 👋
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            AI Tools & Workflows
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Transform your fashion brand with AI-powered photography and content
-            creation
+          <p className="text-xl text-gray-600">
+            Choose your preferred workflow to get started
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      {stat.title}
-                    </p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="h-3 w-3 text-green-500" />
-                      <span className="text-sm text-green-500">
-                        {stat.change}
-                      </span>
-                    </div>
+        {/* AI Tools Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {aiTools.map((tool, index) => {
+            const gradientClasses = [
+              "bg-gradient-to-br from-purple-100 via-pink-100 to-rose-100 border border-purple-200/30",
+              "bg-gradient-to-br from-blue-100 via-cyan-100 to-teal-100 border border-blue-200/30",
+              "bg-gradient-to-br from-pink-100 via-rose-100 to-red-100 border border-pink-200/30",
+              "bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 border border-indigo-200/30",
+              "bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 border border-green-200/30",
+              "bg-gradient-to-br from-cyan-100 via-blue-100 to-indigo-100 border border-cyan-200/30",
+            ];
+
+            const outputGradients = [
+              "bg-gradient-to-br from-purple-200 via-pink-200 to-rose-200",
+              "bg-gradient-to-br from-blue-200 via-cyan-200 to-teal-200",
+              "bg-gradient-to-br from-pink-200 via-rose-200 to-red-200",
+              "bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200",
+              "bg-gradient-to-br from-green-200 via-emerald-200 to-teal-200",
+              "bg-gradient-to-br from-cyan-200 via-blue-200 to-indigo-200",
+            ];
+
+            const buttonColors = [
+              "text-purple-500 group-hover:text-purple-600",
+              "text-blue-500 group-hover:text-blue-600",
+              "text-pink-500 group-hover:text-pink-600",
+              "text-indigo-500 group-hover:text-indigo-600",
+              "text-green-500 group-hover:text-green-600",
+              "text-cyan-500 group-hover:text-cyan-600",
+            ];
+
+            const IconComponent = tool.icon;
+
+            return (
+              <div
+                key={tool.id}
+                className={`${gradientClasses[index]} rounded-3xl p-6 hover:shadow-lg transition-all duration-300 group cursor-pointer`}
+                onClick={() => router.push(tool.href)}
+              >
+                {/* Header with Icon */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-sm">
+                    <IconComponent className={`h-6 w-6 ${tool.iconColor}`} />
                   </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+
+                {/* Title and Description */}
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {tool.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                  {tool.description}
+                </p>
+
+                {/* Output Section */}
+                <div
+                  className={`${outputGradients[index]} rounded-2xl p-6 mb-4 relative`}
+                >
+                  <div className="absolute top-4 right-4 bg-white rounded-xl px-4 py-2 text-sm font-semibold text-gray-800 shadow-sm">
+                    Output
+                  </div>
+
+                  {/* Dynamic Content Based on Tool Type */}
+                  {tool.id === "product-model" && (
+                    <>
+                      {/* Model and Product */}
+                      <div className="flex justify-center gap-4 mt-8 mb-4">
+                        <div className="w-16 h-24 bg-gradient-to-b from-pink-300 to-pink-500 rounded-2xl relative shadow-lg">
+                          {/* Model figure */}
+                          <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-400 rounded-full"></div>
+                          <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-10 h-12 bg-pink-400 rounded-t-xl"></div>
+                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-pink-400 rounded-b-xl"></div>
+                        </div>
+                        <div className="w-16 h-20 bg-gradient-to-b from-amber-600 to-amber-800 rounded-2xl shadow-lg relative overflow-hidden">
+                          <div className="absolute inset-2 bg-gradient-to-b from-amber-400 to-amber-600 rounded-xl"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white/30 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center gap-4">
+                        <div className="bg-purple-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Model
+                        </div>
+                        <div className="bg-amber-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Product
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {tool.id === "ai-photography" && (
+                    <>
+                      {/* Camera/Photo Enhancement */}
+                      <div className="flex justify-center mt-8 mb-4">
+                        <div className="w-20 h-16 bg-gradient-to-b from-gray-800 to-black rounded-2xl shadow-lg relative overflow-hidden">
+                          <div className="absolute inset-2 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-2 border-gray-300 flex items-center justify-center">
+                            <div className="w-1 h-3 bg-gray-600 rounded"></div>
+                            <div className="w-3 h-1 bg-gray-600 absolute rounded"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center">
+                        <div className="bg-blue-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Enhanced
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {tool.id === "fashion-try-on" && (
+                    <>
+                      {/* Model with clothing options */}
+                      <div className="flex justify-center mt-8 mb-4">
+                        <div className="w-16 h-24 bg-gradient-to-b from-pink-300 to-pink-500 rounded-2xl relative shadow-lg">
+                          <div className="absolute top-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-pink-400 rounded-full"></div>
+                          <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-10 h-12 bg-pink-400 rounded-t-xl"></div>
+                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-pink-400 rounded-b-xl"></div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center gap-2">
+                        <div className="w-6 h-6 bg-red-400 rounded-lg shadow-sm"></div>
+                        <div className="w-6 h-6 bg-blue-400 rounded-lg shadow-sm"></div>
+                        <div className="w-6 h-6 bg-green-400 rounded-lg shadow-sm"></div>
+                      </div>
+                    </>
+                  )}
+
+                  {tool.id === "gallery" && (
+                    <>
+                      {/* Gallery grid preview */}
+                      <div className="flex justify-center mt-8 mb-4">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="w-8 h-10 bg-gradient-to-b from-purple-400 to-purple-600 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-pink-400 to-pink-600 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-blue-400 to-blue-600 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-lg shadow-sm"></div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center">
+                        <div className="bg-indigo-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Gallery
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {tool.id === "prompt-to-image" && (
+                    <>
+                      {/* Text to image concept */}
+                      <div className="flex justify-center items-center gap-3 mt-8 mb-4">
+                        <div className="w-12 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                          <div className="text-xs text-gray-600 font-mono">
+                            ABC
+                          </div>
+                        </div>
+                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <ChevronRight className="h-2 w-2 text-white" />
+                        </div>
+                        <div className="w-12 h-8 bg-gradient-to-b from-green-400 to-green-600 rounded-lg"></div>
+                      </div>
+                      <div className="flex justify-center">
+                        <div className="bg-green-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Generated
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {tool.id === "img-to-prompt" && (
+                    <>
+                      {/* Image to text concept */}
+                      <div className="flex justify-center items-center gap-3 mt-8 mb-4">
+                        <div className="w-12 h-8 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-lg"></div>
+                        <div className="w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center">
+                          <ChevronRight className="h-2 w-2 text-white" />
+                        </div>
+                        <div className="w-12 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
+                          <div className="text-xs text-gray-600 font-mono">
+                            TXT
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-center">
+                        <div className="bg-cyan-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                          Description
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Action Button */}
+                <div
+                  className={`flex items-center ${buttonColors[index]} font-semibold text-lg`}
+                >
+                  <span>{tool.buttonText}</span>
+                  <ChevronRight className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
-              Quick Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  className="h-auto p-4 flex flex-col items-start gap-3 hover:bg-muted/50"
-                  onClick={() => router.push(action.href)}
-                >
-                  <div className={`p-2 rounded-lg ${action.color} text-white`}>
-                    <action.icon className="h-5 w-5" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-medium">{action.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {action.description}
-                    </div>
-                  </div>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent Projects */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Recent Projects
-              </CardTitle>
-              <Button variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                New Project
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Recent Activity */}
+          <div className="bg-white rounded-3xl p-8 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Recent Activity
+              </h2>
+              <Button
+                variant="link"
+                className="text-orange-500 font-medium p-0 hover:text-orange-600"
+              >
+                View All
+                <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                >
-                  <div className="space-y-1">
-                    <p className="font-medium">{project.name}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{project.type}</span>
-                      <span>•</span>
-                      <span>{project.images} images</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {project.lastUpdated}
-                    </p>
-                  </div>
-                  <Badge
-                    variant={
-                      project.status === "completed" ? "default" : "secondary"
-                    }
-                    className={
-                      project.status === "processing" ? "animate-pulse" : ""
-                    }
-                  >
-                    {project.status}
-                  </Badge>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Features Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5" />
-                Explore Features
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {features.map((feature, index) => (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
+                <div className="bg-gray-800 rounded-lg p-2">
+                  <File className="h-8 w-8 text-gray-400" />
+                </div>
+              </div>
+              <p className="text-gray-500 font-medium mb-2 text-lg">
+                No recent activity
+              </p>
+              <p className="text-gray-400 text-sm">
+                Start creating to see your work here
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Access */}
+          <div className="bg-white rounded-3xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-8">
+              Quick Access
+            </h2>
+
+            <div className="space-y-4">
+              {quickAccessItems.map((item, index) => (
                 <Button
                   key={index}
                   variant="ghost"
-                  className="w-full justify-start h-auto p-3"
-                  onClick={() => router.push(feature.href)}
+                  className="w-full justify-start h-auto p-4 hover:bg-gray-50 rounded-2xl"
+                  onClick={() => router.push(item.href)}
                 >
-                  <feature.icon className="h-4 w-4 mr-3 text-primary" />
-                  <div className="text-left">
-                    <div className="font-medium">{feature.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {feature.description}
-                    </div>
+                  <div className="bg-gray-100 rounded-xl p-3 mr-4">
+                    <item.icon className="h-5 w-5 text-gray-600" />
                   </div>
+                  <span className="font-medium text-gray-900 text-lg">
+                    {item.title}
+                  </span>
                 </Button>
               ))}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
 
-        {/* Getting Started Section */}
-        <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-background">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <h3 className="text-xl font-semibold">Ready to get started?</h3>
-                <p className="text-muted-foreground">
-                  Create your first AI-generated model photo in just a few
-                  clicks.
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => router.push("/gallery")}
-                >
-                  <ImageIcon className="h-4 w-4 mr-2" />
-                  View Gallery
-                </Button>
-                <Button onClick={() => router.push("/product-model")}>
-                  <PlayCircle className="h-4 w-4 mr-2" />
-                  Start Creating
-                </Button>
+            {/* Low Credit Alert */}
+            <div className="mt-8 bg-orange-50 border border-orange-200 rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="bg-orange-100 rounded-xl p-2.5">
+                  <Triangle className="h-5 w-5 text-orange-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-orange-800 mb-2 text-lg">
+                    Low Credit Alert
+                  </h3>
+                  <p className="text-sm text-orange-700 mb-4 leading-relaxed">
+                    You have 50 credits remaining. Consider upgrading to
+                    continue creating.
+                  </p>
+                  <Button
+                    className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-6 py-2.5 h-auto rounded-xl font-medium"
+                    onClick={() => router.push("/pricing")}
+                  >
+                    Upgrade Now
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Footer Info */}
-        <div className="text-center text-sm text-muted-foreground py-4">
-          <p>
-            Powered by advanced AI technology • Built for fashion brands •
-            <Button
-              variant="link"
-              className="p-0 h-auto text-sm"
-              onClick={() => router.push("/pricing")}
-            >
-              Upgrade to Pro
-            </Button>
-          </p>
+          </div>
         </div>
       </div>
     </div>
