@@ -11,16 +11,6 @@ interface ConditionalLayoutProps {
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname();
 
-  // Landing page route - no sidebar/header
-  const isLandingPage =
-    pathname === "/" || pathname === "/signup" || pathname === "/signin";
-
-  if (isLandingPage) {
-    // Landing page layout - full screen, no sidebar/header
-    return <div className="min-h-screen">{children}</div>;
-  }
-
-  // All other routes get the app layout with sidebar and header
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />

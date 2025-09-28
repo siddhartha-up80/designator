@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthHeader } from "@/components/auth-header";
 
 const SignInPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -127,9 +128,12 @@ const SignInPage = () => {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden">
+    <div className="h-screen flex overflow-hidden relative">
+      {/* Auth Header */}
+      <AuthHeader currentPage="signin" />
+      
       {/* Left side - Carousel */}
-      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50">
+      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50 pt-20">
         {/* Carousel container */}
         <div className="relative w-full h-full">
           {/* Main carousel image */}
@@ -190,7 +194,7 @@ const SignInPage = () => {
       </div>
 
       {/* Right side - Sign In Form */}
-      <div className="flex-1 flex items-center justify-center bg-white p-8 overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center bg-white p-8 overflow-y-auto pt-24">
         <div className="w-full max-w-md my-8">
           {/* Header */}
           <div className="text-center mb-8">

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { EdgeStoreProvider } from "@/lib/edgestore";
-import "./globals.css";
+import "../globals.css";
+import { Sidebar } from "@/components/sidebar-main";
+import { Header } from "@/components/header";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   description: "Generate stunning model images wearing your product designs",
 };
 
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -21,7 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <EdgeStoreProvider>{children}</EdgeStoreProvider>
+        <div className="flex h-screen bg-background">
+          <Sidebar />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <Header />
+            <main className="flex-1 overflow-auto pt-16 md:pt-0">
+              {children}
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );
