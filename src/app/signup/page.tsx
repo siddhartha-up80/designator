@@ -6,82 +6,79 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthHeader } from "@/components/auth-header";
+import { imageService, ModelImage } from "@/lib/image-service";
 
 const SignUpPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [carouselImages, setCarouselImages] = useState<ModelImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Images for the carousel with model-product mapping
-  const carouselImages = [
-    {
-      src: "/images/model1.png",
-      alt: "Model 1 showcase",
-      productSrc: "/images/product1.png",
-      type: "model",
-    },
-    {
-      src: "/images/model1_2.png",
-      alt: "Model 1 variation 2",
-      productSrc: "/images/product1.png",
-      type: "model",
-    },
-    {
-      src: "/images/model1_3.png",
-      alt: "Model 1 variation 3",
-      productSrc: "/images/product1.png",
-      type: "model",
-    },
-    {
-      src: "/images/model2.png",
-      alt: "Model 2 showcase",
-      productSrc: "/images/product2.png",
-      type: "model",
-    },
-    {
-      src: "/images/model5.png",
-      alt: "Model 5 showcase",
-      productSrc: "/images/product5.png",
-      type: "model",
-    },
-    {
-      src: "/images/model6.png",
-      alt: "Model 6 showcase",
-      productSrc: "/images/product3.png",
-      type: "model",
-    },
-    {
-      src: "/images/model7.png",
-      alt: "Model 7 showcase",
-      productSrc: "/images/product3.png",
-      type: "model",
-    },
-    {
-      src: "/images/product1.png",
-      alt: "Product 1",
-      productSrc: "/images/product1.png",
-      type: "product",
-    },
-    {
-      src: "/images/product2.png",
-      alt: "Product 2",
-      productSrc: "/images/product2.png",
-      type: "product",
-    },
-    {
-      src: "/images/product3.png",
-      alt: "Product 3",
-      productSrc: "/images/product3.png",
-      type: "product",
-    },
-    {
-      src: "/images/product5.png",
-      alt: "Product 5",
-      productSrc: "/images/product5.png",
-      type: "product",
-    },
-  ];
+  // Load images dynamically using the image service
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        // Clear any existing cache first
+        imageService.clearCache();
+
+        // Try to get images
+        const images = await imageService.getModelImagesForCarousel();
+        console.log("Signup: Loaded images:", images.length, images);
+
+        if (images && images.length > 0) {
+          setCarouselImages(images);
+        } else {
+          console.warn("No images loaded, using direct fallback");
+          // Use direct fallback if service returns empty array
+          const fallbackImages = [
+            {
+              id: 1,
+              src: "/images/model (1).jpg",
+              alt: "Model 1 showcase",
+              productSrc: "/images/product (1).png",
+              type: "model" as const,
+            },
+            {
+              id: 2,
+              src: "/images/model (2).jpg",
+              alt: "Model 2 showcase",
+              productSrc: "/images/product (2).png",
+              type: "model" as const,
+            },
+            {
+              id: 3,
+              src: "/images/model (3).jpg",
+              alt: "Model 3 showcase",
+              productSrc: "/images/product (3).png",
+              type: "model" as const,
+            },
+          ];
+          setCarouselImages(fallbackImages);
+        }
+      } catch (error) {
+        console.error("Failed to load carousel images:", error);
+        // Direct fallback for emergencies
+        const emergencyFallback = [
+          {
+            id: 1,
+            src: "/images/model (1).jpg",
+            alt: "Model 1 showcase",
+            productSrc: "/images/product (1).png",
+            type: "model" as const,
+          },
+        ];
+        setCarouselImages(emergencyFallback);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadImages();
+  }, []);
 
   // Auto-slide functionality
   useEffect(() => {
+    if (carouselImages.length === 0) return;
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
     }, 4000); // Change slide every 4 seconds
@@ -139,58 +136,76 @@ const SignUpPage = () => {
         <div className="relative w-full h-full">
           {/* Main carousel image */}
           <div className="w-full h-full flex items-center justify-center p-8">
-            <img
-              src={carouselImages[currentSlide].src}
-              alt={carouselImages[currentSlide].alt}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-            />
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+              </div>
+            ) : carouselImages.length > 0 ? (
+              <img
+                src={carouselImages[currentSlide].src}
+                alt={carouselImages[currentSlide].alt}
+                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+              />
+            ) : (
+              <div className="text-gray-500 text-center">
+                <p>No images available</p>
+              </div>
+            )}
           </div>
 
           {/* Navigation arrows */}
-          <button
-            onClick={prevSlide}
-            aria-label="Previous image"
-            className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
-          >
-            <ChevronLeft className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
-          </button>
+          {!loading && carouselImages.length > 1 && (
+            <>
+              <button
+                onClick={prevSlide}
+                aria-label="Previous image"
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+              >
+                <ChevronLeft className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+              </button>
 
-          <button
-            onClick={nextSlide}
-            aria-label="Next image"
-            className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
-          >
-            <ChevronRight className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
-          </button>
+              <button
+                onClick={nextSlide}
+                aria-label="Next image"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+              </button>
+            </>
+          )}
 
           {/* Thumbnail navigation */}
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-            <div className="flex space-x-2">
-              {carouselImages.slice(0, 5).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  aria-label={`Go to slide ${index + 1}`}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    currentSlide === index
-                      ? "bg-orange-500 scale-110"
-                      : "bg-white/60 hover:bg-white/80"
-                  }`}
-                />
-              ))}
+          {!loading && carouselImages.length > 1 && (
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+              <div className="flex space-x-2">
+                {carouselImages.slice(0, 5).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      currentSlide === index
+                        ? "bg-orange-500 scale-110"
+                        : "bg-white/60 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Thumbnail preview in bottom left */}
-          <div className="absolute bottom-6 left-6">
-            <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-lg">
-              <img
-                src={carouselImages[currentSlide].productSrc}
-                alt={`Product for ${carouselImages[currentSlide].alt}`}
-                className="w-full h-full object-cover"
-              />
+          {!loading && carouselImages.length > 0 && (
+            <div className="absolute bottom-6 left-6">
+              <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-lg">
+                <img
+                  src={carouselImages[currentSlide].productSrc}
+                  alt={`Product for ${carouselImages[currentSlide].alt}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

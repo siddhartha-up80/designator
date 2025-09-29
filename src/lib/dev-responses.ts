@@ -1,4 +1,5 @@
 import { pexelsService } from "./pexels-service";
+import { imageService } from "./image-service";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -33,42 +34,13 @@ const getRandomModelImages = async (count: number = 1): Promise<string[]> => {
     console.warn("Failed to fetch Pexels images, using local fallback:", error);
   }
 
-  // Fallback to local images
-  const localImages = [
-    "/images/model1.png",
-    "/images/model1_2.png",
-    "/images/model1_3.png",
-    "/images/model2.png",
-    "/images/model5.png",
-    "/images/model6.png",
-    "/images/model7.png",
-  ];
-
-  const selectedImages = [];
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * localImages.length);
-    selectedImages.push(localImages[randomIndex]);
-  }
-
-  return selectedImages;
+  // Fallback to local images using image service
+  return await imageService.getRandomModelImages(count);
 };
 
 // Get random product images from public/images
-const getRandomProductImages = (count: number = 1): string[] => {
-  const productImages = [
-    "product1.png",
-    "product2.png",
-    "product3.png",
-    "product5.png",
-  ];
-
-  const selectedImages = [];
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * productImages.length);
-    selectedImages.push(`/images/${productImages[randomIndex]}`);
-  }
-
-  return selectedImages;
+const getRandomProductImages = async (count: number = 1): Promise<string[]> => {
+  return await imageService.getRandomProductImages(count);
 };
 
 // Get random photography images from Pexels (fallback to local images)
@@ -89,24 +61,8 @@ const getRandomPhotographyImages = async (
     );
   }
 
-  // Fallback to local images
-  const localImages = [
-    "/images/model1.png",
-    "/images/model1_2.png",
-    "/images/model1_3.png",
-    "/images/model2.png",
-    "/images/model5.png",
-    "/images/model6.png",
-    "/images/model7.png",
-  ];
-
-  const selectedImages = [];
-  for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * localImages.length);
-    selectedImages.push(localImages[randomIndex]);
-  }
-
-  return selectedImages;
+  // Fallback to local images using image service
+  return await imageService.getRandomModelImages(count);
 };
 
 // Convert local image path to base64 data

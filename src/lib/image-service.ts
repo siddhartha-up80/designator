@@ -1,0 +1,316 @@
+// Dynamic imports for Node.js modules to avoid client-side bundling issues
+
+export interface ImagePair {
+  id: number;
+  modelImage: string;
+  productImage: string;
+  modelImagePath: string;
+  productImagePath: string;
+}
+
+export interface ModelImage {
+  id: number;
+  src: string;
+  alt: string;
+  productSrc: string;
+  type: 'model';
+}
+
+class ImageService {
+  private static instance: ImageService;
+  private imageCache: ImagePair[] | null = null;
+
+  private constructor() {}
+
+  static getInstance(): ImageService {
+    if (!ImageService.instance) {
+      ImageService.instance = new ImageService();
+    }
+    return ImageService.instance;
+  }
+
+  /**
+   * Extracts the number from image filename
+   * Supports formats like: model1.jpg, model (1).jpg, product1.png, product (1).png
+   */
+  private extractImageNumber(filename: string): number | null {
+    // Match patterns like model1.jpg, model (1).jpg, etc.
+    const match = filename.match(/(?:model|product)(?:\s*\((\d+)\)|\s*(\d+))/i);
+    if (match) {
+      return parseInt(match[1] || match[2], 10);
+    }
+    return null;
+  }
+
+  /**
+   * Fallback method with current image structure
+   */
+  private getFallbackImagePairs(): ImagePair[] {
+    return [
+      {
+        id: 1,
+        modelImage: 'model (1).jpg',
+        productImage: 'product (1).png',
+        modelImagePath: '/images/model (1).jpg',
+        productImagePath: '/images/product (1).png',
+      },
+      {
+        id: 2,
+        modelImage: 'model (2).jpg',
+        productImage: 'product (2).png',
+        modelImagePath: '/images/model (2).jpg',
+        productImagePath: '/images/product (2).png',
+      },
+      {
+        id: 3,
+        modelImage: 'model (3).jpg',
+        productImage: 'product (3).png',
+        modelImagePath: '/images/model (3).jpg',
+        productImagePath: '/images/product (3).png',
+      },
+      {
+        id: 4,
+        modelImage: 'model (4).jpg',
+        productImage: 'product (4).png',
+        modelImagePath: '/images/model (4).jpg',
+        productImagePath: '/images/product (4).png',
+      },
+      {
+        id: 5,
+        modelImage: 'model (5).jpg',
+        productImage: 'product (5).png',
+        modelImagePath: '/images/model (5).jpg',
+        productImagePath: '/images/product (5).png',
+      },
+      {
+        id: 6,
+        modelImage: 'model (6).jpg',
+        productImage: 'product (6).png',
+        modelImagePath: '/images/model (6).jpg',
+        productImagePath: '/images/product (6).png',
+      },
+      {
+        id: 7,
+        modelImage: 'model (7).jpg',
+        productImage: 'product (7).png',
+        modelImagePath: '/images/model (7).jpg',
+        productImagePath: '/images/product (7).png',
+      },
+    ];
+  }
+
+  /**
+   * Scan the public/images directory for model and product images
+   */
+  private async scanImagesDirectory(): Promise<ImagePair[]> {
+    try {
+      const imagePairs: ImagePair[] = [];
+
+      if (typeof window === 'undefined') {
+        // Server-side: can read files using dynamic imports
+        try {
+          const { readdir } = await import('fs/promises');
+          const { join } = await import('path');
+          
+          const publicImagesPath = join(process.cwd(), 'public', 'images');
+          const files = await readdir(publicImagesPath);
+          
+          const modelFiles = files.filter((file: string) => 
+            file.toLowerCase().includes('model') && 
+            /\.(jpg|jpeg|png|webp)$/i.test(file)
+          );
+          
+          const productFiles = files.filter((file: string) => 
+            file.toLowerCase().includes('product') && 
+            /\.(jpg|jpeg|png|webp)$/i.test(file)
+          );
+
+          // Group images by number
+          const imageGroups = new Map<number, { model?: string; product?: string }>();
+
+          modelFiles.forEach((file: string) => {
+            const id = this.extractImageNumber(file);
+            if (id !== null) {
+              if (!imageGroups.has(id)) {
+                imageGroups.set(id, {});
+              }
+              imageGroups.get(id)!.model = file;
+            }
+          });
+
+          productFiles.forEach((file: string) => {
+            const id = this.extractImageNumber(file);
+            if (id !== null) {
+              if (!imageGroups.has(id)) {
+                imageGroups.set(id, {});
+              }
+              imageGroups.get(id)!.product = file;
+            }
+          });
+
+          // Create ImagePair objects
+          imageGroups.forEach((group, id) => {
+            if (group.model && group.product) {
+              imagePairs.push({
+                id,
+                modelImage: group.model,
+                productImage: group.product,
+                modelImagePath: `/images/${group.model}`,
+                productImagePath: `/images/${group.product}`,
+              });
+            }
+          });
+
+          imagePairs.sort((a, b) => a.id - b.id);
+        } catch (fsError) {
+          console.warn('Failed to read files from filesystem:', fsError);
+          return this.getFallbackImagePairs();
+        }
+      } else {
+        // Client-side: use predefined list or fetch from API
+        throw new Error('Cannot scan images directory on client-side. Use getAvailableImagePairs() instead.');
+      }
+
+      return imagePairs;
+    } catch (error) {
+      console.error('Error scanning images directory:', error);
+      return this.getFallbackImagePairs();
+    }
+  }
+
+  /**
+   * Get all available image pairs (client-side safe)
+   */
+  async getAvailableImagePairs(): Promise<ImagePair[]> {
+    if (this.imageCache) {
+      return this.imageCache;
+    }
+
+    try {
+      if (typeof window === 'undefined') {
+        // Server-side
+        this.imageCache = await this.scanImagesDirectory();
+      } else {
+        // Client-side: fetch from API or use fallback
+        const response = await fetch('/api/images');
+        if (response.ok) {
+          this.imageCache = await response.json();
+        } else {
+          throw new Error('Failed to fetch images from API');
+        }
+      }
+    } catch (error) {
+      console.warn('Using fallback image configuration:', error);
+      // Fallback to manually defined pairs based on current structure
+      this.imageCache = this.getFallbackImagePairs();
+    }
+
+    return this.imageCache || [];
+  }
+
+  /**
+   * Get model images formatted for carousel use
+   */
+  async getModelImagesForCarousel(): Promise<ModelImage[]> {
+    try {
+      const imagePairs = await this.getAvailableImagePairs();
+      
+      if (!imagePairs || imagePairs.length === 0) {
+        // Direct fallback if no pairs found
+        const fallbackPairs = this.getFallbackImagePairs();
+        return fallbackPairs.map((pair: ImagePair) => ({
+          id: pair.id,
+          src: pair.modelImagePath,
+          alt: `Model ${pair.id} showcase`,
+          productSrc: pair.productImagePath,
+          type: 'model' as const,
+        }));
+      }
+      
+      return imagePairs.map((pair: ImagePair) => ({
+        id: pair.id,
+        src: pair.modelImagePath,
+        alt: `Model ${pair.id} showcase`,
+        productSrc: pair.productImagePath,
+        type: 'model' as const,
+      }));
+    } catch (error) {
+      console.error('Error in getModelImagesForCarousel:', error);
+      // Emergency fallback
+      const fallbackPairs = this.getFallbackImagePairs();
+      return fallbackPairs.map((pair: ImagePair) => ({
+        id: pair.id,
+        src: pair.modelImagePath,
+        alt: `Model ${pair.id} showcase`,
+        productSrc: pair.productImagePath,
+        type: 'model' as const,
+      }));
+    }
+  }
+
+  /**
+   * Get random model image paths (for dev-responses.ts)
+   */
+  async getRandomModelImages(count: number = 1): Promise<string[]> {
+    const imagePairs = await this.getAvailableImagePairs();
+    const modelImages = imagePairs.map((pair: ImagePair) => pair.modelImagePath);
+    
+    const selectedImages = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * modelImages.length);
+      selectedImages.push(modelImages[randomIndex]);
+    }
+    
+    return selectedImages;
+  }
+
+  /**
+   * Get random product image paths (for dev-responses.ts)
+   */
+  async getRandomProductImages(count: number = 1): Promise<string[]> {
+    const imagePairs = await this.getAvailableImagePairs();
+    const productImages = imagePairs.map((pair: ImagePair) => pair.productImagePath);
+    
+    const selectedImages = [];
+    for (let i = 0; i < count; i++) {
+      const randomIndex = Math.floor(Math.random() * productImages.length);
+      selectedImages.push(productImages[randomIndex]);
+    }
+    
+    return selectedImages;
+  }
+
+  /**
+   * Get all model image paths
+   */
+  async getAllModelImages(): Promise<string[]> {
+    const imagePairs = await this.getAvailableImagePairs();
+    return imagePairs.map((pair: ImagePair) => pair.modelImagePath);
+  }
+
+  /**
+   * Get all product image paths
+   */
+  async getAllProductImages(): Promise<string[]> {
+    const imagePairs = await this.getAvailableImagePairs();
+    return imagePairs.map((pair: ImagePair) => pair.productImagePath);
+  }
+
+  /**
+   * Clear cache (useful when images are updated)
+   */
+  clearCache(): void {
+    this.imageCache = null;
+  }
+
+  /**
+   * Get image pair by ID
+   */
+  async getImagePairById(id: number): Promise<ImagePair | null> {
+    const imagePairs = await this.getAvailableImagePairs();
+    return imagePairs.find((pair: ImagePair) => pair.id === id) || null;
+  }
+}
+
+// Export singleton instance
+export const imageService = ImageService.getInstance();
