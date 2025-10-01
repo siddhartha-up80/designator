@@ -6,6 +6,7 @@ import {
   SidebarLink,
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
@@ -21,6 +22,8 @@ import {
   Pin,
   PinOff,
 } from "lucide-react";
+import { ProfileDialog } from "@/components/profile-dialog";
+import Image from "next/image";
 
 interface SidebarProps {
   className?: string;
@@ -41,8 +44,10 @@ export function Sidebar({ className }: SidebarProps) {
   const [open, setOpen] = useState(true); // Default to open for better initial UX
   const [pinned, setPinned] = useState(true); // Default to pinned for desktop
   const [isMobile, setIsMobile] = useState(false);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
 
   // Check if device is mobile
   useEffect(() => {
@@ -151,20 +156,55 @@ export function Sidebar({ className }: SidebarProps) {
             </div>
           </div>
           <div>
-            <SidebarLink
-              link={{
-                label: "User",
-                href: "#",
-                icon: (
-                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+            {session?.user ? (
+              <div
+                onClick={() => setProfileDialogOpen(true)}
+                className="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group"
+              >
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
+                    width={28}
+                    height={28}
+                    className="rounded-full flex-shrink-0"
+                  />
+                ) : (
+                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
                     <User className="h-4 w-4 text-white" />
                   </div>
-                ),
-              }}
-            />
+                )}
+                {open && (
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 truncate">
+                      {session.user.name?.split(" ")[0] || "Profile"}
+                    </p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                      View Profile
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <SidebarLink
+                link={{
+                  label: "User",
+                  href: "/signin",
+                  icon: (
+                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                      <User className="h-4 w-4 text-white" />
+                    </div>
+                  ),
+                }}
+              />
+            )}
           </div>
         </SidebarBody>
       </AceternitySidebar>
+      <ProfileDialog
+        open={profileDialogOpen}
+        onOpenChange={setProfileDialogOpen}
+      />
     </div>
   );
 }
