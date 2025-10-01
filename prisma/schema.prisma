@@ -10,234 +10,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model with subscription tiers
+// User model for authentication
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
-  name      String?
-  avatar    String?
-  plan      Plan     @default(FREE)
-  credits   Int      @default(5) // Monthly credits based on plan
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String? // For email/password auth (optional, can be null for OAuth users)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  // Relationships
-  projects     Project[]
-  galleryItems GalleryItem[]
-  tryOns       TryOn[]
-  models       ModelImage[]
-  favorites    Favorite[]
-
-  @@map("users")
+  accounts Account[]
+  sessions Session[]
 }
 
-// Subscription plans
-enum Plan {
-  FREE
-  PRO
-  ENTERPRISE
+// Account model for OAuth providers
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
-// User projects to organize work
-model Project {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String?
-  type        ProjectType
-  status      Status      @default(ACTIVE)
-  userId      String      @db.ObjectId
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  // Relationships
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  galleryItems GalleryItem[]
-  tryOns       TryOn[]
-
-  @@map("projects")
-}
-
-enum ProjectType {
-  FASHION_TRY_ON
-  MODEL_GENERATION
-  IMAGE_UPSCALE
-  VIDEO_CREATION
-  PROMPT_GENERATION
-  PRODUCT_MODEL
-}
-
-enum Status {
-  ACTIVE
-  COMPLETED
-  ARCHIVED
-  PROCESSING
-  FAILED
-}
-
-// Pre-defined model images for selection
-model ModelImage {
+// Session model (optional - we'll use JWT tokens stored in cookies instead)
+model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  description  String?
-  imageUrl     String
-  thumbnailUrl String?
-  gender       Gender
-  category     String[] // ["casual", "formal", "summer", etc.]
-  tags         String[]
-  isPublic     Boolean  @default(true)
-  isApproved   Boolean  @default(false)
-  userId       String?  @db.ObjectId // If user-uploaded model
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relationships
-  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
-  tryOns    TryOn[]
-  favorites Favorite[]
-
-  @@map("model_images")
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Gender {
-  MALE
-  FEMALE
-  UNISEX
-}
+// Verification token model for email verification
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-// Fashion try-on results
-model TryOn {
-  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId              String   @db.ObjectId
-  projectId           String?  @db.ObjectId
-  modelImageId        String?  @db.ObjectId
-  customModelImageUrl String? // For uploaded models
-  garmentImageUrl     String
-  backgroundImageUrl  String?
-  resultImageUrl      String?
-  numberOfImages      Int      @default(1)
-  status              Status   @default(PROCESSING)
-  settings            Json? // Zoom, position, etc.
-  processingTime      Int? // In seconds
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-
-  // Relationships
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project     Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  modelImage  ModelImage?  @relation(fields: [modelImageId], references: [id], onDelete: SetNull)
-  galleryItem GalleryItem?
-
-  @@map("try_ons")
-}
-
-// Generated/uploaded items in gallery
-model GalleryItem {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  title        String
-  description  String?
-  imageUrl     String
-  thumbnailUrl String?
-  type         GalleryType
-  category     String
-  tags         String[]
-  userId       String      @db.ObjectId
-  projectId    String?     @db.ObjectId
-  tryOnId      String?     @unique @db.ObjectId
-  isPublic     Boolean     @default(false)
-  likes        Int         @default(0)
-  views        Int         @default(0)
-  downloads    Int         @default(0)
-  metadata     Json? // Additional metadata like dimensions, file size, etc.
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-
-  // Relationships
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project?   @relation(fields: [projectId], references: [id], onDelete: SetNull)
-  tryOn     TryOn?     @relation(fields: [tryOnId], references: [id], onDelete: SetNull)
-  favorites Favorite[]
-
-  @@map("gallery_items")
-}
-
-enum GalleryType {
-  FASHION_MODEL
-  TRY_ON_RESULT
-  UPSCALED_IMAGE
-  GENERATED_VIDEO
-  CUSTOM_UPLOAD
-}
-
-// User favorites system
-model Favorite {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String   @db.ObjectId
-  modelImageId  String?  @db.ObjectId
-  galleryItemId String?  @db.ObjectId
-  createdAt     DateTime @default(now())
-
-  // Relationships
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  modelImage  ModelImage?  @relation(fields: [modelImageId], references: [id], onDelete: Cascade)
-  galleryItem GalleryItem? @relation(fields: [galleryItemId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, modelImageId])
-  @@unique([userId, galleryItemId])
-  @@map("favorites")
-}
-
-// Image processing jobs for background tasks
-model ProcessingJob {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  type        JobType
-  status      JobStatus @default(PENDING)
-  userId      String    @db.ObjectId
-  inputData   Json // URLs, settings, etc.
-  outputData  Json? // Results, URLs, etc.
-  error       String?
-  progress    Int       @default(0) // 0-100
-  startedAt   DateTime?
-  completedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("processing_jobs")
-}
-
-enum JobType {
-  FASHION_TRY_ON
-  MODEL_GENERATION
-  IMAGE_UPSCALE
-  VIDEO_GENERATION
-  PROMPT_GENERATION
-}
-
-enum JobStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
-
-// Usage tracking for credits and analytics
-model UsageLog {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  action    String // "try_on", "upscale", "generate_model", etc.
-  credits   Int // Credits consumed
-  metadata  Json? // Additional tracking data
-  createdAt DateTime @default(now())
-
-  @@map("usage_logs")
-}
-
-// App settings and configurations
-model AppSetting {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  key       String   @unique
-  value     Json
-  updatedAt DateTime @updatedAt
-
-  @@map("app_settings")
+  @@unique([identifier, token])
 }

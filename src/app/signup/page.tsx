@@ -7,11 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthHeader } from "@/components/auth-header";
 import { imageService, ModelImage } from "@/lib/image-service";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const SignUpPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [carouselImages, setCarouselImages] = useState<ModelImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Load images dynamically using the image service
   useEffect(() => {
@@ -116,13 +120,22 @@ const SignUpPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log("Signup form submitted:", formData);
+    // Handle signup logic here - commented out as requested
+    console.log("Email signup temporarily disabled");
+    // TODO: Implement email/password signup in the future
   };
 
-  const handleGoogleSignUp = () => {
-    // Handle Google signup logic here
-    console.log("Google signup clicked");
+  const handleGoogleSignUp = async () => {
+    try {
+      setIsSubmitting(true);
+      await signIn("google", {
+        callbackUrl: "/home",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("Google signup error:", error);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -131,11 +144,11 @@ const SignUpPage = () => {
       <AuthHeader currentPage="signup" />
 
       {/* Left side - Carousel */}
-      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50 pt-20">
+      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50">
         {/* Carousel container */}
         <div className="relative w-full h-full">
           {/* Main carousel image */}
-          <div className="w-full h-full flex items-center justify-center p-8">
+          <div className="w-full h-full flex items-center justify-center">
             {loading ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -144,7 +157,7 @@ const SignUpPage = () => {
               <img
                 src={carouselImages[currentSlide].src}
                 alt={carouselImages[currentSlide].alt}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                className="w-full h-full object-top object-cover"
               />
             ) : (
               <div className="text-gray-500 text-center">
@@ -159,7 +172,7 @@ const SignUpPage = () => {
               <button
                 onClick={prevSlide}
                 aria-label="Previous image"
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
                 <ChevronLeft className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
               </button>
@@ -167,7 +180,7 @@ const SignUpPage = () => {
               <button
                 onClick={nextSlide}
                 aria-label="Next image"
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs border border-white/30 hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
                 <ChevronRight className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
               </button>
@@ -197,11 +210,11 @@ const SignUpPage = () => {
           {/* Thumbnail preview in bottom left */}
           {!loading && carouselImages.length > 0 && (
             <div className="absolute bottom-6 left-6">
-              <div className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-lg">
+              <div className="w-28 h-28 rounded-lg overflow-hidden border-8 border-gray-600/40 shadow-lg bg-white">
                 <img
                   src={carouselImages[currentSlide].productSrc}
                   alt={`Product for ${carouselImages[currentSlide].alt}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover p-1"
                 />
               </div>
             </div>
@@ -215,11 +228,13 @@ const SignUpPage = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-orange-500 mb-2">Sign Up</h1>
+            <p className="text-gray-600 text-sm">
+              Create your Designator account
+            </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Field */}
+          {/* Email/Password Form - Temporarily Commented Out */}
+          {/* <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label
                 htmlFor="name"
@@ -239,7 +254,6 @@ const SignUpPage = () => {
               />
             </div>
 
-            {/* Email Field */}
             <div className="space-y-2">
               <Label
                 htmlFor="email"
@@ -259,7 +273,6 @@ const SignUpPage = () => {
               />
             </div>
 
-            {/* Password Field */}
             <div className="space-y-2">
               <Label
                 htmlFor="password"
@@ -279,7 +292,6 @@ const SignUpPage = () => {
               />
             </div>
 
-            {/* Sign Up Button */}
             <Button
               type="submit"
               className="w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
@@ -288,19 +300,19 @@ const SignUpPage = () => {
             </Button>
           </form>
 
-          {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-300"></div>
             <span className="px-4 text-sm text-gray-500">or</span>
             <div className="flex-1 border-t border-gray-300"></div>
-          </div>
+          </div> */}
 
           {/* Google Sign Up Button */}
           <Button
             type="button"
             onClick={handleGoogleSignUp}
+            disabled={isSubmitting}
             variant="outline"
-            className="w-full py-3 px-4 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2"
+            className="w-full py-3 px-4 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -320,7 +332,9 @@ const SignUpPage = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            <span>Continue with Google</span>
+            <span>
+              {isSubmitting ? "Signing up..." : "Continue with Google"}
+            </span>
           </Button>
 
           {/* Sign In Link */}
