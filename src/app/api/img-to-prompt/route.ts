@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { devResponseHelpers } from "@/lib/dev-responses";
+import { withCredits } from "@/lib/credits-middleware";
+import { CREDIT_COSTS } from "@/lib/credits-service";
 
 // Helper function to convert image URL to base64
 async function imageUrlToBase64(imageUrl: string): Promise<string> {
@@ -32,9 +34,33 @@ function getMimeType(imageUrl: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Parse request to get numberOfPrompts for credit calculation
+  const body = await request.json();
+  const numberOfPrompts = body.numberOfPrompts || 1;
+
+  // Calculate credits: 10 per prompt (treating each prompt as a generation)
+  const requiredCredits = CREDIT_COSTS.TEXT_PROMPT * numberOfPrompts;
+
+  // Wrap with credits middleware
+  return withCredits(
+    request,
+    requiredCredits,
+    "TEXT_PROMPT",
+    `Image to Prompt Generation (${numberOfPrompts} prompt${
+      numberOfPrompts > 1 ? "s" : ""
+    })`,
+    async (userId: string) => {
+      return await handleImgToPrompt(body, userId);
+    }
+  );
+}
+
+async function handleImgToPrompt(
+  body: any,
+  userId: string
+): Promise<NextResponse> {
   try {
     console.log("Image-to-prompt API called");
-    const body = await request.json();
     console.log("Request body:", body);
 
     const {

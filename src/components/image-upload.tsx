@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { showToast } from "@/lib/toast";
 
 interface ImageUploadProps {
   onImageUploaded: (url: string) => void;
@@ -24,7 +25,7 @@ export function ImageUpload({
   const handleFileUpload = useCallback(
     async (file: File) => {
       if (!file.type.startsWith("image/")) {
-        alert("Please upload an image file");
+        showToast.warning("Please upload an image file");
         return;
       }
 
@@ -42,7 +43,7 @@ export function ImageUpload({
         onImageUploaded(res.url);
       } catch (error) {
         console.error("Upload failed:", error);
-        alert("Failed to upload image. Please try again.");
+        showToast.error("Failed to upload image", "Please try again.");
       } finally {
         setIsUploading(false);
         setUploadProgress(0);

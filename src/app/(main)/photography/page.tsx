@@ -8,6 +8,11 @@ import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/image-upload";
+import { FeatureCreditCost } from "@/components/credits-badge";
+import { CREDIT_COSTS } from "@/lib/credits-service";
+import { useCredits } from "@/contexts/credits-context";
+import { CostPreview } from "@/components/cost-preview";
+import { showToast } from "@/lib/toast";
 import {
   Camera,
   Palette,
@@ -33,6 +38,9 @@ import {
 type Step = "UPLOAD" | "EDIT";
 
 export default function PhotographyPage() {
+  // Credits context for real-time updates
+  const { updateCredits } = useCredits();
+
   // Flow state
   const [step, setStep] = useState<Step>("UPLOAD");
   // Current image in editor
@@ -177,7 +185,10 @@ export default function PhotographyPage() {
       });
     } catch (error) {
       console.error("Failed to apply manual adjustments:", error);
-      alert("Failed to apply manual adjustments. Please try again.");
+      showToast.error(
+        "Failed to apply manual adjustments",
+        "Please try again."
+      );
     } finally {
       setIsApplyingManual(false);
     }
@@ -310,6 +321,15 @@ export default function PhotographyPage() {
         }),
       });
 
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
+
       const result = await response.json();
 
       if (!response.ok) {
@@ -323,10 +343,9 @@ export default function PhotographyPage() {
       }
     } catch (error) {
       console.error("Enhancement failed:", error);
-      alert(
-        `Failed to enhance image: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+      showToast.error(
+        "Failed to enhance image",
+        error instanceof Error ? error.message : "Unknown error"
       );
     } finally {
       setIsProcessing(false);
@@ -356,6 +375,15 @@ export default function PhotographyPage() {
         }),
       });
 
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
+
       const result = await response.json();
 
       if (!response.ok) {
@@ -369,10 +397,9 @@ export default function PhotographyPage() {
       }
     } catch (error) {
       console.error("Preset application failed:", error);
-      alert(
-        `Failed to apply preset: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+      showToast.error(
+        "Failed to apply preset",
+        error instanceof Error ? error.message : "Unknown error"
       );
     } finally {
       setIsProcessing(false);
@@ -405,6 +432,15 @@ export default function PhotographyPage() {
         }),
       });
 
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
+
       const result = await response.json();
 
       if (!response.ok) {
@@ -418,10 +454,9 @@ export default function PhotographyPage() {
       }
     } catch (error) {
       console.error("Custom enhancement failed:", error);
-      alert(
-        `Failed to apply custom enhancement: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
+      showToast.error(
+        "Failed to apply custom enhancement",
+        error instanceof Error ? error.message : "Unknown error"
       );
     } finally {
       setIsProcessing(false);
@@ -466,6 +501,10 @@ export default function PhotographyPage() {
             <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
               <Camera className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               Photography Studio
+              <FeatureCreditCost
+                cost={CREDIT_COSTS.PHOTO_ENHANCEMENT}
+                size="md"
+              />
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm">
               Upload photos and transform them with AI-powered enhancements,
@@ -583,7 +622,15 @@ export default function PhotographyPage() {
                         ) : (
                           <>
                             <Zap className="h-4 w-4 mr-2" />
-                            Apply AI Enhance
+                            Apply AI Enhance{" "}
+                            <span className="opacity-90">
+                              (
+                              <CostPreview
+                                baseRate={CREDIT_COSTS.PHOTO_ENHANCEMENT}
+                                quantity={1}
+                              />
+                              )
+                            </span>
                           </>
                         )}
                       </Button>
@@ -904,7 +951,15 @@ export default function PhotographyPage() {
                     ) : (
                       <>
                         <Zap className="h-4 w-4 mr-2" />
-                        Apply Custom Enhancement
+                        Apply Custom Enhancement{" "}
+                        <span className="opacity-90">
+                          (
+                          <CostPreview
+                            baseRate={CREDIT_COSTS.PHOTO_ENHANCEMENT}
+                            quantity={1}
+                          />
+                          )
+                        </span>
                       </>
                     )}
                   </Button>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Designator - Credits System Preview</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .header {
+        background: white;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .header-left h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .credits-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+
+      .credits-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+        color: #b45309;
+        border: 1px solid #fbbf24;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .upgrade-btn {
+        background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s;
+      }
+
+      .upgrade-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .content {
+        padding: 2rem;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        transition: all 0.3s;
+      }
+
+      .feature-card:hover {
+        border-color: #f97316;
+        box-shadow: 0 10px 30px rgba(249, 115, 22, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .feature-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .feature-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+
+      .feature-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+      }
+
+      .cost-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+        color: #b45309;
+        border: 1px solid #fbbf24;
+        border-radius: 0.375rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+      }
+
+      .feature-desc {
+        color: #6b7280;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+      }
+
+      .feature-type {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #f3f4f6;
+        color: #6b7280;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .intro {
+        text-align: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .intro h2 {
+        font-size: 2rem;
+        color: #92400e;
+        margin-bottom: 1rem;
+      }
+
+      .intro p {
+        color: #78350f;
+        font-size: 1.125rem;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      .stat-card {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f97316;
+      }
+
+      .stat-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .coin-icon {
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <h1>
+            <span style="font-size: 2rem">🎨</span>
+            Designator
+          </h1>
+        </div>
+        <div class="header-right">
+          <span class="credits-label">Credits</span>
+          <div class="credits-badge">
+            <span class="coin-icon">🪙</span>
+            <span>50</span>
+          </div>
+          <button class="upgrade-btn">
+            <span>📈</span>
+            Upgrade
+          </button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <!-- Intro -->
+        <div class="intro">
+          <h2>🎉 Welcome to Designator!</h2>
+          <p>
+            You've received <strong>50 free credits</strong> to get started. Use
+            them to explore our AI-powered features.
+          </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-value">50</div>
+            <div class="stat-label">Free Credits</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">6</div>
+            <div class="stat-label">AI Features</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Possibilities</div>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <h2
+          style="
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+          "
+        >
+          AI-Powered Features
+        </h2>
+
+        <div class="feature-grid">
+          <!-- Fashion Try-On -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">👕</div>
+                Fashion Try-On
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                25
+              </div>
+            </div>
+            <p class="feature-desc">
+              Virtually try garments on models with AI technology. Upload a
+              model and clothing to see instant results.
+            </p>
+            <span class="feature-type">PHOTO GENERATION</span>
+          </div>
+
+          <!-- Product Model -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">📦</div>
+                Product Model
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                25
+              </div>
+            </div>
+            <p class="feature-desc">
+              Generate professional model images wearing your products with
+              AI-powered image generation.
+            </p>
+            <span class="feature-type">PHOTO GENERATION</span>
+          </div>
+
+          <!-- Prompt to Image -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">✨</div>
+                Prompt to Image
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                10
+              </div>
+            </div>
+            <p class="feature-desc">
+              Generate stunning images from text descriptions. Create artwork,
+              photos, and designs with AI.
+            </p>
+            <span class="feature-type">TEXT PROMPT</span>
+          </div>
+
+          <!-- Image to Prompt -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">🖼️</div>
+                Image to Prompt
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                10
+              </div>
+            </div>
+            <p class="feature-desc">
+              Extract detailed text prompts from images. Perfect for creating
+              consistent style descriptions.
+            </p>
+            <span class="feature-type">TEXT PROMPT</span>
+          </div>
+
+          <!-- Photography Enhancement -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">📸</div>
+                Photo Enhancement
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                15
+              </div>
+            </div>
+            <p class="feature-desc">
+              Enhance your photos with AI-powered improvements. Adjust lighting,
+              color, sharpness, and more.
+            </p>
+            <span class="feature-type">PHOTO ENHANCEMENT</span>
+          </div>
+
+          <!-- Style Presets -->
+          <div class="feature-card">
+            <div class="feature-header">
+              <div class="feature-title">
+                <div class="feature-icon">🎨</div>
+                Style Presets
+              </div>
+              <div class="cost-badge">
+                <span class="coin-icon">🪙</span>
+                15
+              </div>
+            </div>
+            <p class="feature-desc">
+              Transform photos with professional style presets. Apply cinematic,
+              vintage, and artistic effects.
+            </p>
+            <span class="feature-type">PHOTO ENHANCEMENT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

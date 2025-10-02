@@ -18,11 +18,46 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String? // For email/password auth (optional, can be null for OAuth users)
+  credits       Int       @default(50) // Free users start with 50 credits
+  plan          Plan      @default(FREE)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  sessions Session[]
+  accounts     Account[]
+  sessions     Session[]
+  transactions CreditTransaction[]
+}
+
+// Subscription plans
+enum Plan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+// Credit transaction model to track all credit usage
+model CreditTransaction {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String          @db.ObjectId
+  amount      Int // Negative for deductions, positive for additions
+  type        TransactionType
+  description String
+  metadata    Json? // Store additional info like feature used, image generated, etc.
+  createdAt   DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+// Transaction types for different features
+enum TransactionType {
+  PHOTO_GENERATION // 25 credits - Fashion Try-on, Product Model
+  TEXT_PROMPT // 10 credits - Prompt to Image, Image to Prompt
+  PHOTO_ENHANCEMENT // 15 credits - Photography AI Enhancement & Style Presets
+  CREDIT_PURCHASE // Credit purchase (positive amount)
+  SIGNUP_BONUS // Initial signup bonus
+  REFUND // Refund credits
 }
 
 // Account model for OAuth providers

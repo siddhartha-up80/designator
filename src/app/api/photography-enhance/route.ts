@@ -1,11 +1,30 @@
+import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { devResponseHelpers } from "@/lib/dev-responses";
+import { withCredits } from "@/lib/credits-middleware";
+import { CREDIT_COSTS } from "@/lib/credits-service";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || "",
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // Wrap with credits middleware
+  return withCredits(
+    request,
+    CREDIT_COSTS.PHOTO_ENHANCEMENT,
+    "PHOTO_ENHANCEMENT",
+    "Photography Enhancement",
+    async (userId: string) => {
+      return await handlePhotographyEnhance(request, userId);
+    }
+  );
+}
+
+async function handlePhotographyEnhance(
+  request: NextRequest,
+  userId: string
+): Promise<NextResponse> {
   try {
     const {
       imageUrl,
@@ -17,7 +36,7 @@ export async function POST(request: Request) {
     } = await request.json();
 
     if (!imageUrl && !imageData) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Image URL or image data is required" },
         { status: 400 }
       );
@@ -26,7 +45,7 @@ export async function POST(request: Request) {
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
       console.log("Using development mode - returning fake response");
-      return Response.json(
+      return NextResponse.json(
         await devResponseHelpers.getFakePhotographyEnhanceResponse()
       );
     }
@@ -45,7 +64,7 @@ export async function POST(request: Request) {
         const buffer = Buffer.from(arrayBuffer);
         base64ImageData = buffer.toString("base64");
       } catch (error) {
-        return Response.json(
+        return NextResponse.json(
           {
             error: `Failed to fetch image from URL: ${
               error instanceof Error ? error.message : "Unknown error"
@@ -71,7 +90,7 @@ export async function POST(request: Request) {
         break;
       case "custom":
         if (!customPrompt || !customPrompt.trim()) {
-          return Response.json(
+          return NextResponse.json(
             { error: "Custom prompt is required for custom enhancement type" },
             { status: 400 }
           );
@@ -114,7 +133,7 @@ export async function POST(request: Request) {
     });
 
     if (!response.candidates || response.candidates.length === 0) {
-      return Response.json(
+      return NextResponse.json(
         { error: "No enhanced image generated" },
         { status: 500 }
       );
@@ -127,7 +146,7 @@ export async function POST(request: Request) {
       !candidate.content.parts ||
       candidate.content.parts.length === 0
     ) {
-      return Response.json(
+      return NextResponse.json(
         { error: "No image content in response" },
         { status: 500 }
       );
@@ -139,14 +158,14 @@ export async function POST(request: Request) {
     );
 
     if (!imagePart || !imagePart.inlineData?.data) {
-      return Response.json(
+      return NextResponse.json(
         { error: "No image data found in response" },
         { status: 500 }
       );
     }
 
     // Return the enhanced image as base64
-    return Response.json({
+    return NextResponse.json({
       success: true,
       enhancedImage: `data:${
         imagePart.inlineData.mimeType || "image/jpeg"
@@ -158,7 +177,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Photography enhancement error:", error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: "Failed to enhance image",
         details: error instanceof Error ? error.message : "Unknown error",

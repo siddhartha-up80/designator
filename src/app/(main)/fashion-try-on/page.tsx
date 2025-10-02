@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { useEdgeStore } from "@/lib/edgestore";
+import { FeatureCreditCost } from "@/components/credits-badge";
+import { CREDIT_COSTS } from "@/lib/credits-service";
+import { useCredits } from "@/contexts/credits-context";
+import { CostPreview } from "@/components/cost-preview";
+import { showToast } from "@/lib/toast";
 import Image from "next/image";
+import { Shirt } from "lucide-react";
 
 interface UploadedImage {
   file: File;
@@ -14,6 +20,9 @@ interface UploadedImage {
 }
 
 const FashionTryOnPage = () => {
+  // Credits context for real-time updates
+  const { updateCredits } = useCredits();
+
   const [selectedNumImages, setSelectedNumImages] = useState(1);
   const [zoomLevel, setZoomLevel] = useState([100]);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +116,9 @@ const FashionTryOnPage = () => {
   // Try-on functionality
   const handleTryOn = async () => {
     if (!modelImage?.url || !garmentImage?.url) {
-      setError("Please upload both model and garment images before trying on.");
+      showToast.warning(
+        "Please upload both model and garment images before trying on"
+      );
       return;
     }
 
@@ -129,6 +140,15 @@ const FashionTryOnPage = () => {
           numberOfImages: selectedNumImages,
         }),
       });
+
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
 
       const data = await response.json();
       console.log("Try-on response:", data);
@@ -190,6 +210,18 @@ const FashionTryOnPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
+        {/* Page Title */}
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold flex items-center gap-2">
+            <Shirt className="h-6 w-6 text-primary" />
+            Fashion Try-On
+            <FeatureCreditCost cost={CREDIT_COSTS.PHOTO_GENERATION} size="md" />
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Virtually try garments on models with AI technology
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-screen">
           {/* Left Sidebar Form */}
           <div className="lg:col-span-2 space-y-4">
@@ -515,7 +547,14 @@ const FashionTryOnPage = () => {
                   ) : (
                     <>
                       <span>✨</span> Try-On Now{" "}
-                      <span className="text-white/90">( ❤️ 25 )</span>
+                      <span className="opacity-90">
+                        (
+                        <CostPreview
+                          baseRate={CREDIT_COSTS.PHOTO_GENERATION}
+                          quantity={selectedNumImages}
+                        />
+                        )
+                      </span>
                     </>
                   )}
                 </Button>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ImageUpload } from "@/components/image-upload";
+import { showToast } from "@/lib/toast";
 import {
   ArrowUpCircle,
   Download,
@@ -21,7 +22,7 @@ export default function UpscalePage() {
 
   const handleUpscale = async () => {
     if (!uploadedImage) {
-      alert("Please upload an image first");
+      showToast.warning("Please upload an image first");
       return;
     }
 

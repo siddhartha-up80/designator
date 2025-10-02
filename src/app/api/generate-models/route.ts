@@ -1,11 +1,39 @@
+import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { devResponseHelpers } from "@/lib/dev-responses";
+import { withCredits } from "@/lib/credits-middleware";
+import { CREDIT_COSTS } from "@/lib/credits-service";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || "",
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // Parse request to get numberOfOutputs for credit calculation
+  const body = await request.json();
+  const numberOfOutputs = body.numberOfOutputs || 1;
+
+  // Calculate credits: 25 per image
+  const requiredCredits = CREDIT_COSTS.PHOTO_GENERATION * numberOfOutputs;
+
+  // Wrap with credits middleware
+  return withCredits(
+    request,
+    requiredCredits,
+    "PHOTO_GENERATION",
+    `Model Generation (${numberOfOutputs} image${
+      numberOfOutputs > 1 ? "s" : ""
+    })`,
+    async (userId: string) => {
+      return await handleGenerateModels(body, userId);
+    }
+  );
+}
+
+async function handleGenerateModels(
+  body: any,
+  userId: string
+): Promise<NextResponse> {
   try {
     const {
       imageUrl,
@@ -16,10 +44,10 @@ export async function POST(request: Request) {
       numberOfOutputs = 1,
       isUpdate = false,
       mimeType = "image/png",
-    } = await request.json();
+    } = body;
 
     if ((!imageUrl && !imageData) || !prompt) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Image (URL or data) and prompt are required" },
         { status: 400 }
       );
@@ -27,7 +55,7 @@ export async function POST(request: Request) {
 
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
-      return Response.json(
+      return NextResponse.json(
         await devResponseHelpers.getFakeModelGenerationResponse(numberOfOutputs)
       );
     }
@@ -47,7 +75,7 @@ export async function POST(request: Request) {
         const buffer = Buffer.from(arrayBuffer);
         base64ImageData = buffer.toString("base64");
       } catch (error) {
-        return Response.json(
+        return NextResponse.json(
           {
             error: `Failed to fetch image from URL: ${
               error instanceof Error ? error.message : "Unknown error"
@@ -173,7 +201,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
       generatedImages: generatedImages,
       generatedImage: generatedImages[0], // For backward compatibility
@@ -184,7 +212,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error generating images:", error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: `Failed to generate images: ${
           error instanceof Error ? error.message : "Unknown error"

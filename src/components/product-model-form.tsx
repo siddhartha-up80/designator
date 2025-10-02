@@ -26,6 +26,10 @@ import {
   Download,
 } from "lucide-react";
 import { ImageUpload } from "@/components/image-upload";
+import { useCredits } from "@/contexts/credits-context";
+import { CostPreview } from "@/components/cost-preview";
+import { CREDIT_COSTS } from "@/lib/credits-service";
+import { showToast } from "@/lib/toast";
 
 interface ProductModelFormProps {
   activeStep: string;
@@ -38,6 +42,9 @@ export function ProductModelForm({
   onStepChange,
   onUploadComplete,
 }: ProductModelFormProps) {
+  // Credits context for real-time updates
+  const { updateCredits } = useCredits();
+
   const [mode, setMode] = useState("fully-automatic");
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [styleInstructions, setStyleInstructions] = useState("");
@@ -58,7 +65,7 @@ export function ProductModelForm({
 
   const handleGenerateModels = async () => {
     if (!uploadedImageUrl) {
-      alert("Please upload a product image first");
+      showToast.warning("Please upload a product image first");
       return;
     }
 
@@ -107,6 +114,15 @@ export function ProductModelForm({
         }),
       });
 
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -130,7 +146,7 @@ export function ProductModelForm({
       }
     } catch (error) {
       console.error("Error generating images:", error);
-      alert("Failed to generate images. Please try again.");
+      showToast.error("Failed to generate images", "Please try again.");
     } finally {
       setIsGeneratingImages(false);
     }
@@ -138,12 +154,12 @@ export function ProductModelForm({
 
   const handleUpdateImages = async () => {
     if (!imageUpdatePrompt.trim()) {
-      alert("Please enter update instructions");
+      showToast.warning("Please enter update instructions");
       return;
     }
 
     if (generatedImages.length === 0) {
-      alert("No images to update");
+      showToast.warning("No images to update");
       return;
     }
 
@@ -168,6 +184,15 @@ export function ProductModelForm({
             isUpdate: true,
           }),
         });
+
+        // Update credits from response header
+        const remainingCredits = response.headers.get("X-Remaining-Credits");
+        if (remainingCredits !== null) {
+          const credits = parseInt(remainingCredits, 10);
+          if (!isNaN(credits)) {
+            updateCredits(credits);
+          }
+        }
 
         const data = await response.json();
 
@@ -199,7 +224,7 @@ export function ProductModelForm({
       setImageUpdatePrompt("");
     } catch (error) {
       console.error("Error updating images:", error);
-      alert("Failed to update images. Please try again.");
+      showToast.error("Failed to update images", "Please try again.");
     } finally {
       setIsUpdatingImages(false);
     }
@@ -336,6 +361,14 @@ export function ProductModelForm({
                     ) : (
                       <>
                         <span>✨</span> Generate Model Images
+                        <span className="opacity-90">
+                          (
+                          <CostPreview
+                            baseRate={CREDIT_COSTS.PHOTO_GENERATION}
+                            quantity={numberOfOutputs}
+                          />
+                          )
+                        </span>
                       </>
                     )}
                   </Button>

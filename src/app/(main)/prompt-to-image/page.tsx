@@ -8,6 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { MultiImageUpload } from "@/components/multi-image-upload";
+import { FeatureCreditCost } from "@/components/credits-badge";
+import { CREDIT_COSTS } from "@/lib/credits-service";
+import { useCredits } from "@/contexts/credits-context";
+import { CostPreview } from "@/components/cost-preview";
+import { showToast } from "@/lib/toast";
 import {
   Wand2,
   Sparkles,
@@ -111,6 +116,9 @@ export default function PromptToImagePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
 
+  // Credits context for real-time updates
+  const { updateCredits } = useCredits();
+
   // UI toggles for collapsible groups
   const [openStyles, setOpenStyles] = useState(true);
   const [openSettings, setOpenSettings] = useState(true);
@@ -136,7 +144,9 @@ export default function PromptToImagePage() {
 
   const handleGenerate = async () => {
     if (!textPrompt.trim() && uploadedImages.length === 0) {
-      alert("Please enter a text prompt or upload at least one image");
+      showToast.warning(
+        "Please enter a text prompt or upload at least one image"
+      );
       return;
     }
 
@@ -164,6 +174,15 @@ export default function PromptToImagePage() {
         }),
       });
 
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
+
       const result = await response.json();
       console.log("API response:", result);
 
@@ -182,7 +201,7 @@ export default function PromptToImagePage() {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       setError(errorMessage);
-      alert(`Failed to generate images: ${errorMessage}`);
+      showToast.error("Failed to generate images", errorMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -224,6 +243,7 @@ export default function PromptToImagePage() {
             <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
               <Wand2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               Prompt to Image Generator
+              <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm">
               Generate stunning images from text prompts or transform existing
@@ -340,7 +360,15 @@ export default function PromptToImagePage() {
                         <>
                           <Wand2 className="h-5 w-5 mr-2" />
                           Generate {numberOfImages[0]} Image
-                          {numberOfImages[0] > 1 ? "s" : ""}
+                          {numberOfImages[0] > 1 ? "s" : ""}{" "}
+                          <span className="opacity-90">
+                            (
+                            <CostPreview
+                              baseRate={CREDIT_COSTS.TEXT_PROMPT}
+                              quantity={numberOfImages[0]}
+                            />
+                            )
+                          </span>
                         </>
                       )}
                     </Button>

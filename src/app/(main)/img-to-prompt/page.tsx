@@ -8,6 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ImageUpload } from "@/components/image-upload";
+import { FeatureCreditCost } from "@/components/credits-badge";
+import { CREDIT_COSTS } from "@/lib/credits-service";
+import { useCredits } from "@/contexts/credits-context";
+import { CostPreview } from "@/components/cost-preview";
+import { showToast } from "@/lib/toast";
 import {
   FileImage,
   MessageSquare,
@@ -54,6 +59,9 @@ const promptStyles = [
 type Step = "UPLOAD" | "ANALYZE";
 
 export default function ImgToPromptPage() {
+  // Credits context for real-time updates
+  const { updateCredits } = useCredits();
+
   // Flow state
   const [step, setStep] = useState<Step>("UPLOAD");
   const [uploadedImage, setUploadedImage] = useState("");
@@ -134,7 +142,7 @@ export default function ImgToPromptPage() {
 
   const handleAnalyzeImage = async () => {
     if (!uploadedImage) {
-      alert("Please upload an image first");
+      showToast.warning("Please upload an image first");
       return;
     }
 
@@ -154,6 +162,15 @@ export default function ImgToPromptPage() {
           numberOfPrompts: numberOfPrompts[0],
         }),
       });
+
+      // Update credits from response header
+      const remainingCredits = response.headers.get("X-Remaining-Credits");
+      if (remainingCredits !== null) {
+        const credits = parseInt(remainingCredits, 10);
+        if (!isNaN(credits)) {
+          updateCredits(credits);
+        }
+      }
 
       const result = await response.json();
       console.log("API response:", result);
@@ -182,7 +199,7 @@ export default function ImgToPromptPage() {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       setError(errorMessage);
-      alert(`Failed to generate prompts: ${errorMessage}`);
+      showToast.error("Failed to generate prompts", errorMessage);
     } finally {
       setIsAnalyzing(false);
     }
@@ -299,6 +316,7 @@ ${generatedPrompts
             <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
               <FileImage className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               Image to Prompt Generator
+              <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
             </h1>
             <p className="text-muted-foreground text-xs sm:text-sm">
               Transform your images into detailed text prompts for AI
@@ -390,7 +408,15 @@ ${generatedPrompts
                         <>
                           <Wand2 className="h-4 w-4 mr-2" />
                           Generate {numberOfPrompts[0]} Prompt
-                          {numberOfPrompts[0] > 1 ? "s" : ""}
+                          {numberOfPrompts[0] > 1 ? "s" : ""}{" "}
+                          <span className="opacity-90">
+                            (
+                            <CostPreview
+                              baseRate={CREDIT_COSTS.TEXT_PROMPT}
+                              quantity={numberOfPrompts[0]}
+                            />
+                            )
+                          </span>
                         </>
                       )}
                     </Button>

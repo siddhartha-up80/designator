@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { SessionProvider } from "@/components/session-provider";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,7 +24,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
         <SessionProvider>
-          <EdgeStoreProvider>{children}</EdgeStoreProvider>
+          <EdgeStoreProvider>
+            {children}
+            <Toaster
+              position="top-center"
+              richColors
+              closeButton
+              expand={false}
+            />
+          </EdgeStoreProvider>
         </SessionProvider>
       </body>
     </html>

@@ -5,6 +5,7 @@ import { useEdgeStore } from "@/lib/edgestore";
 import { Button } from "@/components/ui/button";
 import { Upload, X, Plus, ImageIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { showToast } from "@/lib/toast";
 
 interface UploadedImage {
   id: string;
@@ -37,12 +38,12 @@ export function MultiImageUpload({
       );
 
       if (imageFiles.length === 0) {
-        alert("Please upload image files only");
+        showToast.warning("Please upload image files only");
         return;
       }
 
       if (uploadedImages.length + imageFiles.length > maxImages) {
-        alert(`You can upload a maximum of ${maxImages} images`);
+        showToast.warning(`You can upload a maximum of ${maxImages} images`);
         return;
       }
 
@@ -69,7 +70,7 @@ export function MultiImageUpload({
           });
         } catch (error) {
           console.error("Upload failed:", error);
-          alert(`Failed to upload ${file.name}. Please try again.`);
+          showToast.error(`Failed to upload ${file.name}`, "Please try again.");
         } finally {
           newUploadingSet.delete(fileId);
           setUploadingFiles(new Set(newUploadingSet));

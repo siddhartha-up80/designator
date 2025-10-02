@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/image-upload";
+import { showToast } from "@/lib/toast";
 import {
   Video,
   Play,
@@ -68,12 +69,12 @@ export default function VideoPage() {
 
   const handleGenerateVideo = async () => {
     if (!uploadedImage) {
-      alert("Please upload an image first");
+      showToast.warning("Please upload an image first");
       return;
     }
 
     if (!selectedTemplate && !customPrompt) {
-      alert("Please select a template or enter a custom prompt");
+      showToast.warning("Please select a template or enter a custom prompt");
       return;
     }
 

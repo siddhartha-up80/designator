@@ -17,8 +17,11 @@ import {
   User as UserIcon,
   CreditCard,
   Crown,
+  Coins,
 } from "lucide-react";
 import Image from "next/image";
+import { useCredits } from "@/contexts/credits-context";
+import { useRouter } from "next/navigation";
 
 interface ProfileDialogProps {
   open: boolean;
@@ -27,9 +30,16 @@ interface ProfileDialogProps {
 
 export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
   const { data: session, status } = useSession();
+  const { credits, loading } = useCredits();
+  const router = useRouter();
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
+    onOpenChange(false);
+  };
+
+  const handleUpgrade = () => {
+    router.push("/pricing");
     onOpenChange(false);
   };
 
@@ -115,19 +125,31 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
             </div>
 
             {/* Credits */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200">
-              <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
-                <CreditCard className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-200">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Coins className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                   Credits Remaining
                 </p>
-                <p className="text-lg font-bold text-orange-700">50 / 50</p>
+                {loading ? (
+                  <div className="h-6 w-20 bg-orange-200 animate-pulse rounded mt-1" />
+                ) : (
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-2xl font-bold text-orange-700">
+                      {credits ?? 0}
+                    </p>
+                    <span className="text-sm text-orange-600 font-medium">
+                      credits
+                    </span>
+                  </div>
+                )}
               </div>
               <Button
                 size="sm"
-                className="bg-orange-600 hover:bg-orange-700 text-white"
+                onClick={handleUpgrade}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
               >
                 Buy More
               </Button>

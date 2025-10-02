@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Sparkles, User, Users } from "lucide-react";
+import { showToast } from "@/lib/toast";
 
 interface ModelGenerationProps {
   productImageUrl: string;
@@ -33,7 +34,7 @@ export function ModelGeneration({ productImageUrl }: ModelGenerationProps) {
 
   const handleGenerateModels = async () => {
     if (!productImageUrl) {
-      alert("Please upload a product image first");
+      showToast.warning("Please upload a product image first");
       return;
     }
 
@@ -88,7 +89,7 @@ export function ModelGeneration({ productImageUrl }: ModelGenerationProps) {
       }
     } catch (error) {
       console.error("Error generating models:", error);
-      alert("Failed to generate models. Please try again.");
+      showToast.error("Failed to generate models", "Please try again.");
       setGenerationStatus("");
     } finally {
       setIsGenerating(false);

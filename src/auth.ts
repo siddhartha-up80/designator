@@ -66,8 +66,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   events: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile, isNewUser }) {
       console.log("User signed in:", user.email);
+
+      // Initialize credits for new users
+      if (isNewUser && user.id) {
+        try {
+          const { creditsService } = await import("@/lib/credits-service");
+          await creditsService.initializeNewUserCredits(user.id);
+          console.log("Initialized credits for new user:", user.email);
+        } catch (error) {
+          console.error("Failed to initialize credits for new user:", error);
+        }
+      }
     },
     async signOut() {
       console.log("User signed out");

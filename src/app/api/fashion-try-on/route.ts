@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { devResponseHelpers } from "@/lib/dev-responses";
+import { withCredits } from "@/lib/credits-middleware";
+import { CREDIT_COSTS } from "@/lib/credits-service";
 
 // Helper function to convert image URL to base64
 async function imageUrlToBase64(imageUrl: string): Promise<string> {
@@ -32,12 +34,36 @@ function getMimeType(imageUrl: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Parse request to get numberOfImages for credit calculation
+  const body = await request.json();
+  const numberOfImages = body.numberOfImages || 1;
+
+  // Calculate credits: 25 per image
+  const requiredCredits = CREDIT_COSTS.PHOTO_GENERATION * numberOfImages;
+
+  // Wrap with credits middleware
+  return withCredits(
+    request,
+    requiredCredits,
+    "PHOTO_GENERATION",
+    `Fashion Try-On Generation (${numberOfImages} image${
+      numberOfImages > 1 ? "s" : ""
+    })`,
+    async (userId: string) => {
+      return await handleFashionTryOn(body, userId);
+    }
+  );
+}
+
+async function handleFashionTryOn(
+  body: any,
+  userId: string
+): Promise<NextResponse> {
   const startTime = Date.now();
   let tryOnRecord = null;
 
   try {
     console.log("Fashion try-on API called");
-    const body = await request.json();
     console.log("Request body:", body);
     const {
       personImageUrl,
@@ -45,7 +71,6 @@ export async function POST(request: NextRequest) {
       backgroundImageUrl,
       numberOfImages = 1,
       modelImageId,
-      userId = "temp-user", // TODO: Get from authentication
       projectId,
       settings,
     } = body;
