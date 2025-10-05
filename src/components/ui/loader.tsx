@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import React from "react";
 
 export const LoaderOne = () => {
-  const transition = (x: number) => {
+  const transition = (x: number): any => {
     return {
       duration: 1,
       repeat: Infinity,
@@ -49,7 +49,7 @@ export const LoaderOne = () => {
 };
 
 export const LoaderTwo = () => {
-  const transition = (x: number) => {
+  const transition = (x: number): any => {
     return {
       duration: 2,
       repeat: Infinity,
@@ -128,18 +128,21 @@ export const LoaderFour = ({ text = "Loading..." }: { text?: string }) => {
   return (
     <div className="relative font-bold text-black [perspective:1000px] dark:text-white">
       <motion.span
-        animate={{
-          skew: [0, -40, 0],
-          scaleX: [1, 2, 1],
-        }}
-        transition={{
-          duration: 0.05,
-          repeat: Infinity,
-          repeatType: "reverse",
-          repeatDelay: 2,
-          ease: "linear",
-          times: [0, 0.2, 0.5, 0.8, 1],
-        }}
+        animate={
+          {
+            scaleX: [1, 2, 1],
+          } as any
+        }
+        transition={
+          {
+            duration: 0.05,
+            repeat: Infinity,
+            repeatType: "reverse",
+            repeatDelay: 2,
+            ease: "linear",
+            times: [0, 0.2, 0.5, 0.8, 1],
+          } as any
+        }
         className="relative z-20 inline-block"
       >
         {text}

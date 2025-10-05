@@ -61,16 +61,12 @@ const FashionTryOnPage = () => {
     ) => {
       try {
         setError(null);
-        console.log(`Uploading ${imageType}:`, file.name);
-
         // Create preview
         const preview = URL.createObjectURL(file);
         setImage({ file, preview });
 
         // Upload to EdgeStore
         const res = await edgestore.publicFiles.upload({ file });
-        console.log(`${imageType} uploaded:`, res.url);
-
         // Update with URL
         setImage((prev) => (prev ? { ...prev, url: res.url } : null));
       } catch (err) {
@@ -127,7 +123,6 @@ const FashionTryOnPage = () => {
     setResultImage(null);
 
     try {
-      console.log("Starting try-on process...");
       const response = await fetch("/api/fashion-try-on", {
         method: "POST",
         headers: {
@@ -151,15 +146,12 @@ const FashionTryOnPage = () => {
       }
 
       const data = await response.json();
-      console.log("Try-on response:", data);
-
       if (!response.ok) {
         throw new Error(data.error || "Failed to process try-on");
       }
 
       if (data.success && data.resultImageUrl) {
         setResultImage(data.resultImageUrl);
-        console.log("Try-on successful!");
       } else {
         throw new Error(data.error || "No result image generated");
       }
@@ -199,7 +191,6 @@ const FashionTryOnPage = () => {
       // Simulate API call to refresh models
       await new Promise((resolve) => setTimeout(resolve, 1000));
       // Here you would typically fetch the latest models from your API
-      console.log("Refreshing available models...");
     } catch (err) {
       console.error("Failed to refresh models:", err);
     } finally {

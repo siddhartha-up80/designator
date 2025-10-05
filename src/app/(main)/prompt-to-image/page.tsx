@@ -155,7 +155,6 @@ export default function PromptToImagePage() {
     setError("");
 
     try {
-      console.log("Sending request to API...");
       const response = await fetch("/api/prompt-to-image", {
         method: "POST",
         headers: {
@@ -185,8 +184,6 @@ export default function PromptToImagePage() {
       }
 
       const result = await response.json();
-      console.log("API response:", result);
-
       if (!response.ok) {
         throw new Error(result.error || "Failed to generate images");
       }

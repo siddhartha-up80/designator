@@ -85,9 +85,6 @@ export async function withCredits(
 
     if (!isSuccess) {
       // Operation failed - refund credits
-      console.log(
-        `Operation failed (status: ${response.status}), refunding ${requiredCredits} credits to user ${userId}`
-      );
 
       await creditsService.addCredits(
         userId,
@@ -109,10 +106,6 @@ export async function withCredits(
           updatedUser.credits.toString()
         );
       }
-
-      console.log(
-        `Refunded ${requiredCredits} credits. New balance: ${updatedUser?.credits}`
-      );
     } else {
       // Operation succeeded - add remaining credits to response headers
       response.headers.set(
@@ -128,18 +121,12 @@ export async function withCredits(
     // If credits were deducted but an error occurred, refund them
     if (creditsDeducted && userId) {
       try {
-        console.log(
-          `Exception occurred, refunding ${requiredCredits} credits to user ${userId}`
-        );
-
         await creditsService.addCredits(
           userId,
           requiredCredits,
           "REFUND",
           `Refund: ${description} (exception occurred)`
         );
-
-        console.log(`Refunded ${requiredCredits} credits due to exception`);
       } catch (refundError) {
         console.error("Failed to refund credits:", refundError);
       }

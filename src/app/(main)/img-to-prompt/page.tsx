@@ -150,7 +150,6 @@ export default function ImgToPromptPage() {
     setError("");
 
     try {
-      console.log("Sending request to API...");
       const response = await fetch("/api/img-to-prompt", {
         method: "POST",
         headers: {
@@ -173,8 +172,6 @@ export default function ImgToPromptPage() {
       }
 
       const result = await response.json();
-      console.log("API response:", result);
-
       if (!response.ok) {
         throw new Error(result.error || "Failed to generate prompts");
       }

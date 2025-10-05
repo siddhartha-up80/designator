@@ -60,11 +60,8 @@ async function handleFashionTryOn(
   userId: string
 ): Promise<NextResponse> {
   const startTime = Date.now();
-  let tryOnRecord = null;
 
   try {
-    console.log("Fashion try-on API called");
-    console.log("Request body:", body);
     const {
       personImageUrl,
       clothingImageUrl,
@@ -77,7 +74,6 @@ async function handleFashionTryOn(
 
     // Validate required fields
     if (!personImageUrl || !clothingImageUrl) {
-      console.log("Missing required fields");
       return NextResponse.json(
         { error: "Both person image and clothing image URLs are required" },
         { status: 400 }
@@ -86,55 +82,31 @@ async function handleFashionTryOn(
 
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
-      console.log("Using development mode - returning fake response");
-
       try {
         const fakeResponse =
           await devResponseHelpers.getFakeFashionTryOnResponse();
-        console.log("Fake response generated successfully");
-        return NextResponse.json({
-          ...fakeResponse,
-          resultImageUrl: fakeResponse.tryOnImageUrl, // Add the expected property
-          tryOnId: "dev-mode-id",
-        });
-      } catch (devError) {
-        console.error("Error generating fake response:", devError);
-        // Return a simple fallback response
-        return NextResponse.json({
-          success: true,
-          tryOnImageBase64:
-            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
-          tryOnImageUrl: "/images/model1.png",
-          resultImageUrl: "/images/model1.png", // Add the expected property
-          message:
-            "Fashion try-on completed successfully [DEV MODE - FALLBACK]",
-          textResponse: "Development mode active",
-          tryOnId: "dev-mode-id",
-        });
+
+        // Import gallery service for development mode
+        try {
+          const { galleryService } = await import("@/lib/db-services");
+          await galleryService.createGalleryItem({
+            userId,
+            title: `Fashion Try-on ${new Date().toLocaleString()}`,
+            imageUrl: fakeResponse.resultImageUrl,
+            type: "FASHION_TRYON",
+          });
+        } catch (galleryError) {
+          console.error("Error saving to gallery (dev mode):", galleryError);
+        }
+
+        return NextResponse.json(fakeResponse);
+      } catch (error) {
+        console.error("Error in development mode:", error);
+        return NextResponse.json(
+          { error: "Development mode error" },
+          { status: 500 }
+        );
       }
-    }
-
-    // Import database services only for production mode
-    const { tryOnService, userService, usageService, galleryService } =
-      await import("@/lib/db-services");
-
-    // Create try-on record in database
-    try {
-      tryOnRecord = await tryOnService.createTryOn({
-        userId,
-        projectId,
-        modelImageId,
-        customModelImageUrl: !modelImageId ? personImageUrl : undefined,
-        garmentImageUrl: clothingImageUrl,
-        backgroundImageUrl,
-        numberOfImages,
-        settings,
-      });
-      console.log("Created try-on record:", tryOnRecord.id);
-    } catch (dbError) {
-      console.error("Database error creating try-on record:", dbError);
-      // Continue without database record if creation fails
-      console.log("Continuing without database record due to error");
     }
 
     // Validate environment variable
@@ -145,10 +117,6 @@ async function handleFashionTryOn(
         { status: 500 }
       );
     }
-
-    console.log("Processing images with Gemini AI...");
-    console.log("Person image URL:", personImageUrl);
-    console.log("Clothing image URL:", clothingImageUrl);
 
     // Initialize Gemini AI
     const genAI = new GoogleGenAI({
@@ -162,8 +130,6 @@ async function handleFashionTryOn(
     // Get MIME types
     const personMimeType = getMimeType(personImageUrl);
     const clothingMimeType = getMimeType(clothingImageUrl);
-
-    console.log("Images converted to base64, calling Gemini API...");
 
     // Create the prompt for fashion try-on
     const prompt = [
@@ -190,12 +156,9 @@ async function handleFashionTryOn(
       contents: prompt,
     });
 
-    console.log("Gemini API response received");
-
     // Extract the generated image
     let resultImageBase64 = null;
-    let resultImageMimeType = "image/png"; // Default
-    let responseText = "";
+    let responseText = null;
 
     if (
       response.candidates &&
@@ -204,19 +167,11 @@ async function handleFashionTryOn(
       response.candidates[0].content.parts
     ) {
       for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData && part.inlineData.data) {
+          resultImageBase64 = part.inlineData.data;
+        }
         if (part.text) {
           responseText = part.text;
-          console.log("Response text:", part.text);
-        } else if (part.inlineData) {
-          resultImageBase64 = part.inlineData.data;
-          resultImageMimeType = part.inlineData.mimeType || "image/png";
-          console.log(
-            "Generated image received with MIME type:",
-            resultImageMimeType
-          );
-          if (resultImageBase64) {
-            console.log("Base64 length:", resultImageBase64.length);
-          }
         }
       }
     } else {
@@ -225,50 +180,33 @@ async function handleFashionTryOn(
     }
 
     if (!resultImageBase64) {
-      // If no image was generated, analyze the response and provide helpful feedback
-      console.log("No image generated, analyzing response...");
-
       let errorMessage =
         "The AI could not generate an image. Please ensure you're uploading a clear photo of a person and a clothing item.";
 
       if (responseText) {
-        // Check for common issues based on AI response
         if (
           responseText.toLowerCase().includes("crow") ||
           responseText.toLowerCase().includes("animal")
         ) {
           errorMessage =
             "Please upload a photo of a person, not an animal or object. The AI detected that one of your images contains an animal.";
-        } else if (responseText.toLowerCase().includes("not a person")) {
+        } else if (responseText.toLowerCase().includes("inappropriate")) {
           errorMessage =
-            "Please upload a clear photo of a person for the try-on feature to work properly.";
-        } else if (
-          responseText.toLowerCase().includes("unclear") ||
-          responseText.toLowerCase().includes("quality")
-        ) {
-          errorMessage =
-            "Please upload higher quality, clearer images for better results.";
-        } else if (
-          responseText.toLowerCase().includes("clothing") ||
-          responseText.toLowerCase().includes("apparel")
-        ) {
-          errorMessage =
-            "Please ensure the second image contains a clear view of a clothing item.";
-        } else {
-          // Use the AI's response directly if it's informative
-          errorMessage = responseText;
+            "Please ensure your images are appropriate and follow our content guidelines.";
         }
       }
 
       return NextResponse.json(
         {
-          success: false,
           error: errorMessage,
-          aiResponse: responseText,
+          details: responseText || "No additional details available",
         },
         { status: 400 }
       );
     }
+
+    // Determine MIME type for the generated image
+    const resultImageMimeType = "image/png";
 
     // Convert base64 to data URL for frontend consumption
     let resultImageDataUrl;
@@ -276,18 +214,8 @@ async function handleFashionTryOn(
     try {
       // First validate the base64 data
       const buffer = Buffer.from(resultImageBase64, "base64");
-      console.log("Base64 buffer size:", buffer.length);
-
       // Create data URL with correct MIME type
       resultImageDataUrl = `data:${resultImageMimeType};base64,${resultImageBase64}`;
-      console.log(
-        "Generated image data URL length:",
-        resultImageDataUrl.length
-      );
-      console.log(
-        "Data URL starts with:",
-        resultImageDataUrl.substring(0, 100)
-      );
 
       // Verify it's valid base64
       if (resultImageBase64.length % 4 !== 0) {
@@ -317,97 +245,27 @@ async function handleFashionTryOn(
       },
     };
 
-    // Update try-on record with successful result
-    const processingTime = Math.round((Date.now() - startTime) / 1000);
-
-    if (tryOnRecord) {
-      try {
-        await tryOnService.updateTryOnResult(tryOnRecord.id, {
-          resultImageUrl: resultImageDataUrl,
-          status: "COMPLETED",
-          processingTime,
-        });
-      } catch (dbError) {
-        console.error("Error updating try-on record:", dbError);
-        // Continue even if update fails
-      }
-
-      // Log usage for analytics
-      try {
-        await usageService.logUsage({
-          userId,
-          action: "fashion_try_on",
-          credits: 1, // Deduct 1 credit per try-on
-          metadata: {
-            tryOnId: tryOnRecord.id,
-            processingTime,
-            numberOfImages,
-          },
-        });
-      } catch (dbError) {
-        console.error("Error logging usage:", dbError);
-        // Continue even if usage logging fails
-      }
-
-      // Create gallery item if successful
-      try {
-        await galleryService.createGalleryItem({
-          title: `Fashion Try-On ${new Date().toLocaleDateString()}`,
-          description: "AI-generated fashion try-on result",
-          imageUrl: resultImageDataUrl,
-          type: "TRY_ON_RESULT",
-          category: "Fashion Try-On",
-          tags: ["try-on", "ai-generated"],
-          userId,
-          projectId,
-          tryOnId: tryOnRecord.id,
-          isPublic: false, // Default to private
-          metadata: {
-            processingTime,
-            originalImages: {
-              person: personImageUrl,
-              clothing: clothingImageUrl,
-              background: backgroundImageUrl,
-            },
-          },
-        });
-      } catch (dbError) {
-        console.error("Error creating gallery item:", dbError);
-        // Continue even if gallery creation fails
-      }
+    // Save to gallery if successful
+    try {
+      const { galleryService } = await import("@/lib/db-services");
+      await galleryService.createGalleryItem({
+        userId,
+        title: `Fashion Try-on ${new Date().toLocaleString()}`,
+        imageUrl: resultImageDataUrl,
+        type: "FASHION_TRYON",
+      });
+    } catch (galleryError) {
+      console.error("Error saving to gallery:", galleryError);
     }
 
-    console.log("Returning successful result");
     return NextResponse.json(result);
   } catch (error) {
     console.error("Fashion try-on API error:", error);
 
-    // Update try-on record with error status
-    if (tryOnRecord) {
-      try {
-        // Import database services for error handling
-        const { tryOnService } = await import("@/lib/db-services");
-        await tryOnService.updateTryOnResult(tryOnRecord.id, {
-          resultImageUrl: "",
-          status: "FAILED",
-          processingTime: Math.round((Date.now() - startTime) / 1000),
-        });
-      } catch (dbError) {
-        console.error(
-          "Error updating try-on record with failure status:",
-          dbError
-        );
-        // Continue even if update fails
-      }
-    }
-
     return NextResponse.json(
       {
-        error: "Failed to process fashion try-on request",
+        error: "Failed to process fashion try-on",
         details: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
-        isDevelopment: devResponseHelpers.isDevelopment,
-        nodeEnv: process.env.NODE_ENV,
       },
       { status: 500 }
     );

@@ -37,7 +37,7 @@ const sidebarItems = [
   { icon: FileImage, label: "Img to Prompt", href: "/img-to-prompt" },
   { icon: Camera, label: "Photography", href: "/photography" },
   { icon: Shirt, label: "Fashion Try On", href: "/fashion-try-on" },
-  { icon: DollarSign, label: "Pricing", href: "/pricing" },
+  { icon: DollarSign, label: "Credits", href: "/buy-credits" },
 ];
 
 export function Sidebar({ className }: SidebarProps) {

@@ -60,9 +60,6 @@ async function handleImgToPrompt(
   userId: string
 ): Promise<NextResponse> {
   try {
-    console.log("Image-to-prompt API called");
-    console.log("Request body:", body);
-
     const {
       imageUrl,
       imageData,
@@ -73,7 +70,6 @@ async function handleImgToPrompt(
 
     // Validate required fields
     if (!imageUrl && !imageData) {
-      console.log("Missing image data");
       return NextResponse.json(
         { error: "Image URL or image data is required" },
         { status: 400 }
@@ -90,7 +86,6 @@ async function handleImgToPrompt(
 
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
-      console.log("Using development mode - returning fake response");
       return NextResponse.json(
         devResponseHelpers.getFakeImageToPromptResponse(numberOfPrompts)
       );
@@ -104,9 +99,6 @@ async function handleImgToPrompt(
         { status: 500 }
       );
     }
-
-    console.log("Processing image with Gemini AI...");
-
     // Initialize Gemini AI
     const genAI = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
@@ -121,9 +113,6 @@ async function handleImgToPrompt(
 
     // Get MIME type
     const imageMimeType = imageUrl ? getMimeType(imageUrl) : mimeType;
-
-    console.log("Image converted to base64, calling Gemini API...");
-
     // Define prompt styles
     const stylePrompts = {
       detailed: `Analyze this image and create ${numberOfPrompts} detailed, comprehensive text prompts that describe the visual content. Focus on:
@@ -187,9 +176,6 @@ Each prompt should include specific technical details for precise image recreati
       model: "gemini-2.0-flash-thinking-exp",
       contents: prompt,
     });
-
-    console.log("Gemini API response received");
-
     // Extract the generated text
     let responseText = "";
     let keyElements = "";
@@ -203,7 +189,6 @@ Each prompt should include specific technical details for precise image recreati
       for (const part of response.candidates[0].content.parts) {
         if (part.text) {
           responseText = part.text;
-          console.log("Response text received, length:", part.text.length);
         }
       }
     } else {
@@ -310,9 +295,6 @@ Each prompt should include specific technical details for precise image recreati
 
     // Use the final prompts
     const cleanedPrompts = finalPrompts;
-
-    console.log(`Generated ${cleanedPrompts.length} prompts successfully`);
-
     return NextResponse.json({
       success: true,
       prompts: cleanedPrompts,

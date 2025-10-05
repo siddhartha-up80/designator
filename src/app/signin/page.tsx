@@ -26,8 +26,6 @@ const SignInPage = () => {
 
         // Try to get images
         const images = await imageService.getModelImagesForCarousel();
-        console.log("Signin: Loaded images:", images.length, images);
-
         if (images && images.length > 0) {
           setCarouselImages(images);
         } else {
@@ -120,7 +118,6 @@ const SignInPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle signin logic here - commented out as requested
-    console.log("Email signin temporarily disabled");
     // TODO: Implement email/password signin in the future
   };
 

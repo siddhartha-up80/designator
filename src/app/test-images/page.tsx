@@ -11,13 +11,10 @@ export default function ImageTestPage() {
   useEffect(() => {
     const loadImages = async () => {
       try {
-        console.log("Testing image service...");
         const pairs = await imageService.getAvailableImagePairs();
-        console.log("Got image pairs:", pairs);
         setImagePairs(pairs);
 
         const carouselImages = await imageService.getModelImagesForCarousel();
-        console.log("Got carousel images:", carouselImages);
       } catch (err) {
         console.error("Error loading images:", err);
         setError(err instanceof Error ? err.message : "Unknown error");

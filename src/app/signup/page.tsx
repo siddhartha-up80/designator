@@ -26,8 +26,6 @@ const SignUpPage = () => {
 
         // Try to get images
         const images = await imageService.getModelImagesForCarousel();
-        console.log("Signup: Loaded images:", images.length, images);
-
         if (images && images.length > 0) {
           setCarouselImages(images);
         } else {
@@ -121,7 +119,6 @@ const SignUpPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle signup logic here - commented out as requested
-    console.log("Email signup temporarily disabled");
     // TODO: Implement email/password signup in the future
   };
 

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  trustHost: true, // Fix for UntrustedHost error
   session: {
     strategy: "jwt", // Use JWT tokens stored in cookies instead of database sessions
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -67,22 +68,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signIn({ user, account, profile, isNewUser }) {
-      console.log("User signed in:", user.email);
-
       // Initialize credits for new users
       if (isNewUser && user.id) {
         try {
           const { creditsService } = await import("@/lib/credits-service");
           await creditsService.initializeNewUserCredits(user.id);
-          console.log("Initialized credits for new user:", user.email);
         } catch (error) {
           console.error("Failed to initialize credits for new user:", error);
         }
       }
     },
-    async signOut() {
-      console.log("User signed out");
-    },
+    async signOut() {},
   },
   debug: process.env.NODE_ENV === "development",
 });

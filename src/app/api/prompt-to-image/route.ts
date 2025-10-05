@@ -60,9 +60,6 @@ async function handlePromptToImage(
   userId: string
 ): Promise<NextResponse> {
   try {
-    console.log("Prompt-to-image API called");
-    console.log("Request body:", body);
-
     const {
       generationMode = "text-to-image",
       textPrompt,
@@ -84,9 +81,6 @@ async function handlePromptToImage(
       !textPrompt?.trim() &&
       (!referenceImages || referenceImages.length === 0)
     ) {
-      console.log(
-        "Missing text prompt or reference images for text-to-image mode"
-      );
       return NextResponse.json(
         {
           error:
@@ -101,7 +95,6 @@ async function handlePromptToImage(
       !referenceImageUrl &&
       !referenceImageData
     ) {
-      console.log("Missing reference image for image-to-image mode");
       return NextResponse.json(
         { error: "Reference image is required for image-to-image generation" },
         { status: 400 }
@@ -118,7 +111,6 @@ async function handlePromptToImage(
 
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
-      console.log("Using development mode - returning fake response");
       return NextResponse.json(
         await devResponseHelpers.getFakePromptToImageResponse(numberOfImages)
       );
@@ -132,9 +124,6 @@ async function handlePromptToImage(
         { status: 500 }
       );
     }
-
-    console.log("Processing generation request with Gemini AI...");
-
     // Initialize Gemini AI
     const genAI = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
@@ -183,7 +172,6 @@ async function handlePromptToImage(
 
       // Handle multiple reference images
       if (referenceImages && referenceImages.length > 0) {
-        console.log(`Processing ${referenceImages.length} reference images...`);
         finalPrompt += `. Use these reference images for style and composition guidance`;
 
         // Convert prompt to array format to include images
@@ -256,22 +244,14 @@ async function handlePromptToImage(
         },
       ];
     }
-
-    console.log("Calling Gemini API for image generation...");
-
     // Generate multiple images if requested
     const generatedImages: string[] = [];
 
     for (let i = 0; i < numberOfImages; i++) {
-      console.log(`Generating image ${i + 1} of ${numberOfImages}...`);
-
       const response = await genAI.models.generateContent({
         model: "gemini-2.5-flash-image-preview",
         contents: promptContent,
       });
-
-      console.log(`Gemini API response received for image ${i + 1}`);
-
       // Check if response is valid
       if (!response.candidates || response.candidates.length === 0) {
         console.warn(`No candidates in response for image ${i + 1}`);
@@ -300,16 +280,6 @@ async function handlePromptToImage(
 
       const resultImageBase64 = imagePart.inlineData.data;
       const resultImageMimeType = imagePart.inlineData.mimeType || "image/png";
-
-      console.log(
-        `Generated image ${i + 1} received with MIME type:`,
-        resultImageMimeType
-      );
-      console.log(
-        `Base64 length for image ${i + 1}:`,
-        resultImageBase64.length
-      );
-
       // Convert base64 to data URL for frontend display
       const dataUrl = `data:${resultImageMimeType};base64,${resultImageBase64}`;
       generatedImages.push(dataUrl);
@@ -318,9 +288,6 @@ async function handlePromptToImage(
     if (generatedImages.length === 0) {
       throw new Error("No images were generated successfully");
     }
-
-    console.log(`Generated ${generatedImages.length} images successfully`);
-
     return NextResponse.json({
       success: true,
       images: generatedImages,

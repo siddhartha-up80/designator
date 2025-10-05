@@ -107,8 +107,8 @@ const quickAccessItems = [
   },
   {
     icon: CreditCard,
-    title: "Pricing",
-    href: "/pricing",
+    title: "Credits",
+    href: "/buy-credits",
   },
   {
     icon: Settings,
@@ -406,9 +406,9 @@ export default function HomePage() {
                   </p>
                   <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-6 py-2.5 h-auto rounded-xl font-medium"
-                    onClick={() => router.push("/pricing")}
+                    onClick={() => router.push("/buy-credits")}
                   >
-                    Upgrade Now
+                    Buy Credits
                     <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>

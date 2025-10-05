@@ -44,7 +44,6 @@ async function handlePhotographyEnhance(
 
     // Return fake response in development mode
     if (devResponseHelpers.isDevelopment) {
-      console.log("Using development mode - returning fake response");
       return NextResponse.json(
         await devResponseHelpers.getFakePhotographyEnhanceResponse()
       );

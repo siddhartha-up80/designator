@@ -26,10 +26,10 @@ export function LandingHeader() {
           Gallery
         </Link>
         <Link
-          href="/pricing"
+          href="/buy-credits"
           className="text-gray-700 hover:text-black transition-colors"
         >
-          Pricing
+          Credits
         </Link>
         <div className="relative">
           <button className="text-gray-700 hover:text-black transition-colors flex items-center gap-1">

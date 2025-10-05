@@ -39,7 +39,7 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
   };
 
   const handleUpgrade = () => {
-    router.push("/pricing");
+    router.push("/buy-credits");
     onOpenChange(false);
   };
 
@@ -83,13 +83,6 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
             <h3 className="mt-4 text-xl font-semibold text-gray-900">
               {session.user.name || "User"}
             </h3>
-            <Badge
-              variant="secondary"
-              className="mt-2 bg-orange-50 text-orange-700 border-orange-200"
-            >
-              <Crown className="w-3 h-3 mr-1" />
-              Free Plan
-            </Badge>
           </div>
 
           {/* User Information */}

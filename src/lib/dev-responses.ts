@@ -116,8 +116,6 @@ const imageUrlToBase64 = async (imageUrl: string): Promise<string> => {
       "for URL:",
       imageUrl
     );
-    console.log("Falling back to placeholder image");
-
     // Return a small placeholder image base64 (1x1 transparent pixel)
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==";
   }

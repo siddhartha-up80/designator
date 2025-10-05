@@ -26,6 +26,7 @@ model User {
   accounts     Account[]
   sessions     Session[]
   transactions CreditTransaction[]
+  payments     Payment[]
 }
 
 // Subscription plans
@@ -118,4 +119,32 @@ enum GalleryImageType {
   PRODUCT_MODEL
   PROMPT_TO_IMAGE
   AI_PHOTOGRAPHY
+}
+
+// Payment model to track credit purchases
+model Payment {
+  id                String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String        @db.ObjectId
+  cashfreeOrderId   String        @unique
+  cashfreePaymentId String?       @unique
+  amount            Int // Amount in paise (₹100 = 10000 paise)
+  credits           Int // Credits purchased
+  currency          String        @default("INR")
+  status            PaymentStatus @default(PENDING)
+  notes             Json? // Additional metadata
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status])
+}
+
+// Payment status enum
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
 }
