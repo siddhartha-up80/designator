@@ -98,3 +98,24 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+// Gallery Image model to store user's generated images
+model GalleryImage {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String           @db.ObjectId
+  title     String
+  imageUrl  String
+  type      GalleryImageType
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+// Gallery image types
+enum GalleryImageType {
+  FASHION_TRYON
+  PRODUCT_MODEL
+  PROMPT_TO_IMAGE
+  AI_PHOTOGRAPHY
+}

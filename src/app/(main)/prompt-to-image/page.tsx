@@ -30,6 +30,7 @@ import {
   RotateCcw,
   Zap,
   Trash2,
+  Save,
 } from "lucide-react";
 
 const imageStyles = [
@@ -218,6 +219,83 @@ export default function PromptToImagePage() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  };
+
+  const saveToGallery = async (imageUrl: string, index: number) => {
+    try {
+      const response = await fetch("/api/gallery/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: `Prompt to Image ${new Date().toLocaleDateString()} - ${
+            index + 1
+          }`,
+          imageUrl: imageUrl,
+          type: "PROMPT_TO_IMAGE",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save image");
+      }
+
+      showToast.success(
+        "Saved to Gallery",
+        `Image ${index + 1} saved successfully`
+      );
+    } catch (error) {
+      console.error("Error saving to gallery:", error);
+      showToast.error("Failed to save", "Could not save image to gallery");
+    }
+  };
+
+  const saveAllToGallery = async () => {
+    if (generatedImages.length === 0) {
+      showToast.warning("No images to save");
+      return;
+    }
+
+    try {
+      let successCount = 0;
+      for (let i = 0; i < generatedImages.length; i++) {
+        const response = await fetch("/api/gallery/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: `Prompt to Image ${new Date().toLocaleDateString()} - ${
+              i + 1
+            }`,
+            imageUrl: generatedImages[i],
+            type: "PROMPT_TO_IMAGE",
+          }),
+        });
+
+        if (response.ok) {
+          successCount++;
+        }
+      }
+
+      if (successCount === generatedImages.length) {
+        showToast.success(
+          "All Saved",
+          `${successCount} images saved to gallery`
+        );
+      } else if (successCount > 0) {
+        showToast.warning(
+          "Partially saved",
+          `${successCount} of ${generatedImages.length} saved`
+        );
+      } else {
+        throw new Error("Failed to save images");
+      }
+    } catch (error) {
+      console.error("Error saving to gallery:", error);
+      showToast.error("Failed to save", "Could not save images to gallery");
+    }
   };
 
   const resetAll = () => {
@@ -489,6 +567,15 @@ export default function PromptToImagePage() {
                                 <Button
                                   size="sm"
                                   variant="secondary"
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  onClick={() => saveToGallery(imageUrl, index)}
+                                >
+                                  <Save className="h-4 w-4 mr-2" />
+                                  Save
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="secondary"
                                   onClick={() => downloadImage(imageUrl, index)}
                                 >
                                   <Download className="h-4 w-4 mr-2" />
@@ -498,14 +585,25 @@ export default function PromptToImagePage() {
                             </div>
                             <div className="flex items-center justify-between">
                               <Badge variant="outline">Image {index + 1}</Badge>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => downloadImage(imageUrl, index)}
-                              >
-                                <Download className="h-3 w-3 mr-1" />
-                                Save
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="text-green-600 border-green-600 hover:bg-green-50"
+                                  onClick={() => saveToGallery(imageUrl, index)}
+                                >
+                                  <Save className="h-3 w-3 mr-1" />
+                                  Gallery
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => downloadImage(imageUrl, index)}
+                                >
+                                  <Download className="h-3 w-3 mr-1" />
+                                  Download
+                                </Button>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -521,6 +619,16 @@ export default function PromptToImagePage() {
                   </CardHeader>
                   <CardContent className="pb-4">
                     <div className="flex flex-wrap gap-2 sm:gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={generatedImages.length === 0}
+                        className="text-green-600 border-green-600 hover:bg-green-50"
+                        onClick={saveAllToGallery}
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Save All to Gallery
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"

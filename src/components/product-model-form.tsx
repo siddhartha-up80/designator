@@ -24,6 +24,7 @@ import {
   Loader2,
   RefreshCw,
   Download,
+  Save,
 } from "lucide-react";
 import { ImageUpload } from "@/components/image-upload";
 import { useCredits } from "@/contexts/credits-context";
@@ -241,6 +242,83 @@ export function ProductModelForm({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleSaveToGallery = async (imageUrl: string, index: number) => {
+    try {
+      const response = await fetch("/api/gallery/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: `Product Model ${new Date().toLocaleDateString()} - ${
+            index + 1
+          }`,
+          imageUrl: imageUrl,
+          type: "PRODUCT_MODEL",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save image");
+      }
+
+      showToast.success(
+        "Saved to Gallery",
+        `Image ${index + 1} saved successfully`
+      );
+    } catch (error) {
+      console.error("Error saving to gallery:", error);
+      showToast.error("Failed to save", "Could not save image to gallery");
+    }
+  };
+
+  const handleSaveAllToGallery = async () => {
+    if (generatedImages.length === 0) {
+      showToast.warning("No images to save");
+      return;
+    }
+
+    try {
+      let successCount = 0;
+      for (let i = 0; i < generatedImages.length; i++) {
+        const response = await fetch("/api/gallery/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: `Product Model ${new Date().toLocaleDateString()} - ${
+              i + 1
+            }`,
+            imageUrl: generatedImages[i],
+            type: "PRODUCT_MODEL",
+          }),
+        });
+
+        if (response.ok) {
+          successCount++;
+        }
+      }
+
+      if (successCount === generatedImages.length) {
+        showToast.success(
+          "All Saved",
+          `${successCount} images saved to gallery`
+        );
+      } else if (successCount > 0) {
+        showToast.warning(
+          "Partially saved",
+          `${successCount} of ${generatedImages.length} saved`
+        );
+      } else {
+        throw new Error("Failed to save images");
+      }
+    } catch (error) {
+      console.error("Error saving to gallery:", error);
+      showToast.error("Failed to save", "Could not save images to gallery");
+    }
   };
 
   const renderInputStep = () => (
@@ -610,24 +688,42 @@ export function ProductModelForm({
                               alt={`Generated model ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg shadow-md"
                             />
-                            {/* Download Icon */}
-                            <button
-                              onClick={() =>
-                                handleDownloadImage(imageUrl, index)
-                              }
-                              className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
-                              title={`Download image ${index + 1}`}
-                            >
-                              <Download className="h-4 w-4" />
-                            </button>
+                            {/* Action Buttons */}
+                            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              <button
+                                onClick={() =>
+                                  handleSaveToGallery(imageUrl, index)
+                                }
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-all"
+                                title={`Save image ${index + 1} to gallery`}
+                              >
+                                <Save className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleDownloadImage(imageUrl, index)
+                                }
+                                className="bg-black/70 hover:bg-black/90 text-white p-2 rounded-full transition-all"
+                                title={`Download image ${index + 1}`}
+                              >
+                                <Download className="h-4 w-4" />
+                              </button>
+                            </div>
                             <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
                               AI Generated #{index + 1}
                             </div>
                           </div>
                         ))}
                       </div>
-                      {/* Download All Button */}
-                      <div className="mt-4 flex justify-center">
+                      {/* Action Buttons */}
+                      <div className="mt-4 flex justify-center gap-3">
+                        <Button
+                          onClick={handleSaveAllToGallery}
+                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+                        >
+                          <Save className="h-4 w-4" />
+                          Save All to Gallery ({generatedImages.length})
+                        </Button>
                         <Button
                           onClick={() => {
                             generatedImages.forEach((imageUrl, index) => {
@@ -728,24 +824,42 @@ export function ProductModelForm({
                               alt={`Final model ${index + 1}`}
                               className="w-full h-full object-cover rounded-lg shadow-md"
                             />
-                            {/* Download Icon */}
-                            <button
-                              onClick={() =>
-                                handleDownloadImage(imageUrl, index)
-                              }
-                              className="absolute top-2 right-2 bg-black/70 hover:bg-black/90 text-white p-2 rounded-full transition-all duration-200 opacity-0 group-hover:opacity-100"
-                              title={`Download image ${index + 1}`}
-                            >
-                              <Download className="h-4 w-4" />
-                            </button>
+                            {/* Action Buttons */}
+                            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                              <button
+                                onClick={() =>
+                                  handleSaveToGallery(imageUrl, index)
+                                }
+                                className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full transition-all"
+                                title={`Save image ${index + 1} to gallery`}
+                              >
+                                <Save className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleDownloadImage(imageUrl, index)
+                                }
+                                className="bg-black/70 hover:bg-black/90 text-white p-2 rounded-full transition-all"
+                                title={`Download image ${index + 1}`}
+                              >
+                                <Download className="h-4 w-4" />
+                              </button>
+                            </div>
                             <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
                               Final Result #{index + 1}
                             </div>
                           </div>
                         ))}
                       </div>
-                      {/* Download All Button */}
-                      <div className="mt-4 flex justify-center">
+                      {/* Action Buttons */}
+                      <div className="mt-4 flex justify-center gap-3">
+                        <Button
+                          onClick={handleSaveAllToGallery}
+                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+                        >
+                          <Save className="h-4 w-4" />
+                          Save All to Gallery ({generatedImages.length})
+                        </Button>
                         <Button
                           onClick={() => {
                             generatedImages.forEach((imageUrl, index) => {

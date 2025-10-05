@@ -1,508 +1,341 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
-  ImageIcon,
-  Search,
-  Filter,
-  Download,
-  Heart,
-  Share,
-  Eye,
-  Grid3X3,
-  List,
-  Calendar,
-  Tag,
-  User,
-  Shirt,
-  MoreVertical,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ImageIcon, Search, Download, Trash2, Loader2, X } from "lucide-react";
+import { showToast } from "@/lib/toast";
 
-const mockGalleryItems = [
-  {
-    id: 1,
-    type: "model",
-    title: "Summer Dress Model",
-    imageUrl:
-      "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=600&fit=crop",
-    createdAt: "2025-09-15",
-    likes: 24,
-    views: 156,
-    tags: ["summer", "dress", "female"],
-    category: "Fashion Model",
-    featured: true,
-  },
-  {
-    id: 2,
-    type: "try-on",
-    title: "Casual Shirt Try-On",
-    imageUrl:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop",
-    createdAt: "2025-09-14",
-    likes: 18,
-    views: 89,
-    tags: ["casual", "shirt", "male"],
-    category: "Try-On Result",
-  },
-  {
-    id: 3,
-    type: "model",
-    title: "Evening Gown Elegance",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108755-2616b2e7d2e6?w=400&h=600&fit=crop",
-    createdAt: "2025-09-13",
-    likes: 42,
-    views: 234,
-    tags: ["evening", "gown", "elegant"],
-    category: "Fashion Model",
-    trending: true,
-  },
-  {
-    id: 4,
-    type: "model",
-    title: "Sporty Athleisure Look",
-    imageUrl:
-      "https://images.unsplash.com/photo-1506629905607-d405650655ba?w=400&h=600&fit=crop",
-    createdAt: "2025-09-12",
-    likes: 31,
-    views: 178,
-    tags: ["sport", "athleisure", "fitness"],
-    category: "Fashion Model",
-  },
-  {
-    id: 5,
-    type: "try-on",
-    title: "Business Suit Perfect Fit",
-    imageUrl:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=600&fit=crop",
-    createdAt: "2025-09-11",
-    likes: 27,
-    views: 145,
-    tags: ["business", "suit", "professional"],
-    category: "Try-On Result",
-  },
-  {
-    id: 6,
-    type: "model",
-    title: "Bohemian Style Dress",
-    imageUrl:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=600&fit=crop",
-    createdAt: "2025-09-10",
-    likes: 35,
-    views: 201,
-    tags: ["bohemian", "style", "dress"],
-    category: "Fashion Model",
-    featured: true,
-  },
-];
+interface GalleryImage {
+  id: string;
+  title: string;
+  imageUrl: string;
+  type: string;
+  createdAt: string;
+}
 
 export default function GalleryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filteredItems, setFilteredItems] = useState(mockGalleryItems);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const categories = ["all", "Fashion Model", "Try-On Result"];
+  const categories = [
+    { value: "all", label: "All Types" },
+    { value: "PRODUCT_MODEL", label: "Product Model" },
+    { value: "FASHION_TRYON", label: "Fashion Try-On" },
+    { value: "PROMPT_TO_IMAGE", label: "Prompt to Image" },
+    { value: "AI_PHOTOGRAPHY", label: "AI Photography" },
+  ];
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    filterItems(term, selectedCategory);
+  useEffect(() => {
+    fetchGalleryImages();
+  }, []);
+
+  useEffect(() => {
+    filterImages();
+  }, [searchTerm, selectedCategory, images]);
+
+  const fetchGalleryImages = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/gallery");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch gallery images");
+      }
+
+      const data = await response.json();
+      setImages(data.images || []);
+    } catch (error) {
+      console.error("Error fetching gallery:", error);
+      showToast.error("Failed to load gallery", "Please try again");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleCategoryFilter = (category: string) => {
-    setSelectedCategory(category);
-    filterItems(searchTerm, category);
-  };
+  const filterImages = () => {
+    let filtered = images;
 
-  const filterItems = (search: string, category: string) => {
-    let filtered = mockGalleryItems;
-
-    if (category !== "all") {
-      filtered = filtered.filter((item) => item.category === category);
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((item) => item.type === selectedCategory);
     }
 
-    if (search) {
-      filtered = filtered.filter(
-        (item) =>
-          item.title.toLowerCase().includes(search.toLowerCase()) ||
-          item.tags.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          )
+    if (searchTerm) {
+      filtered = filtered.filter((item) =>
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    setFilteredItems(filtered);
+    setFilteredImages(filtered);
+  };
+
+  const handleDownload = (imageUrl: string, title: string) => {
+    const link = document.createElement("a");
+    link.href = imageUrl;
+    link.download = `${title}-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast.success("Download started", title);
+  };
+
+  const handleDelete = async (imageId: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/gallery?id=${imageId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image");
+      }
+
+      showToast.success("Image deleted", title);
+      fetchGalleryImages();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      showToast.error("Failed to delete image", "Please try again");
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    const category = categories.find((c) => c.value === type);
+    return category?.label || type;
+  };
+
+  const openImageDialog = (image: GalleryImage) => {
+    setSelectedImage(image);
+    setIsDialogOpen(true);
+  };
+
+  const closeImageDialog = () => {
+    setIsDialogOpen(false);
+    setTimeout(() => setSelectedImage(null), 200); // Wait for animation
+  };
+
+  const handleDeleteFromDialog = async () => {
+    if (!selectedImage) return;
+
+    closeImageDialog();
+    await handleDelete(selectedImage.id, selectedImage.title);
+  };
+
+  const handleDownloadFromDialog = () => {
+    if (!selectedImage) return;
+    handleDownload(selectedImage.imageUrl, selectedImage.title);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Modern Header */}
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl shadow-lg mb-4">
-            <ImageIcon className="h-10 w-10 text-white" />
-          </div>
-          <div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-4">
-              Creative Gallery
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Browse your AI-generated fashion models, try-on results, and
-              creative content. Organize, share, and manage your digital fashion
-              portfolio with style.
-            </p>
-          </div>
-        </div>
-
-        {/* Modern Search and Filter Bar */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20">
-          <div className="flex flex-col lg:flex-row gap-6 items-center">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Search and Filter */}
+        <Card className="p-6">
+          <div className="flex flex-col md:flex-row gap-4">
             {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search creations..."
+                placeholder="Search by title..."
                 value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-12 h-12 rounded-2xl border-gray-200 bg-white/50 backdrop-blur-sm focus:bg-white transition-all"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
               />
             </div>
 
             {/* Category Filters */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0">
               {categories.map((category) => (
                 <Button
-                  key={category}
+                  key={category.value}
                   variant={
-                    selectedCategory === category ? "default" : "outline"
+                    selectedCategory === category.value ? "default" : "outline"
                   }
-                  className={`h-12 px-6 rounded-2xl font-semibold transition-all ${
-                    selectedCategory === category
-                      ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-                      : "bg-white/50 border-gray-200 hover:bg-gray-50"
+                  className={`whitespace-nowrap ${
+                    selectedCategory === category.value
+                      ? "bg-orange-500 hover:bg-orange-600"
+                      : ""
                   }`}
-                  onClick={() => handleCategoryFilter(category)}
+                  onClick={() => setSelectedCategory(category.value)}
                 >
-                  {category === "all" ? "All" : category}
+                  {category.label}
                 </Button>
               ))}
             </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 rounded-2xl p-1">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                className={`h-10 px-4 rounded-xl transition-all ${
-                  viewMode === "grid"
-                    ? "bg-white shadow-sm"
-                    : "hover:bg-gray-50"
-                }`}
-                onClick={() => setViewMode("grid")}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                className={`h-10 px-4 rounded-xl transition-all ${
-                  viewMode === "list"
-                    ? "bg-white shadow-sm"
-                    : "hover:bg-gray-50"
-                }`}
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
-        </div>
+        </Card>
 
-        {/* Results Info */}
+        {/* Results Count */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <p className="text-lg font-semibold text-gray-700">
-              {filteredItems.length}{" "}
-              {filteredItems.length === 1 ? "creation" : "creations"}
-            </p>
-            <Badge className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border-purple-200 px-4 py-1 rounded-full">
-              <Filter className="h-3 w-3 mr-2" />
-              {selectedCategory === "all" ? "All Categories" : selectedCategory}
-            </Badge>
-          </div>
-          <Button variant="outline" className="rounded-2xl">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <p className="text-sm text-gray-600">
+            {filteredImages.length}{" "}
+            {filteredImages.length === 1 ? "image" : "images"}
+          </p>
         </div>
 
-        {/* Modern Gallery Grid */}
-        {viewMode === "grid" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredItems.map((item) => (
-              <div
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+          </div>
+        )}
+
+        {/* Gallery Grid */}
+        {!isLoading && filteredImages.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredImages.map((item) => (
+              <Card
                 key={item.id}
-                className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
+                className="group overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               >
-                {/* Image Container */}
-                <div className="relative overflow-hidden">
+                {/* Image */}
+                <div
+                  className="relative aspect-square overflow-hidden bg-gray-100"
+                  onClick={() => openImageDialog(item)}
+                >
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-72 object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-contain bg-gray-100"
                   />
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                  {/* Floating Action Buttons */}
-                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    <div className="flex flex-col gap-2">
-                      <Button
-                        size="sm"
-                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
-                      >
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
-                      >
-                        <Share className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="h-10 w-10 p-0 bg-white/90 hover:bg-white text-gray-700 shadow-lg rounded-full"
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Category Badge */}
-                  <div className="absolute top-4 left-4">
-                    <Badge
-                      className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg ${
-                        item.type === "model"
-                          ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                          : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                      }`}
+                  {/* Action Buttons Overlay */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="h-10 w-10 p-0 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload(item.imageUrl, item.title);
+                      }}
                     >
-                      {item.type === "model" ? (
-                        <>
-                          <User className="h-3 w-3 mr-1" />
-                          Model
-                        </>
-                      ) : (
-                        <>
-                          <Shirt className="h-3 w-3 mr-1" />
-                          Try-On
-                        </>
-                      )}
-                    </Badge>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="h-10 w-10 p-0 rounded-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(item.id, item.title);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-
-                  {/* Special Badges */}
-                  {item.featured && (
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        <Sparkles className="h-3 w-3 mr-1" />
-                        Featured
-                      </Badge>
-                    </div>
-                  )}
-
-                  {item.trending && (
-                    <div className="absolute top-16 left-4">
-                      <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        Trending
-                      </Badge>
-                    </div>
-                  )}
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-900 line-clamp-2 leading-tight">
-                      {item.title}
-                    </h3>
-                  </div>
-
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4 text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
-                        <span className="font-semibold">{item.likes}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        <span className="font-semibold">{item.views}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-gray-400">
-                      <Calendar className="h-3 w-3" />
-                      <span className="text-xs">
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {item.tags.slice(0, 3).map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="text-xs px-2 py-1 rounded-full bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
-                      >
-                        <Tag className="h-2 w-2 mr-1" />
-                        {tag}
-                      </Badge>
-                    ))}
+                <div className="p-4 space-y-2">
+                  <h3 className="font-semibold text-sm line-clamp-1">
+                    {item.title}
+                  </h3>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>{getTypeLabel(item.type)}</span>
+                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          /* Modern List View */
-          <div className="space-y-4">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group"
-              >
-                <div className="flex gap-6">
-                  {/* Image */}
-                  <div className="relative">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="w-24 h-24 object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute -top-2 -right-2">
-                      <Badge
-                        className={`px-2 py-1 rounded-full text-xs font-semibold shadow-lg ${
-                          item.type === "model"
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                            : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                        }`}
-                      >
-                        {item.type === "model" ? "Model" : "Try-On"}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-bold text-xl text-gray-900">
-                          {item.title}
-                        </h3>
-                        <p className="text-gray-500 mt-1">{item.category}</p>
-                      </div>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-10 w-10 p-0 rounded-full"
-                        >
-                          <Heart className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-10 w-10 p-0 rounded-full"
-                        >
-                          <Share className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-10 w-10 p-0 rounded-full"
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Stats and Date */}
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4" />
-                        <span className="font-semibold">
-                          {item.likes} likes
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="h-4 w-4" />
-                        <span className="font-semibold">
-                          {item.views} views
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>
-                          {new Date(item.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {item.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="text-xs px-3 py-1 rounded-full bg-gray-50 border-gray-200 text-gray-600"
-                        >
-                          <Tag className="h-2 w-2 mr-1" />
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
 
-        {/* Modern Empty State */}
-        {filteredItems.length === 0 && (
+        {/* Empty State */}
+        {!isLoading && filteredImages.length === 0 && (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-8">
-              <ImageIcon className="h-16 w-16 text-gray-400" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
+              <ImageIcon className="h-10 w-10 text-gray-400" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              No creations found
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No images yet
             </h3>
-            <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg leading-relaxed">
-              We couldn't find any items matching your search criteria. Try
-              adjusting your filters or search terms.
+            <p className="text-gray-500 mb-6">
+              Start creating amazing images and save them to your gallery
             </p>
-            <Button
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 h-auto rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
-              onClick={() => {
-                setSearchTerm("");
-                setSelectedCategory("all");
-                setFilteredItems(mockGalleryItems);
-              }}
-            >
-              Clear All Filters
-            </Button>
+            {searchTerm || selectedCategory !== "all" ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("all");
+                }}
+              >
+                Clear Filters
+              </Button>
+            ) : null}
           </div>
         )}
       </div>
+
+      {/* Image Preview Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden">
+          {selectedImage && (
+            <>
+              <DialogHeader className="p-6 pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 pr-4">
+                    <DialogTitle className="text-xl font-semibold">
+                      {selectedImage.title}
+                    </DialogTitle>
+                    <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
+                      <span>{getTypeLabel(selectedImage.type)}</span>
+                      <span>•</span>
+                      <span>
+                        {new Date(selectedImage.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              {/* Image Container */}
+              <div className="relative bg-gray-100 flex items-center justify-center p-6 max-h-[60vh] overflow-auto">
+                <img
+                  src={selectedImage.imageUrl}
+                  alt={selectedImage.title}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 p-6 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={handleDownloadFromDialog}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteFromDialog}
+                  className="flex items-center gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
