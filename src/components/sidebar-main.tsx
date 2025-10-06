@@ -21,6 +21,7 @@ import {
   User,
   Pin,
   PinOff,
+  Settings,
 } from "lucide-react";
 import { ProfileDialog } from "@/components/profile-dialog";
 import Image from "next/image";
@@ -38,6 +39,7 @@ const sidebarItems = [
   { icon: Camera, label: "Photography", href: "/photography" },
   { icon: Shirt, label: "Fashion Try On", href: "/fashion-try-on" },
   { icon: DollarSign, label: "Credits", href: "/buy-credits" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
 export function Sidebar({ className }: SidebarProps) {
