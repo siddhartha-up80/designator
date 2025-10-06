@@ -122,9 +122,7 @@ export function Sidebar({ className }: SidebarProps) {
   const links = sidebarItems.map((item) => ({
     label: item.label,
     href: item.href,
-    icon: (
-      <item.icon className="h-5 w-5 shrink-0 text-orange-500 dark:text-orange-400" />
-    ),
+    icon: <item.icon className="h-5 w-5 shrink-0 text-primary" />,
   }));
 
   return (
@@ -138,15 +136,15 @@ export function Sidebar({ className }: SidebarProps) {
                 <button
                   onClick={togglePin}
                   className={cn(
-                    "p-1 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors",
-                    pinned && "bg-orange-50 dark:bg-orange-950"
+                    "p-1 rounded-md hover:bg-muted transition-colors",
+                    pinned && "bg-primary/10"
                   )}
                   title={pinned ? "Unpin sidebar" : "Pin sidebar"}
                 >
                   {pinned ? (
-                    <Pin className="h-4 w-4 cursor-pointer text-orange-500" />
+                    <Pin className="h-4 w-4 cursor-pointer text-primary" />
                   ) : (
-                    <PinOff className="h-4 w-4 cursor-pointer text-neutral-500" />
+                    <PinOff className="h-4 w-4 cursor-pointer text-muted-foreground" />
                   )}
                 </button>
               )}
@@ -161,7 +159,7 @@ export function Sidebar({ className }: SidebarProps) {
             {session?.user ? (
               <div
                 onClick={() => setProfileDialogOpen(true)}
-                className="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors group"
+                className="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-muted transition-colors group"
               >
                 {session.user.image ? (
                   <Image
@@ -172,16 +170,16 @@ export function Sidebar({ className }: SidebarProps) {
                     className="rounded-full flex-shrink-0"
                   />
                 ) : (
-                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center flex-shrink-0">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+                    <User className="h-4 w-4 text-primary-foreground" />
                   </div>
                 )}
                 {open && (
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {session.user.name?.split(" ")[0] || "Profile"}
                     </p>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+                    <p className="text-xs text-muted-foreground truncate">
                       View Profile
                     </p>
                   </div>
@@ -214,14 +212,14 @@ export const Logo = () => {
   return (
     <a
       href="/home"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground"
       title="Designator"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-orange-400 to-orange-600" />
+      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-primary to-secondary" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
+        className="font-medium whitespace-pre text-foreground"
       >
         Designator
       </motion.span>
@@ -232,10 +230,10 @@ export const LogoIcon = () => {
   return (
     <a
       href="/home"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground"
       title="Designator"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-orange-400 to-orange-600" />
+      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-primary to-secondary" />
     </a>
   );
 };

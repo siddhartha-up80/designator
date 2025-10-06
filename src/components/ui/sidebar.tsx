@@ -90,7 +90,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-white dark:bg-neutral-900 w-[240px] shrink-0 border-r border-neutral-200 dark:border-neutral-700",
+          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-background w-[240px] shrink-0 border-r border-border",
           className
         )}
         animate={{
@@ -118,11 +118,11 @@ export const MobileSidebar = ({
       <div className={cn("fixed top-4 left-4 z-50 md:hidden")} {...props}>
         <button
           onClick={() => setOpen(!open)}
-          className="p-2 rounded-md bg-white dark:bg-neutral-900 shadow-md border border-neutral-200 dark:border-neutral-700 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors"
+          className="p-2 rounded-md bg-background shadow-md border border-border hover:bg-muted transition-colors"
           title="Open menu"
           aria-label="Open navigation menu"
         >
-          <IconMenu2 className="h-5 w-5 text-neutral-800 dark:text-neutral-200" />
+          <IconMenu2 className="h-5 w-5 text-foreground" />
         </button>
       </div>
 
@@ -138,12 +138,12 @@ export const MobileSidebar = ({
               ease: "easeInOut",
             }}
             className={cn(
-              "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between md:hidden",
+              "fixed h-full w-full inset-0 bg-background p-10 z-[100] flex flex-col justify-between md:hidden",
               className
             )}
           >
             <div
-              className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200 cursor-pointer"
+              className="absolute right-10 top-10 z-50 text-foreground cursor-pointer"
               onClick={() => setOpen(!open)}
             >
               <IconX />
@@ -174,8 +174,8 @@ export const SidebarLink = ({
       className={cn(
         "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md transition-colors",
         isActive
-          ? "bg-orange-100 dark:bg-orange-950 text-orange-900 dark:text-orange-100"
-          : "hover:bg-gray-50 dark:hover:bg-neutral-800",
+          ? "bg-primary/10 text-primary"
+          : "hover:bg-muted text-foreground",
         className
       )}
       {...props}
@@ -189,9 +189,7 @@ export const SidebarLink = ({
         }}
         className={cn(
           "text-base font-medium group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
-          isActive
-            ? "text-orange-900 dark:text-orange-100"
-            : "text-neutral-700 dark:text-neutral-200"
+          isActive ? "text-primary" : "text-foreground"
         )}
       >
         {link.label}

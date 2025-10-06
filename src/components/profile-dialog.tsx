@@ -51,12 +51,12 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden">
         {/* Header with gradient background */}
-        <div className="relative bg-gradient-to-br from-orange-500 to-orange-600 px-6 pt-6 pb-20">
+        <div className="relative bg-gradient-to-br from-primary to-secondary px-6 pt-6 pb-20">
           <DialogHeader>
-            <DialogTitle className="text-white text-lg font-semibold">
+            <DialogTitle className="text-primary-foreground text-lg font-semibold">
               Account
             </DialogTitle>
-            <DialogDescription className="text-orange-100">
+            <DialogDescription className="text-primary-foreground/80">
               Manage your profile and preferences
             </DialogDescription>
           </DialogHeader>
@@ -71,16 +71,16 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
                 alt={session.user.name || "User"}
                 width={96}
                 height={96}
-                className="rounded-full border-4 border-white shadow-xl"
+                className="rounded-full border-4 border-background shadow-xl"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full border-4 border-white shadow-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                <span className="text-white text-3xl font-bold">
+              <div className="w-24 h-24 rounded-full border-4 border-background shadow-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <span className="text-3xl font-bold">
                   {session.user.name?.charAt(0).toUpperCase() || "U"}
                 </span>
               </div>
             )}
-            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+            <h3 className="mt-4 text-xl font-semibold ">
               {session.user.name || "User"}
             </h3>
           </div>
@@ -88,52 +88,52 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
           {/* User Information */}
           <div className="mt-6 space-y-3">
             {/* Email */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                <Mail className="w-5 h-5 text-orange-600" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Mail className="w-5 h-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Email
                 </p>
-                <p className="text-sm text-gray-900 truncate">
+                <p className="text-sm text-foreground truncate">
                   {session.user.email}
                 </p>
               </div>
             </div>
 
             {/* User ID */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <UserIcon className="w-5 h-5 text-blue-600" />
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
+              <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                <UserIcon className="w-5 h-5 text-secondary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   User ID
                 </p>
-                <p className="text-xs text-gray-700 truncate font-mono">
+                <p className="text-xs text-foreground truncate font-mono">
                   {session.user.id}
                 </p>
               </div>
             </div>
 
             {/* Credits */}
-            <div className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-200">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center flex-shrink-0 shadow-md">
-                <Coins className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 border-2 border-primary/20">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0 shadow-md">
+                <Coins className="w-5 h-5 text-primary-foreground" />
               </div>
               <div className="flex-1">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Credits Remaining
                 </p>
                 {loading ? (
-                  <div className="h-6 w-20 bg-orange-200 animate-pulse rounded mt-1" />
+                  <div className="h-6 w-20 bg-primary/20 animate-pulse rounded mt-1" />
                 ) : (
                   <div className="flex items-baseline gap-2">
-                    <p className="text-2xl font-bold text-orange-700">
+                    <p className="text-2xl font-bold text-primary">
                       {credits ?? 0}
                     </p>
-                    <span className="text-sm text-orange-600 font-medium">
+                    <span className="text-sm text-primary font-medium">
                       credits
                     </span>
                   </div>
@@ -142,7 +142,7 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
               <Button
                 size="sm"
                 onClick={handleUpgrade}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
+                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground shadow-md"
               >
                 Buy More
               </Button>
@@ -154,7 +154,7 @@ export function ProfileDialog({ open, onOpenChange }: ProfileDialogProps) {
             <Button
               onClick={handleSignOut}
               variant="outline"
-              className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              className="w-full justify-start gap-2 text-destructive hover:text-destructive/80 hover:bg-destructive/10 border-destructive/30"
             >
               <LogOut className="w-4 h-4" />
               Sign Out

@@ -102,7 +102,7 @@ export function ImageUpload({
             <img
               src={uploadedImageUrl}
               alt="Uploaded product"
-              className="w-full max-h-96 object-contain rounded-lg bg-gray-50"
+              className="w-full max-h-96 object-contain rounded-lg bg-muted"
             />
             <Button
               variant="destructive"
@@ -138,7 +138,7 @@ export function ImageUpload({
                 <div className="text-sm font-medium">
                   Uploading... {uploadProgress}%
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-2">
                   <div
                     className="bg-primary h-2 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}

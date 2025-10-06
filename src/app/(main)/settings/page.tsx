@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,16 +37,16 @@ import {
 import Image from "next/image";
 
 interface UserPreferences {
-  theme: "light" | "dark" | "system";
+  // Other user preferences can be added here later
+  // Theme is now handled by next-themes
 }
 
-const defaultPreferences: UserPreferences = {
-  theme: "system",
-};
+const defaultPreferences: UserPreferences = {};
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const { credits, loading: creditsLoading } = useCredits();
+  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [preferences, setPreferences] =
     useState<UserPreferences>(defaultPreferences);
@@ -113,7 +114,7 @@ export default function SettingsPage() {
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -128,11 +129,11 @@ export default function SettingsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
-              <Settings className="h-7 w-7 text-orange-500" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-3">
+              <Settings className="h-7 w-7 text-primary" />
               Settings
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-muted-foreground mt-2">
               Manage your account preferences and application settings
             </p>
           </div>
@@ -146,7 +147,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-orange-500" />
+                <User className="h-5 w-5 text-primary" />
                 Profile Settings
               </CardTitle>
             </CardHeader>
@@ -159,18 +160,18 @@ export default function SettingsPage() {
                     alt={session.user.name || "Profile"}
                     width={64}
                     height={64}
-                    className="rounded-full border-2 border-gray-200 dark:border-gray-700"
+                    className="rounded-full border-2 border-border"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                    <User className="h-8 w-8 text-white" />
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                    <User className="h-8 w-8 text-primary-foreground" />
                   </div>
                 )}
                 <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                  <h3 className="font-medium text-foreground">
                     {session.user.name || "User"}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-muted-foreground">
                     {session.user.email}
                   </p>
                 </div>
@@ -184,9 +185,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
-                  <div className="text-gray-700 dark:text-gray-300">
-                    {session.user.email}
-                  </div>
+                  <div className="text-foreground">{session.user.email}</div>
                 </div>
               </div>
             </CardContent>
@@ -196,7 +195,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-orange-500" />
+                <Palette className="h-5 w-5 text-primary" />
                 Appearance
               </CardTitle>
             </CardHeader>
@@ -212,11 +211,11 @@ export default function SettingsPage() {
                   ].map(({ value, label, icon: Icon }) => (
                     <button
                       key={value}
-                      onClick={() => updatePreferences({ theme: value as any })}
-                      className={`p-3 rounded-lg border-2 transition-all hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        preferences.theme === value
-                          ? "border-orange-500 bg-orange-50 dark:bg-orange-950"
-                          : "border-gray-200 dark:border-gray-700"
+                      onClick={() => setTheme(value)}
+                      className={`p-3 rounded-lg border-2 transition-all hover:bg-muted ${
+                        theme === value
+                          ? "border-primary bg-primary/10"
+                          : "border-border"
                       }`}
                     >
                       <Icon className="h-5 w-5 mx-auto mb-1" />
@@ -259,7 +258,7 @@ export default function SettingsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Crown className="h-5 w-5 text-orange-500" />
+                <Crown className="h-5 w-5 text-primary" />
                 Account Overview
               </CardTitle>
             </CardHeader>
@@ -271,35 +270,35 @@ export default function SettingsPage() {
                     alt={session.user.name || "Profile"}
                     width={80}
                     height={80}
-                    className="rounded-full mx-auto border-4 border-orange-100 dark:border-orange-900"
+                    className="rounded-full mx-auto border-4 border-primary/20"
                   />
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center mx-auto">
-                    <User className="h-10 w-10 text-white" />
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto">
+                    <User className="h-10 w-10 text-primary-foreground" />
                   </div>
                 )}
                 <h3 className="font-semibold text-lg mt-3">
                   {session.user.name || "User"}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-muted-foreground">
                   {session.user.email}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 p-4 rounded-lg">
+              <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-medium text-orange-700 dark:text-orange-300">
+                    <p className="text-xs font-medium text-primary">
                       Credits Remaining
                     </p>
-                    <p className="text-2xl font-bold text-orange-800 dark:text-orange-200">
+                    <p className="text-2xl font-bold text-primary">
                       {creditsLoading ? "..." : credits || 0}
                     </p>
                   </div>
                   <Button
                     size="sm"
                     onClick={() => router.push("/buy-credits")}
-                    className="bg-orange-500 hover:bg-orange-600"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     <CreditCard className="h-4 w-4 mr-1" />
                     Buy More
@@ -323,7 +322,7 @@ export default function SettingsPage() {
               ].map(({ label, value, icon: Icon }, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-gray-500" />
+                    <Icon className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">{label}</span>
                   </div>
                   <span className="font-semibold text-sm">{value}</span>

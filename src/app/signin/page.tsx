@@ -170,7 +170,7 @@ const SignInPage = () => {
                 aria-label="Previous image"
                 className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronLeft className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronLeft className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
               </button>
 
               <button
@@ -178,7 +178,7 @@ const SignInPage = () => {
                 aria-label="Next image"
                 className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronRight className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronRight className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
               </button>
             </>
           )}
@@ -296,7 +296,7 @@ const SignInPage = () => {
             onClick={handleGoogleSignIn}
             disabled={isSubmitting}
             variant="outline"
-            className="w-full py-3 px-4 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 border hover:bg-accent text-muted-foreground hover:text-accent-foreground font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

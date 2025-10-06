@@ -30,7 +30,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <LandingHeader />
 
       {/* Hero Section */}
@@ -42,24 +42,28 @@ export default function LandingPage() {
               <Star key={i} className="h-4 w-4 text-green-500 fill-green-500" />
             ))}
           </div>
-          <span className="text-sm text-gray-600">Rated 5/5</span>
-          <span className="text-sm text-gray-600">Used by 1700+ brands</span>
-          <span className="text-sm text-gray-600">Full commercial rights</span>
+          <span className="text-sm text-muted-foreground">Rated 5/5</span>
+          <span className="text-sm text-muted-foreground">
+            Used by 1700+ brands
+          </span>
+          <span className="text-sm text-muted-foreground">
+            Full commercial rights
+          </span>
         </div>
 
         {/* Main Heading */}
-        <h1 className="text-5xl md:text-7xl font-bold text-black mb-4 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-4 leading-tight">
           Instant Product Shoots
         </h1>
         <h2 className="text-5xl md:text-7xl font-bold text-orange-500 mb-4 leading-tight">
           Photos, Videos, And Ads
         </h2>
-        <h3 className="text-5xl md:text-7xl font-bold text-black mb-8 leading-tight">
+        <h3 className="text-5xl md:text-7xl font-bold text-foreground mb-8 leading-tight">
           From A Single Upload.
         </h3>
 
         {/* Subtitle */}
-        <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+        <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
           Upload a picture, pick your styles, and get 100+ on-brand assets in
           minutes. No studio, no expensive models!
         </p>
@@ -68,14 +72,11 @@ export default function LandingPage() {
         <div className="flex items-center justify-center gap-4 mb-16">
           <Button
             asChild
-            className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-3 text-lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg"
           >
             <Link href="/home">Get Started For Free →</Link>
           </Button>
-          <Button
-            variant="outline"
-            className="px-8 py-3 text-lg border-gray-300 hover:bg-gray-50"
-          >
+          <Button variant="outline" className="px-8 py-3 text-lg">
             <UserIcon className="h-5 w-5 mr-2" />
             Book a Demo
           </Button>
@@ -87,11 +88,11 @@ export default function LandingPage() {
           {productImages.map((image, index) => (
             <div
               key={index}
-              className="aspect-[3/4] bg-gray-100 rounded-xl overflow-hidden shadow-sm"
+              className="aspect-[3/4] bg-muted rounded-xl overflow-hidden shadow-sm"
             >
-              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-muted to-muted/80 flex items-center justify-center">
                 {/* Simulated product images - you can replace with actual images */}
-                <div className="w-full h-full bg-white rounded-lg mx-1 my-1 flex items-center justify-center">
+                <div className="w-full h-full bg-card rounded-lg mx-1 my-1 flex items-center justify-center">
                   <div className="text-2xl">👕</div>
                 </div>
               </div>
@@ -101,16 +102,18 @@ export default function LandingPage() {
 
         {/* Trust Section */}
         <div className="text-center">
-          <p className="text-gray-600 mb-8">
+          <p className="text-muted-foreground mb-8">
             Trusted by forward-thinking brands
           </p>
           <div className="flex items-center justify-center gap-8 opacity-60">
             {brandLogos.map((brand, index) => (
               <div
                 key={index}
-                className="h-10 w-20 bg-gray-200 rounded flex items-center justify-center"
+                className="h-10 w-20 bg-muted rounded flex items-center justify-center"
               >
-                <span className="text-xs text-gray-500">{brand.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {brand.name}
+                </span>
               </div>
             ))}
           </div>

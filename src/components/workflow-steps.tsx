@@ -56,9 +56,9 @@ export function WorkflowSteps({
             className={cn(
               "flex-1 p-4 transition-all duration-200",
               isActive
-                ? "border-primary bg-orange-50"
+                ? "border-primary bg-primary/10"
                 : isDisabled
-                ? "border-gray-200 bg-gray-50 opacity-50"
+                ? "border-muted bg-muted opacity-50"
                 : "border-border hover:border-primary/50 hover:shadow-md",
               isClickable ? "cursor-pointer" : "cursor-default"
             )}
@@ -71,7 +71,7 @@ export function WorkflowSteps({
                   isActive
                     ? "bg-primary/15"
                     : isDisabled
-                    ? "bg-gray-200"
+                    ? "bg-muted"
                     : "bg-muted"
                 )}
               >
@@ -81,7 +81,7 @@ export function WorkflowSteps({
                     isActive
                       ? "text-primary"
                       : isDisabled
-                      ? "text-gray-400"
+                      ? "text-muted-foreground"
                       : "text-muted-foreground"
                   )}
                 />
@@ -91,9 +91,9 @@ export function WorkflowSteps({
                   className={cn(
                     "font-semibold text-sm",
                     isActive
-                      ? "text-orange-700"
+                      ? "text-primary"
                       : isDisabled
-                      ? "text-gray-400"
+                      ? "text-muted-foreground"
                       : "text-foreground"
                   )}
                 >
@@ -103,9 +103,9 @@ export function WorkflowSteps({
                   className={cn(
                     "text-xs",
                     isActive
-                      ? "text-orange-600"
+                      ? "text-primary"
                       : isDisabled
-                      ? "text-gray-400"
+                      ? "text-muted-foreground"
                       : "text-muted-foreground"
                   )}
                 >

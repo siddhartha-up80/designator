@@ -74,7 +74,7 @@ export function FeatureCreditCost({
     <Badge
       variant="outline"
       className={cn(
-        "gap-1 font-semibold bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 border-amber-300",
+        "gap-1 font-semibold bg-gradient-to-r from-primary/10 to-secondary/10 text-primary border-primary/20",
         sizeClasses[size],
         className
       )}

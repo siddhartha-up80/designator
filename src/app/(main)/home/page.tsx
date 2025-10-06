@@ -30,8 +30,8 @@ const aiTools = [
     icon: Sparkles,
     href: "/product-model",
     buttonText: "Generate",
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-500",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
     outputLabels: ["Model", "Product"],
     previewImage: "/images/product1.png",
   },
@@ -43,8 +43,8 @@ const aiTools = [
     icon: Camera,
     href: "/photography",
     buttonText: "Enhance",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-500",
+    iconBg: "bg-secondary/10",
+    iconColor: "text-secondary",
     previewImage: "/images/product2.png",
   },
   {
@@ -55,8 +55,8 @@ const aiTools = [
     icon: Shirt,
     href: "/fashion-try-on",
     buttonText: "Try On",
-    iconBg: "bg-pink-100",
-    iconColor: "text-pink-500",
+    iconBg: "bg-accent/10",
+    iconColor: "text-accent-foreground",
     previewImage: "/images/model1.png",
     modelImages: ["/images/model1_2.png", "/images/model1_3.png"],
   },
@@ -68,8 +68,8 @@ const aiTools = [
     icon: ImageIconLucide,
     href: "/gallery",
     buttonText: "Browse",
-    iconBg: "bg-indigo-100",
-    iconColor: "text-indigo-500",
+    iconBg: "bg-primary/15",
+    iconColor: "text-primary",
     previewImage: "/images/product3.png",
     isGallery: true,
   },
@@ -81,8 +81,8 @@ const aiTools = [
     icon: Wand2,
     href: "/prompt-to-image",
     buttonText: "Generate",
-    iconBg: "bg-green-100",
-    iconColor: "text-green-500",
+    iconBg: "bg-secondary/15",
+    iconColor: "text-secondary",
     previewImage: "/images/product5.png",
   },
   {
@@ -121,14 +121,14 @@ export default function HomePage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
             AI Tools & Workflows
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-muted-foreground">
             Choose your preferred workflow to get started
           </p>
         </div>
@@ -136,30 +136,30 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {aiTools.map((tool, index) => {
             const gradientClasses = [
-              "bg-gradient-to-br from-purple-100 via-pink-100 to-rose-100 border border-purple-200/30",
-              "bg-gradient-to-br from-blue-100 via-cyan-100 to-teal-100 border border-blue-200/30",
-              "bg-gradient-to-br from-pink-100 via-rose-100 to-red-100 border border-pink-200/30",
-              "bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 border border-indigo-200/30",
-              "bg-gradient-to-br from-green-100 via-emerald-100 to-teal-100 border border-green-200/30",
-              "bg-gradient-to-br from-cyan-100 via-blue-100 to-indigo-100 border border-cyan-200/30",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
+              "bg-gradient-to-br from-secondary/10 via-accent/5 to-primary/10 border border-secondary/20",
+              "bg-gradient-to-br from-accent/10 via-primary/5 to-secondary/10 border border-accent/20",
+              "bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/5 border border-primary/15",
+              "bg-gradient-to-br from-secondary/15 via-primary/10 to-accent/10 border border-secondary/15",
+              "bg-gradient-to-br from-accent/15 via-secondary/10 to-primary/5 border border-accent/15",
             ];
 
             const outputGradients = [
-              "bg-gradient-to-br from-purple-200 via-pink-200 to-rose-200",
-              "bg-gradient-to-br from-blue-200 via-cyan-200 to-teal-200",
-              "bg-gradient-to-br from-pink-200 via-rose-200 to-red-200",
-              "bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200",
-              "bg-gradient-to-br from-green-200 via-emerald-200 to-teal-200",
-              "bg-gradient-to-br from-cyan-200 via-blue-200 to-indigo-200",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-secondary/20 via-accent/15 to-primary/20",
+              "bg-gradient-to-br from-accent/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-primary/25 via-secondary/20 to-accent/15",
+              "bg-gradient-to-br from-secondary/25 via-primary/20 to-accent/20",
+              "bg-gradient-to-br from-accent/25 via-secondary/20 to-primary/15",
             ];
 
             const buttonColors = [
-              "text-purple-500 group-hover:text-purple-600",
-              "text-blue-500 group-hover:text-blue-600",
-              "text-pink-500 group-hover:text-pink-600",
-              "text-indigo-500 group-hover:text-indigo-600",
-              "text-green-500 group-hover:text-green-600",
-              "text-cyan-500 group-hover:text-cyan-600",
+              "text-primary group-hover:text-primary/80",
+              "text-secondary group-hover:text-secondary/80",
+              "text-accent-foreground group-hover:text-accent-foreground/80",
+              "text-primary group-hover:text-primary/80",
+              "text-secondary group-hover:text-secondary/80",
+              "text-accent-foreground group-hover:text-accent-foreground/80",
             ];
 
             const IconComponent = tool.icon;
@@ -172,16 +172,16 @@ export default function HomePage() {
               >
                 {/* Header with Icon */}
                 <div className="flex items-start justify-between mb-4">
-                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 shadow-sm">
+                  <div className="bg-background/80 backdrop-blur-sm rounded-2xl p-3 shadow-sm">
                     <IconComponent className={`h-6 w-6 ${tool.iconColor}`} />
                   </div>
                 </div>
 
                 {/* Title and Description */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-xl font-semibold text-foreground mb-2">
                   {tool.title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                   {tool.description}
                 </p>
 
@@ -189,7 +189,7 @@ export default function HomePage() {
                 <div
                   className={`${outputGradients[index]} rounded-2xl p-6 mb-4 relative`}
                 >
-                  <div className="absolute top-4 right-4 bg-white rounded-xl px-4 py-2 text-sm font-semibold text-gray-800 shadow-sm">
+                  <div className="absolute top-4 right-4 bg-background rounded-xl px-4 py-2 text-sm font-semibold text-foreground shadow-sm border">
                     Output
                   </div>
 
@@ -210,10 +210,10 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="flex justify-center gap-4">
-                        <div className="bg-purple-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-purple-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Model
                         </div>
-                        <div className="bg-amber-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-amber-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Product
                         </div>
                       </div>
@@ -224,16 +224,16 @@ export default function HomePage() {
                     <>
                       {/* Camera/Photo Enhancement */}
                       <div className="flex justify-center mt-8 mb-4">
-                        <div className="w-20 h-16 bg-gradient-to-b from-gray-800 to-black rounded-2xl shadow-lg relative overflow-hidden">
-                          <div className="absolute inset-2 bg-gradient-to-b from-gray-700 to-gray-900 rounded-xl"></div>
-                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-2 border-gray-300 flex items-center justify-center">
-                            <div className="w-1 h-3 bg-gray-600 rounded"></div>
-                            <div className="w-3 h-1 bg-gray-600 absolute rounded"></div>
+                        <div className="w-20 h-16 bg-gradient-to-b from-gray-800 to-gray-900 rounded-2xl shadow-lg relative overflow-hidden">
+                          <div className="absolute inset-2 bg-gradient-to-b from-gray-700 to-gray-800 rounded-xl"></div>
+                          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-background rounded-full border-2 border-border flex items-center justify-center">
+                            <div className="w-1 h-3 bg-muted-foreground rounded"></div>
+                            <div className="w-3 h-1 bg-muted-foreground absolute rounded"></div>
                           </div>
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-blue-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-blue-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Enhanced
                         </div>
                       </div>
@@ -270,7 +270,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-indigo-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-indigo-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Gallery
                         </div>
                       </div>
@@ -281,18 +281,18 @@ export default function HomePage() {
                     <>
                       {/* Text to image concept */}
                       <div className="flex justify-center items-center gap-3 mt-8 mb-4">
-                        <div className="w-12 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <div className="text-xs text-gray-600 font-mono">
+                        <div className="w-12 h-8 bg-muted rounded-lg flex items-center justify-center">
+                          <div className="text-xs text-muted-foreground font-mono">
                             ABC
                           </div>
                         </div>
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <ChevronRight className="h-2 w-2 text-white" />
+                          <ChevronRight className="h-2 w-2 text-primary-foreground" />
                         </div>
                         <div className="w-12 h-8 bg-gradient-to-b from-green-400 to-green-600 rounded-lg"></div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-green-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-green-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Generated
                         </div>
                       </div>
@@ -305,16 +305,16 @@ export default function HomePage() {
                       <div className="flex justify-center items-center gap-3 mt-8 mb-4">
                         <div className="w-12 h-8 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-lg"></div>
                         <div className="w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center">
-                          <ChevronRight className="h-2 w-2 text-white" />
+                          <ChevronRight className="h-2 w-2 text-primary-foreground" />
                         </div>
-                        <div className="w-12 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <div className="text-xs text-gray-600 font-mono">
+                        <div className="w-12 h-8 bg-muted rounded-lg flex items-center justify-center">
+                          <div className="text-xs text-muted-foreground font-mono">
                             TXT
                           </div>
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-cyan-500 text-white text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-cyan-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Description
                         </div>
                       </div>
@@ -337,9 +337,9 @@ export default function HomePage() {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent Activity */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-100">
+          <div className="bg-card rounded-3xl p-8 border">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-2xl font-semibold text-card-foreground">
                 Recent Activity
               </h2>
               <Button
@@ -352,23 +352,23 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mb-6">
-                <div className="bg-gray-800 rounded-lg p-2">
-                  <File className="h-8 w-8 text-gray-400" />
+              <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mb-6">
+                <div className="bg-muted-foreground rounded-lg p-2">
+                  <File className="h-8 w-8 text-muted" />
                 </div>
               </div>
-              <p className="text-gray-500 font-medium mb-2 text-lg">
+              <p className="text-muted-foreground font-medium mb-2 text-lg">
                 No recent activity
               </p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground/70 text-sm">
                 Start creating to see your work here
               </p>
             </div>
           </div>
 
           {/* Quick Access */}
-          <div className="bg-white rounded-3xl p-8 border border-gray-100">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-8">
+          <div className="bg-card rounded-3xl p-8 border">
+            <h2 className="text-2xl font-semibold text-card-foreground mb-8">
               Quick Access
             </h2>
 
@@ -377,13 +377,13 @@ export default function HomePage() {
                 <Button
                   key={index}
                   variant="ghost"
-                  className="w-full justify-start h-auto p-4 hover:bg-gray-50 rounded-2xl"
+                  className="w-full justify-start h-auto p-4 hover:bg-accent hover:text-accent-foreground rounded-2xl"
                   onClick={() => router.push(item.href)}
                 >
-                  <div className="bg-gray-100 rounded-xl p-3 mr-4">
-                    <item.icon className="h-5 w-5 text-gray-600" />
+                  <div className="bg-muted rounded-xl p-3 mr-4">
+                    <item.icon className="h-5 w-5 text-muted-foreground" />
                   </div>
-                  <span className="font-medium text-gray-900 text-lg">
+                  <span className="font-medium text-card-foreground text-lg">
                     {item.title}
                   </span>
                 </Button>

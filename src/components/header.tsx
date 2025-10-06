@@ -38,7 +38,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Credits</span>
           {loading ? (
-            <div className="h-6 w-16 bg-gray-200 animate-pulse rounded" />
+            <div className="h-6 w-16 bg-muted animate-pulse rounded" />
           ) : (
             <CreditsBadge credits={credits ?? 0} showLabel={false} />
           )}
@@ -47,7 +47,7 @@ export function Header() {
         {/* Upgrade Button */}
         <Button
           onClick={() => router.push("/buy-credits")}
-          className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white gap-2"
+          className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground gap-2"
         >
           <TrendingUp className="h-4 w-4" />
           Upgrade

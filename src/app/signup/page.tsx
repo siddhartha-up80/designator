@@ -171,7 +171,7 @@ const SignUpPage = () => {
                 aria-label="Previous image"
                 className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronLeft className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronLeft className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
               </button>
 
               <button
@@ -179,7 +179,7 @@ const SignUpPage = () => {
                 aria-label="Next image"
                 className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronRight className="w-5 h-5 text-black group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronRight className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
               </button>
             </>
           )}
@@ -196,7 +196,7 @@ const SignUpPage = () => {
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       currentSlide === index
                         ? "bg-orange-500 scale-110"
-                        : "bg-white/60 hover:bg-white/80"
+                        : "bg-background/60 hover:bg-background/80"
                     }`}
                   />
                 ))}
@@ -207,7 +207,7 @@ const SignUpPage = () => {
           {/* Thumbnail preview in bottom left */}
           {!loading && carouselImages.length > 0 && (
             <div className="absolute bottom-6 left-6">
-              <div className="w-28 h-28 rounded-lg overflow-hidden border-8 border-gray-600/40 shadow-lg bg-white">
+              <div className="w-28 h-28 rounded-lg overflow-hidden border-8 border-gray-600/40 shadow-lg bg-background">
                 <img
                   src={carouselImages[currentSlide].productSrc}
                   alt={`Product for ${carouselImages[currentSlide].alt}`}
@@ -220,7 +220,7 @@ const SignUpPage = () => {
       </div>
 
       {/* Right side - Sign Up Form */}
-      <div className="flex-1 flex items-center justify-center bg-white p-8 overflow-y-auto pt-24">
+      <div className="flex-1 flex items-center justify-center bg-background p-8 overflow-y-auto pt-24">
         <div className="w-full max-w-md my-8">
           {/* Header */}
           <div className="text-center mb-8">
@@ -309,7 +309,7 @@ const SignUpPage = () => {
             onClick={handleGoogleSignUp}
             disabled={isSubmitting}
             variant="outline"
-            className="w-full py-3 px-4 border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 border hover:bg-accent text-muted-foreground hover:text-accent-foreground font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

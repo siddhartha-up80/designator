@@ -199,7 +199,7 @@ const FashionTryOnPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Page Title */}
         <div className="mb-4">
@@ -216,7 +216,7 @@ const FashionTryOnPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-screen">
           {/* Left Sidebar Form */}
           <div className="lg:col-span-2 space-y-4">
-            <Card className="p-6 bg-white shadow-sm border border-gray-200">
+            <Card className="p-6 bg-card shadow-sm border border-border">
               <div className="space-y-6">
                 {/* Error Display */}
                 {error && (
@@ -227,16 +227,16 @@ const FashionTryOnPage = () => {
 
                 {/* Model Selection Section */}
                 <div>
-                  <label className="text-sm font-medium text-gray-900 mb-3 block">
-                    Model Selection <span className="text-red-500">*</span>
+                  <label className="text-sm font-medium text-foreground mb-3 block">
+                    Model Selection <span className="text-destructive">*</span>
                   </label>
                   <div className="flex gap-3 mb-4">
                     <Button
                       onClick={() => setModelSelectionTab("upload")}
                       className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
                         modelSelectionTab === "upload"
-                          ? "bg-orange-500 hover:bg-orange-600 text-white"
-                          : "border border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                          ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                          : "border border-border text-foreground bg-background hover:bg-muted"
                       }`}
                     >
                       <span>📤</span> Upload Model
@@ -245,8 +245,8 @@ const FashionTryOnPage = () => {
                       onClick={() => setModelSelectionTab("select")}
                       className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
                         modelSelectionTab === "select"
-                          ? "bg-orange-500 hover:bg-orange-600 text-white"
-                          : "border border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                          ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                          : "border border-border text-foreground bg-background hover:bg-muted"
                       }`}
                     >
                       <span>📁</span> Select Model
@@ -258,7 +258,7 @@ const FashionTryOnPage = () => {
                     <div className="space-y-4">
                       {/* Available Models Header */}
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-foreground">
                           Available Models:
                         </span>
                         <Button
@@ -266,7 +266,7 @@ const FashionTryOnPage = () => {
                           disabled={isRefreshing}
                           variant="outline"
                           size="sm"
-                          className="text-orange-500 border-orange-200 hover:bg-orange-50 text-xs"
+                          className="text-primary border-primary/20 hover:bg-primary/10 text-xs"
                         >
                           {isRefreshing ? (
                             <div className="animate-spin w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full mr-1"></div>
@@ -287,8 +287,8 @@ const FashionTryOnPage = () => {
                           size="sm"
                           className={`text-sm ${
                             availableModelsTab === "all"
-                              ? "bg-orange-500 hover:bg-orange-600 text-white"
-                              : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                              : "border-border text-foreground bg-background hover:bg-muted"
                           }`}
                         >
                           <span className="mr-1">📋</span> All
@@ -304,7 +304,7 @@ const FashionTryOnPage = () => {
                           className={`text-sm ${
                             availableModelsTab === "favorites"
                               ? "bg-orange-500 hover:bg-orange-600 text-white"
-                              : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                              : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                           }`}
                         >
                           <span className="mr-1">💝</span> Favorites
@@ -325,11 +325,11 @@ const FashionTryOnPage = () => {
                 {/* Upload Model Image - Only show when Upload tab is active */}
                 {modelSelectionTab === "upload" && (
                   <div>
-                    <label className="text-sm font-medium text-gray-900 mb-3 block">
+                    <label className="text-sm font-medium text-foreground mb-3 block">
                       Upload Model Image <span className="text-red-500">*</span>
                     </label>
                     <div
-                      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-card hover:bg-accent transition-colors cursor-pointer"
                       onDrop={(e) =>
                         handleDrop(e, setModelImage, "model image")
                       }
@@ -383,11 +383,11 @@ const FashionTryOnPage = () => {
 
                 {/* Upload Garment Image */}
                 <div>
-                  <label className="text-sm font-medium text-gray-900 mb-3 block">
+                  <label className="text-sm font-medium text-foreground mb-3 block">
                     Upload Garment Image <span className="text-red-500">*</span>
                   </label>
                   <div
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-card hover:bg-accent transition-colors cursor-pointer"
                     onDrop={(e) =>
                       handleDrop(e, setGarmentImage, "garment image")
                     }
@@ -438,14 +438,14 @@ const FashionTryOnPage = () => {
 
                 {/* Upload Background Image (Optional) */}
                 <div>
-                  <label className="text-sm font-medium text-gray-900 mb-3 block">
+                  <label className="text-sm font-medium text-foreground mb-3 block">
                     Upload Background Img{" "}
-                    <span className="text-gray-400 font-normal">
+                    <span className="text-muted-foreground font-normal">
                       (Optional)
                     </span>
                   </label>
                   <div
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-border rounded-lg p-6 text-center bg-card hover:bg-accent transition-colors cursor-pointer"
                     onDrop={(e) =>
                       handleDrop(e, setBackgroundImage, "background image")
                     }
@@ -473,7 +473,7 @@ const FashionTryOnPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="border-gray-300 text-gray-700 mb-2 text-sm bg-white"
+                          className="mb-2 text-sm"
                         >
                           Choose Background Image
                         </Button>
@@ -514,7 +514,7 @@ const FashionTryOnPage = () => {
                         className={`px-6 py-2 rounded-md text-sm font-medium ${
                           selectedNumImages === num
                             ? "bg-orange-500 hover:bg-orange-600 text-white"
-                            : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                            : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                         }`}
                         onClick={() => setSelectedNumImages(num)}
                       >
@@ -555,15 +555,15 @@ const FashionTryOnPage = () => {
 
           {/* Right Preview Area */}
           <div className="lg:col-span-3">
-            <Card className="h-full bg-white shadow-sm border border-gray-200">
+            <Card className="h-full bg-card shadow-sm border">
               {/* Top Actions */}
-              <div className="flex justify-end items-center p-4 border-b border-gray-200">
+              <div className="flex justify-end items-center p-4 border-b">
                 <div className="flex gap-3">
                   <Button
                     onClick={handleDownload}
                     disabled={!resultImage}
                     variant="outline"
-                    className="border-gray-300 text-gray-700 px-4 py-2 text-sm bg-white hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 text-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span>📥</span> Download
                   </Button>

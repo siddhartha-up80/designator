@@ -10,12 +10,12 @@ interface AuthHeaderProps {
 
 export function AuthHeader({ currentPage }: AuthHeaderProps) {
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4 bg-white/95 backdrop-blur-sm">
+    <header className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-sm">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-2">
         <div className="flex items-center gap-1">
-          <Heart className="h-6 w-6 text-orange-500 fill-orange-500" />
-          <span className="text-xl font-bold text-black">DESIGNATOR</span>
+          <Heart className="h-6 w-6 text-primary fill-primary" />
+          <span className="text-xl font-bold text-foreground">DESIGNATOR</span>
         </div>
       </Link>
 
@@ -26,8 +26,8 @@ export function AuthHeader({ currentPage }: AuthHeaderProps) {
             variant={currentPage === "signup" ? "default" : "ghost"}
             className={
               currentPage === "signup"
-                ? "bg-orange-500 hover:bg-orange-600 text-white"
-                : "text-gray-700 hover:text-black"
+                ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }
           >
             Signup
@@ -38,8 +38,8 @@ export function AuthHeader({ currentPage }: AuthHeaderProps) {
             variant={currentPage === "signin" ? "default" : "ghost"}
             className={
               currentPage === "signin"
-                ? "bg-orange-500 hover:bg-orange-600 text-white"
-                : "text-gray-700 hover:text-black"
+                ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }
           >
             Signin

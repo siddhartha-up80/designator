@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { ImageIcon, Search, Download, Trash2, Loader2, X } from "lucide-react";
 import { showToast } from "@/lib/toast";
+import { useDialog } from "@/components/ui/dialog-provider";
 
 interface GalleryImage {
   id: string;
@@ -22,6 +23,7 @@ interface GalleryImage {
 }
 
 export default function GalleryPage() {
+  const { confirmDelete } = useDialog();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -92,7 +94,8 @@ export default function GalleryPage() {
   };
 
   const handleDelete = async (imageId: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) {
+    const confirmed = await confirmDelete(title);
+    if (!confirmed) {
       return;
     }
 
@@ -141,14 +144,14 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Search and Filter */}
         <Card className="p-6">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search Bar */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 placeholder="Search by title..."
                 value={searchTerm}
@@ -167,7 +170,7 @@ export default function GalleryPage() {
                   }
                   className={`whitespace-nowrap ${
                     selectedCategory === category.value
-                      ? "bg-orange-500 hover:bg-orange-600"
+                      ? "bg-primary hover:bg-primary/90"
                       : ""
                   }`}
                   onClick={() => setSelectedCategory(category.value)}
@@ -181,7 +184,7 @@ export default function GalleryPage() {
 
         {/* Results Count */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             {filteredImages.length}{" "}
             {filteredImages.length === 1 ? "image" : "images"}
           </p>
@@ -190,7 +193,7 @@ export default function GalleryPage() {
         {/* Loading State */}
         {isLoading && (
           <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         )}
 
@@ -204,13 +207,13 @@ export default function GalleryPage() {
               >
                 {/* Image */}
                 <div
-                  className="relative aspect-square overflow-hidden bg-gray-100"
+                  className="relative aspect-square overflow-hidden bg-muted"
                   onClick={() => openImageDialog(item)}
                 >
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-contain bg-gray-100"
+                    className="w-full h-full object-contain bg-muted"
                   />
 
                   {/* Action Buttons Overlay */}
@@ -245,7 +248,7 @@ export default function GalleryPage() {
                   <h3 className="font-semibold text-sm line-clamp-1">
                     {item.title}
                   </h3>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{getTypeLabel(item.type)}</span>
                     <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                   </div>
@@ -258,13 +261,13 @@ export default function GalleryPage() {
         {/* Empty State */}
         {!isLoading && filteredImages.length === 0 && (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
-              <ImageIcon className="h-10 w-10 text-gray-400" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-muted rounded-full mb-4">
+              <ImageIcon className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               No images yet
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-muted-foreground mb-6">
               Start creating amazing images and save them to your gallery
             </p>
             {searchTerm || selectedCategory !== "all" ? (
@@ -293,7 +296,7 @@ export default function GalleryPage() {
                     <DialogTitle className="text-xl font-semibold">
                       {selectedImage.title}
                     </DialogTitle>
-                    <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
                       <span>{getTypeLabel(selectedImage.type)}</span>
                       <span>•</span>
                       <span>
@@ -305,7 +308,7 @@ export default function GalleryPage() {
               </DialogHeader>
 
               {/* Image Container */}
-              <div className="relative bg-gray-100 flex items-center justify-center p-6 max-h-[60vh] overflow-auto">
+              <div className="relative bg-muted flex items-center justify-center p-6 max-h-[60vh] overflow-auto">
                 <img
                   src={selectedImage.imageUrl}
                   alt={selectedImage.title}

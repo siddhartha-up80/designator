@@ -13,6 +13,7 @@ import { CREDIT_COSTS } from "@/lib/credits-service";
 import { useCredits } from "@/contexts/credits-context";
 import { CostPreview } from "@/components/cost-preview";
 import { showToast } from "@/lib/toast";
+import { useDialog } from "@/components/ui/dialog-provider";
 import {
   Wand2,
   Sparkles,
@@ -96,6 +97,7 @@ interface UploadedImage {
 
 export default function PromptToImagePage() {
   const searchParams = useSearchParams();
+  const { confirm } = useDialog();
 
   // Flow state
   const [step, setStep] = useState<Step>("INPUT");
@@ -295,18 +297,29 @@ export default function PromptToImagePage() {
     }
   };
 
-  const resetAll = () => {
-    setTextPrompt("");
-    setNegativePrompt("");
-    setUploadedImages([]);
-    setGeneratedImages([]);
-    setError("");
-    setSelectedStyle("photorealistic");
-    setAspectRatio("1:1");
-    setNumberOfImages([1]);
-    setGuidanceScale([7.5]);
-    setSteps([20]);
-    setStep("INPUT");
+  const resetAll = async () => {
+    const confirmed = await confirm(
+      "Reset All Settings?",
+      "This will clear all your inputs, settings, and generated images. This action cannot be undone."
+    );
+
+    if (confirmed) {
+      setTextPrompt("");
+      setNegativePrompt("");
+      setUploadedImages([]);
+      setGeneratedImages([]);
+      setError("");
+      setSelectedStyle("photorealistic");
+      setAspectRatio("1:1");
+      setNumberOfImages([1]);
+      setGuidanceScale([7.5]);
+      setSteps([20]);
+      setStep("INPUT");
+      showToast.success(
+        "Settings Reset",
+        "All settings have been restored to default"
+      );
+    }
   };
 
   return (
