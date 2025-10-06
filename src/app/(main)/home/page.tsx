@@ -18,8 +18,15 @@ import {
   Wand2,
   MessageSquare,
   FileImage,
+  Activity as ActivityIcon,
+  Clock,
 } from "lucide-react";
 import { LoaderThree } from "@/components/ui/loader";
+import { useCredits } from "@/contexts/credits-context";
+import {
+  useRecentActivities,
+  type Activity,
+} from "@/hooks/use-recent-activities";
 
 const aiTools = [
   {
@@ -119,6 +126,61 @@ const quickAccessItems = [
 
 export default function HomePage() {
   const router = useRouter();
+  const { credits, loading: creditsLoading } = useCredits();
+  const { activities, loading: activitiesLoading } = useRecentActivities(5);
+
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case "Camera":
+        return Camera;
+      case "Wand2":
+        return Wand2;
+      case "Sparkles":
+        return Sparkles;
+      case "Shirt":
+        return Shirt;
+      case "ImageIcon":
+        return ImageIconLucide;
+      case "ActivityIcon":
+        return ActivityIcon;
+      default:
+        return ActivityIcon;
+    }
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60)
+    );
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) return `${diffInDays}d ago`;
+
+    return date.toLocaleDateString();
+  };
+
+  // Show low credit alert if credits are less than 20
+  const showLowCreditAlert = credits !== null && credits < 20;
+
+  // Debug function to create sample data
+  const createSampleData = async () => {
+    try {
+      const response = await fetch("/api/test-data", { method: "POST" });
+      if (response.ok) {
+        window.location.reload(); // Simple way to refresh the data
+      }
+    } catch (error) {
+      console.error("Error creating sample data:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -342,28 +404,93 @@ export default function HomePage() {
               <h2 className="text-2xl font-semibold text-card-foreground">
                 Recent Activity
               </h2>
-              <Button
-                variant="link"
-                className="text-orange-500 font-medium p-0 hover:text-orange-600"
-              >
-                View All
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
+              <div className="flex gap-2">
+                {/* Debug button for testing - remove in production */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={createSampleData}
+                  className="text-xs"
+                >
+                  Add Test Data
+                </Button>
+                <Button
+                  variant="link"
+                  className="text-orange-500 font-medium p-0 hover:text-orange-600"
+                  onClick={() => router.push("/gallery")}
+                >
+                  View All
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
             </div>
 
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mb-6">
-                <div className="bg-muted-foreground rounded-lg p-2">
-                  <File className="h-8 w-8 text-muted" />
-                </div>
+            {activitiesLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <LoaderThree />
               </div>
-              <p className="text-muted-foreground font-medium mb-2 text-lg">
-                No recent activity
-              </p>
-              <p className="text-muted-foreground/70 text-sm">
-                Start creating to see your work here
-              </p>
-            </div>
+            ) : activities.length > 0 ? (
+              <div className="space-y-4">
+                {activities.map((activity) => {
+                  const IconComponent = getIconComponent(activity.icon);
+                  return (
+                    <div
+                      key={activity.id}
+                      className="flex items-center gap-4 p-4 hover:bg-accent hover:text-accent-foreground rounded-2xl transition-colors"
+                    >
+                      <div className="bg-muted rounded-xl p-3 flex-shrink-0">
+                        <IconComponent className="h-5 w-5 text-muted-foreground" />
+                      </div>
+
+                      {activity.imageUrl && (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                          <img
+                            src={activity.imageUrl}
+                            alt={activity.description}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-card-foreground truncate">
+                          {activity.action}
+                        </p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {activity.description}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        {activity.credits && (
+                          <span className="text-xs bg-muted px-2 py-1 rounded-lg">
+                            -{activity.credits} credits
+                          </span>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          <span>{formatTimeAgo(activity.createdAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mb-6">
+                  <div className="bg-muted-foreground rounded-lg p-2">
+                    <File className="h-8 w-8 text-muted" />
+                  </div>
+                </div>
+                <p className="text-muted-foreground font-medium mb-2 text-lg">
+                  No recent activity
+                </p>
+                <p className="text-muted-foreground/70 text-sm">
+                  Start creating to see your work here
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Quick Access */}
@@ -391,29 +518,33 @@ export default function HomePage() {
             </div>
 
             {/* Low Credit Alert */}
-            <div className="mt-8 bg-orange-50 border border-orange-200 rounded-2xl p-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-orange-100 rounded-xl p-2.5">
-                  <Triangle className="h-5 w-5 text-orange-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-orange-800 mb-2 text-lg">
-                    Low Credit Alert
-                  </h3>
-                  <p className="text-sm text-orange-700 mb-4 leading-relaxed">
-                    You have 50 credits remaining. Consider upgrading to
-                    continue creating.
-                  </p>
-                  <Button
-                    className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-6 py-2.5 h-auto rounded-xl font-medium"
-                    onClick={() => router.push("/buy-credits")}
-                  >
-                    Buy Credits
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
+            {showLowCreditAlert && (
+              <div className="mt-8 bg-orange-50 border border-orange-200 rounded-2xl p-6">
+                <div className="flex items-start gap-4">
+                  <div className="bg-orange-100 rounded-xl p-2.5">
+                    <Triangle className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-orange-800 mb-2 text-lg">
+                      Low Credit Alert
+                    </h3>
+                    <p className="text-sm text-orange-700 mb-4 leading-relaxed">
+                      {creditsLoading
+                        ? "Checking your credits..."
+                        : `You have ${credits} credits remaining. Consider upgrading to continue creating.`}
+                    </p>
+                    <Button
+                      className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-6 py-2.5 h-auto rounded-xl font-medium"
+                      onClick={() => router.push("/buy-credits")}
+                      disabled={creditsLoading}
+                    >
+                      Buy Credits
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
