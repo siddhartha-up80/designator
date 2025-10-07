@@ -22,6 +22,7 @@ import {
   Pin,
   PinOff,
   Settings,
+  BarChart3,
 } from "lucide-react";
 import { ProfileDialog } from "@/components/profile-dialog";
 import Image from "next/image";
@@ -38,6 +39,7 @@ const sidebarItems = [
   { icon: FileImage, label: "Img to Prompt", href: "/img-to-prompt" },
   { icon: Camera, label: "Photography", href: "/photography" },
   { icon: Shirt, label: "Fashion Try On", href: "/fashion-try-on" },
+  { icon: BarChart3, label: "Statistics", href: "/statistics" },
   { icon: DollarSign, label: "Credits", href: "/buy-credits" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
@@ -212,17 +214,10 @@ export const Logo = () => {
   return (
     <a
       href="/home"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground cursor-pointer"
+      className="relative z-20 flex items-center space-x-2 py-2 text-sm font-normal text-foreground cursor-pointer"
       title="Designator"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-primary to-secondary" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-foreground"
-      >
-        Designator
-      </motion.span>
+      <img src="/designator.png" alt="Designator" className="max-w-[180px]" />
     </a>
   );
 };
@@ -230,10 +225,10 @@ export const LogoIcon = () => {
   return (
     <a
       href="/home"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-foreground cursor-pointer"
+      className="relative z-20 flex items-center justify-center py-2 text-sm font-normal text-foreground cursor-pointer"
       title="Designator"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-primary to-secondary" />
+      <img src="/dlogo.png" alt="Designator" className="w-fit h-10" />
     </a>
   );
 };

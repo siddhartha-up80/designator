@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { useCredits } from "@/contexts/credits-context";
 import { showToast } from "@/lib/toast";
+import { useStatistics } from "@/hooks/use-statistics";
 import {
   Settings,
   User,
@@ -42,6 +43,85 @@ interface UserPreferences {
 }
 
 const defaultPreferences: UserPreferences = {};
+
+const QuickStats: React.FC = () => {
+  const { statistics, loading, error } = useStatistics();
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between animate-pulse"
+          >
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 bg-muted rounded"></div>
+              <div className="h-4 w-20 bg-muted rounded"></div>
+            </div>
+            <div className="h-4 w-8 bg-muted rounded"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-sm text-muted-foreground mb-2">
+          Failed to load statistics
+        </p>
+        <p className="text-xs text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (!statistics) {
+    return (
+      <div className="text-center text-muted-foreground py-4">
+        No statistics available
+      </div>
+    );
+  }
+
+  const stats = [
+    {
+      label: "Images Generated",
+      value: statistics.overview.totalImages.toString(),
+      icon: FileImage,
+    },
+    {
+      label: "Prompts Created",
+      value: statistics.usage.promptsCreated.toString(),
+      icon: Wand2,
+    },
+    {
+      label: "Photos Enhanced",
+      value: statistics.usage.photosEnhanced.toString(),
+      icon: Sparkles,
+    },
+    {
+      label: "Account Age",
+      value: statistics.overview.accountAge,
+      icon: Calendar,
+    },
+  ];
+
+  return (
+    <div className="space-y-3">
+      {stats.map(({ label, value, icon: Icon }, index) => (
+        <div key={index} className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icon className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">{label}</span>
+          </div>
+          <span className="font-semibold text-sm">{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -306,23 +386,27 @@ export default function SettingsPage() {
           {/* Quick Stats */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Usage Statistics</CardTitle>
+              <CardTitle className="text-lg flex items-center justify-between">
+                Usage Statistics
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/statistics")}
+                >
+                  View Detailed Analytics
+                  <ExternalLink className="h-3 w-3 ml-1" />
+                </Button>
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { label: "Images Generated", value: "127", icon: FileImage },
-                { label: "Prompts Created", value: "45", icon: Wand2 },
-                { label: "Photos Enhanced", value: "32", icon: Sparkles },
-                { label: "Account Age", value: "2 months", icon: Calendar },
-              ].map(({ label, value, icon: Icon }, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{label}</span>
-                  </div>
-                  <span className="font-semibold text-sm">{value}</span>
-                </div>
-              ))}
+            <CardContent>
+              <QuickStats />
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground text-center">
+                  Get comprehensive insights including usage patterns,
+                  efficiency metrics, and personalized recommendations in the
+                  detailed analytics view.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>

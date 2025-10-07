@@ -466,7 +466,7 @@ export default function HomePage() {
                 <Button
                   variant="link"
                   className="text-rose-500 font-medium p-0 hover:text-rose-600"
-                  onClick={() => router.push("/gallery")}
+                  onClick={() => router.push("/statistics")}
                 >
                   View All
                   <ChevronRight className="h-4 w-4 ml-1" />

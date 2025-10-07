@@ -15,6 +15,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Designator - AI Fashion Model Generator",
   description: "Generate stunning model images wearing your product designs",
+  icons: {
+    icon: "/dlogo.png",
+    shortcut: "/dlogo.png",
+    apple: "/dlogo.png",
+  },
 };
 
 export default function RootLayout({
