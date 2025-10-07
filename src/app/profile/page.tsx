@@ -14,7 +14,7 @@ export default function ProfilePage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function ProfilePage() {
                 className="rounded-full"
               />
             ) : (
-              <div className="w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
+              <div className="w-24 h-24 bg-rose-500 rounded-full flex items-center justify-center text-white text-3xl font-bold">
                 {session.user.name?.charAt(0).toUpperCase() || "U"}
               </div>
             )}

@@ -63,7 +63,7 @@ const aiTools = [
     href: "/photography",
     buttonText: "Enhance",
     iconBg: "bg-secondary/10",
-    iconColor: "text-secondary",
+    iconColor: "text-primary",
     previewImage: "/images/product2.png",
   },
   {
@@ -101,7 +101,7 @@ const aiTools = [
     href: "/prompt-to-image",
     buttonText: "Generate",
     iconBg: "bg-secondary/15",
-    iconColor: "text-secondary",
+    iconColor: "text-primary",
     previewImage: "/images/product5.png",
   },
   {
@@ -112,7 +112,7 @@ const aiTools = [
     icon: MessageSquare,
     href: "/img-to-prompt",
     buttonText: "Analyze",
-    iconBg: "bg-cyan-100",
+    iconBg: "bg-primary/10",
     iconColor: "text-primary",
     previewImage: "/images/model7.png",
   },
@@ -214,11 +214,11 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">
-            AI Tools & Workflows
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Choose your preferred workflow to get started
+          <p className="text-2xl mb-2 font-semibold text-foreground">
+            Get Started with our AI Tools
+          </p>
+          <p className="text-base text-muted-foreground">
+            Choose your preferred option to get started
           </p>
         </div>
         {/* AI Tools Grid */}
@@ -226,28 +226,28 @@ export default function HomePage() {
           {aiTools.map((tool, index) => {
             const gradientClasses = [
               "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
-              "bg-gradient-to-br from-secondary/10 via-accent/5 to-primary/10 border border-secondary/20",
-              "bg-gradient-to-br from-accent/10 via-primary/5 to-secondary/10 border border-accent/20",
-              "bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/5 border border-primary/15",
-              "bg-gradient-to-br from-secondary/15 via-primary/10 to-accent/10 border border-secondary/15",
-              "bg-gradient-to-br from-accent/15 via-secondary/10 to-primary/5 border border-accent/15",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
+              "bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 border border-primary/20",
             ];
 
             const outputGradients = [
               "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
-              "bg-gradient-to-br from-secondary/20 via-accent/15 to-primary/20",
-              "bg-gradient-to-br from-accent/20 via-primary/15 to-secondary/20",
-              "bg-gradient-to-br from-primary/25 via-secondary/20 to-accent/15",
-              "bg-gradient-to-br from-secondary/25 via-primary/20 to-accent/20",
-              "bg-gradient-to-br from-accent/25 via-secondary/20 to-primary/15",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
+              "bg-gradient-to-br from-primary/20 via-primary/15 to-secondary/20",
             ];
 
             const buttonColors = [
               "text-primary group-hover:text-primary/80",
-              "text-secondary group-hover:text-secondary/80",
-              "text-accent-foreground group-hover:text-accent-foreground/80",
               "text-primary group-hover:text-primary/80",
-              "text-secondary group-hover:text-secondary/80",
+              "text-primary group-hover:text-primary/80",
+              "text-primary group-hover:text-primary/80",
+              "text-primary group-hover:text-primary/80",
               "text-primary group-hover:text-primary/80",
             ];
 
@@ -278,10 +278,6 @@ export default function HomePage() {
                 <div
                   className={`${outputGradients[index]} rounded-2xl p-6 mb-4 relative`}
                 >
-                  <div className="absolute top-4 right-4 bg-background rounded-xl px-4 py-2 text-sm font-semibold text-foreground shadow-sm border">
-                    Output
-                  </div>
-
                   {/* Dynamic Content Based on Tool Type */}
                   {tool.id === "product-model" && (
                     <>
@@ -293,16 +289,16 @@ export default function HomePage() {
                           <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-10 h-12 bg-pink-400 rounded-t-xl"></div>
                           <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-6 bg-pink-400 rounded-b-xl"></div>
                         </div>
-                        <div className="w-16 h-20 bg-gradient-to-b from-amber-600 to-amber-800 rounded-2xl shadow-lg relative overflow-hidden">
-                          <div className="absolute inset-2 bg-gradient-to-b from-amber-400 to-amber-600 rounded-xl"></div>
+                        <div className="w-16 h-20 bg-gradient-to-b from-rose-600 to-rose-800 rounded-2xl shadow-lg relative overflow-hidden">
+                          <div className="absolute inset-2 bg-gradient-to-b from-rose-400 to-rose-600 rounded-xl"></div>
                           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white/30 rounded-full"></div>
                         </div>
                       </div>
                       <div className="flex justify-center gap-4">
-                        <div className="bg-purple-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Model
                         </div>
-                        <div className="bg-amber-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Product
                         </div>
                       </div>
@@ -322,7 +318,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-blue-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Enhanced
                         </div>
                       </div>
@@ -340,9 +336,9 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="flex justify-center gap-2">
-                        <div className="w-6 h-6 bg-red-400 rounded-lg shadow-sm"></div>
-                        <div className="w-6 h-6 bg-blue-400 rounded-lg shadow-sm"></div>
-                        <div className="w-6 h-6 bg-green-400 rounded-lg shadow-sm"></div>
+                        <div className="w-6 h-6 bg-rose-400 rounded-lg shadow-sm"></div>
+                        <div className="w-6 h-6 bg-pink-400 rounded-lg shadow-sm"></div>
+                        <div className="w-6 h-6 bg-rose-500 rounded-lg shadow-sm"></div>
                       </div>
                     </>
                   )}
@@ -352,14 +348,14 @@ export default function HomePage() {
                       {/* Gallery grid preview */}
                       <div className="flex justify-center mt-8 mb-4">
                         <div className="grid grid-cols-2 gap-2">
-                          <div className="w-8 h-10 bg-gradient-to-b from-purple-400 to-purple-600 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-rose-400 to-rose-600 rounded-lg shadow-sm"></div>
                           <div className="w-8 h-10 bg-gradient-to-b from-pink-400 to-pink-600 rounded-lg shadow-sm"></div>
-                          <div className="w-8 h-10 bg-gradient-to-b from-blue-400 to-blue-600 rounded-lg shadow-sm"></div>
-                          <div className="w-8 h-10 bg-gradient-to-b from-green-400 to-green-600 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-rose-300 to-rose-500 rounded-lg shadow-sm"></div>
+                          <div className="w-8 h-10 bg-gradient-to-b from-pink-300 to-pink-500 rounded-lg shadow-sm"></div>
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-indigo-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Gallery
                         </div>
                       </div>
@@ -375,13 +371,13 @@ export default function HomePage() {
                             ABC
                           </div>
                         </div>
-                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                           <ChevronRight className="h-2 w-2 text-primary-foreground" />
                         </div>
-                        <div className="w-12 h-8 bg-gradient-to-b from-green-400 to-green-600 rounded-lg"></div>
+                        <div className="w-12 h-8 bg-gradient-to-b from-rose-400 to-rose-600 rounded-lg"></div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-green-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Generated
                         </div>
                       </div>
@@ -392,8 +388,8 @@ export default function HomePage() {
                     <>
                       {/* Image to text concept */}
                       <div className="flex justify-center items-center gap-3 mt-8 mb-4">
-                        <div className="w-12 h-8 bg-gradient-to-b from-cyan-400 to-cyan-600 rounded-lg"></div>
-                        <div className="w-4 h-4 bg-cyan-500 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-8 bg-gradient-to-b from-rose-400 to-rose-600 rounded-lg"></div>
+                        <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                           <ChevronRight className="h-2 w-2 text-primary-foreground" />
                         </div>
                         <div className="w-12 h-8 bg-muted rounded-lg flex items-center justify-center">
@@ -403,7 +399,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div className="flex justify-center">
-                        <div className="bg-cyan-500 text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
+                        <div className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded-xl font-semibold shadow-sm">
                           Description
                         </div>
                       </div>
@@ -469,7 +465,7 @@ export default function HomePage() {
                 )}
                 <Button
                   variant="link"
-                  className="text-orange-500 font-medium p-0 hover:text-orange-600"
+                  className="text-rose-500 font-medium p-0 hover:text-rose-600"
                   onClick={() => router.push("/gallery")}
                 >
                   View All
@@ -516,7 +512,7 @@ export default function HomePage() {
 
                       <div className="flex items-center gap-3 text-sm text-muted-foreground">
                         {activity.credits && (
-                          <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-lg font-medium">
+                          <span className="text-xs bg-rose-500 text-white px-2 py-1 rounded-lg font-medium">
                             -{activity.credits} credits
                           </span>
                         )}
@@ -572,22 +568,22 @@ export default function HomePage() {
 
             {/* Low Credit Alert */}
             {showLowCreditAlert && (
-              <div className="mt-8 bg-orange-500 border border-orange-600 rounded-2xl p-6">
+              <div className="mt-8 bg-rose-500 border border-rose-600 rounded-2xl p-6">
                 <div className="flex items-start gap-4">
-                  <div className="bg-orange-400 rounded-xl p-2.5">
+                  <div className="bg-rose-400 rounded-xl p-2.5">
                     <Triangle className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-white mb-2 text-lg">
                       Low Credit Alert
                     </h3>
-                    <p className="text-sm text-orange-100 mb-4 leading-relaxed">
+                    <p className="text-sm text-rose-100 mb-4 leading-relaxed">
                       {creditsLoading
                         ? "Checking your credits..."
                         : `You have ${credits} credits remaining. Consider upgrading to continue creating.`}
                     </p>
                     <Button
-                      className="bg-white hover:bg-orange-50 text-orange-600 hover:text-orange-700 text-sm px-6 py-2.5 h-auto rounded-xl font-medium border border-orange-200"
+                      className="bg-white hover:bg-rose-50 text-rose-600 hover:text-rose-700 text-sm px-6 py-2.5 h-auto rounded-xl font-medium border border-rose-200"
                       onClick={() => router.push("/buy-credits")}
                       disabled={creditsLoading}
                     >

@@ -55,7 +55,7 @@ export default function LandingPage() {
         <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-4 leading-tight">
           Instant Product Shoots
         </h1>
-        <h2 className="text-5xl md:text-7xl font-bold text-orange-500 mb-4 leading-tight">
+        <h2 className="text-5xl md:text-7xl font-bold text-rose-500 mb-4 leading-tight">
           Photos, Videos, And Ads
         </h2>
         <h3 className="text-5xl md:text-7xl font-bold text-foreground mb-8 leading-tight">

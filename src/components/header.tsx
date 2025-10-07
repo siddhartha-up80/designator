@@ -24,16 +24,6 @@ export function Header() {
           Help
         </Button>
 
-        {/* Tutorial */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="gap-2 text-muted-foreground hover:text-foreground"
-        >
-          <BookOpen className="h-4 w-4" />
-          Tutorial
-        </Button>
-
         {/* Credits */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Credits</span>

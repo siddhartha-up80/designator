@@ -141,14 +141,14 @@ const SignUpPage = () => {
       <AuthHeader currentPage="signup" />
 
       {/* Left side - Carousel */}
-      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-yellow-50">
+      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-rose-100 via-rose-50 to-pink-50">
         {/* Carousel container */}
         <div className="relative w-full h-full">
           {/* Main carousel image */}
           <div className="w-full h-full flex items-center justify-center">
             {loading ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
               </div>
             ) : carouselImages.length > 0 ? (
               <img
@@ -169,17 +169,17 @@ const SignUpPage = () => {
               <button
                 onClick={prevSlide}
                 aria-label="Previous image"
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronLeft className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronLeft className="w-5 h-5 text-foreground group-hover:text-rose-500 transition-colors duration-300" />
               </button>
 
               <button
                 onClick={nextSlide}
                 aria-label="Next image"
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-orange-400 hover:bg-orange-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer"
               >
-                <ChevronRight className="w-5 h-5 text-foreground group-hover:text-orange-500 transition-colors duration-300" />
+                <ChevronRight className="w-5 h-5 text-foreground group-hover:text-rose-500 transition-colors duration-300" />
               </button>
             </>
           )}
@@ -195,7 +195,7 @@ const SignUpPage = () => {
                     aria-label={`Go to slide ${index + 1}`}
                     className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       currentSlide === index
-                        ? "bg-orange-500 scale-110"
+                        ? "bg-rose-500 scale-110"
                         : "bg-background/60 hover:bg-background/80"
                     }`}
                   />
@@ -224,7 +224,7 @@ const SignUpPage = () => {
         <div className="w-full max-w-md my-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-orange-500 mb-2">Sign Up</h1>
+            <h1 className="text-3xl font-bold text-rose-500 mb-2">Sign Up</h1>
             <p className="text-gray-600 text-sm">
               Create your Designator account
             </p>
@@ -246,7 +246,7 @@ const SignUpPage = () => {
                 placeholder="Enter your name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
                 required
               />
             </div>
@@ -265,7 +265,7 @@ const SignUpPage = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
                 required
               />
             </div>
@@ -284,14 +284,14 @@ const SignUpPage = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all duration-200"
                 required
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
+              className="w-full py-3 px-4 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
             >
               Sign Up
             </Button>
@@ -341,7 +341,7 @@ const SignUpPage = () => {
             </span>
             <a
               href="/signin"
-              className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+              className="text-sm text-rose-500 hover:text-rose-600 font-medium"
             >
               Sign in
             </a>

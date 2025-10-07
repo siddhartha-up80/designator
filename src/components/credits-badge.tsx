@@ -33,7 +33,7 @@ export function CreditsBadge({
     <Badge
       variant="secondary"
       className={cn(
-        "gap-1.5 font-medium bg-orange-500 text-white border-orange-600 hover:bg-orange-600",
+        "gap-1.5 font-medium bg-rose-500 text-white border-rose-600 hover:bg-rose-600",
         sizeClasses[size],
         className
       )}

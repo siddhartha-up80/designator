@@ -191,7 +191,7 @@ export function Sidebar({ className }: SidebarProps) {
                   label: "User",
                   href: "/signin",
                   icon: (
-                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+                    <div className="h-7 w-7 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center">
                       <User className="h-4 w-4 text-white" />
                     </div>
                   ),

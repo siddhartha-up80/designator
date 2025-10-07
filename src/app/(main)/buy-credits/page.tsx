@@ -239,11 +239,11 @@ export default function BuyCreditsPage() {
 
       {/* Test Mode Banner (only show in development) */}
       {process.env.NODE_ENV === "development" && (
-        <div className="mt-8 bg-orange-500 border border-orange-600 rounded-lg p-4 max-w-4xl mx-auto">
+        <div className="mt-8 bg-primary border border-primary rounded-lg p-4 max-w-4xl mx-auto">
           <h3 className="font-semibold text-white mb-2">🧪 Test Mode Active</h3>
-          <p className="text-sm text-orange-100">
+          <p className="text-sm text-primary-foreground">
             Use test card:{" "}
-            <code className="bg-white text-orange-600 px-2 py-1 rounded font-medium">
+            <code className="bg-white text-primary px-2 py-1 rounded font-medium">
               4111 1111 1111 1111
             </code>{" "}
             or any UPI ID for testing

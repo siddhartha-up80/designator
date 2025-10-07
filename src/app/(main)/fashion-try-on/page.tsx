@@ -269,7 +269,7 @@ const FashionTryOnPage = () => {
                           className="text-primary border-primary/20 hover:bg-primary/10 text-xs"
                         >
                           {isRefreshing ? (
-                            <div className="animate-spin w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full mr-1"></div>
+                            <div className="animate-spin w-3 h-3 border-2 border-primary border-t-transparent rounded-full mr-1"></div>
                           ) : (
                             <span className="mr-1">�</span>
                           )}
@@ -303,7 +303,7 @@ const FashionTryOnPage = () => {
                           size="sm"
                           className={`text-sm ${
                             availableModelsTab === "favorites"
-                              ? "bg-orange-500 hover:bg-orange-600 text-white"
+                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                               : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                           }`}
                         >
@@ -353,12 +353,10 @@ const FashionTryOnPage = () => {
                         </div>
                       ) : (
                         <>
-                          <div className="text-orange-500 text-3xl mb-3">
-                            📷
-                          </div>
+                          <div className="text-primary text-3xl mb-3">📷</div>
                           <Button
                             type="button"
-                            className="bg-orange-500 hover:bg-orange-600 text-white mb-2 text-sm"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground mb-2 text-sm"
                           >
                             Choose Model Image
                           </Button>
@@ -411,10 +409,10 @@ const FashionTryOnPage = () => {
                       </div>
                     ) : (
                       <>
-                        <div className="text-orange-500 text-3xl mb-3">👗</div>
+                        <div className="text-primary text-3xl mb-3">👗</div>
                         <Button
                           type="button"
-                          className="bg-orange-500 hover:bg-orange-600 text-white mb-2 text-sm"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground mb-2 text-sm"
                         >
                           Choose Garment Image
                         </Button>
@@ -513,7 +511,7 @@ const FashionTryOnPage = () => {
                         }
                         className={`px-6 py-2 rounded-md text-sm font-medium ${
                           selectedNumImages === num
-                            ? "bg-orange-500 hover:bg-orange-600 text-white"
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                             : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                         }`}
                         onClick={() => setSelectedNumImages(num)}
@@ -528,7 +526,7 @@ const FashionTryOnPage = () => {
                 <Button
                   onClick={handleTryOn}
                   disabled={isLoading || !modelImage?.url || !garmentImage?.url}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>
@@ -572,10 +570,10 @@ const FashionTryOnPage = () => {
 
               {/* Main Preview Area */}
               <div className="p-6 h-full flex flex-col">
-                <div className="flex-1 min-h-[400px] bg-gradient-to-br from-pink-50 to-orange-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
+                <div className="flex-1 min-h-[400px] bg-gradient-to-br from-pink-50 to-rose-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
                   {isLoading ? (
                     <div className="text-center">
-                      <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                      <div className="animate-spin w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full mx-auto mb-4"></div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
                         Processing Your Try-On
                       </h3>
@@ -601,7 +599,7 @@ const FashionTryOnPage = () => {
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="text-orange-400 text-6xl mb-4">📷</div>
+                      <div className="text-primary text-6xl mb-4">📷</div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
                         Start Your Try-On
                       </h3>

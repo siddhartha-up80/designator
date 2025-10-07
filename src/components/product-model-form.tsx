@@ -377,7 +377,7 @@ export function ProductModelForm({
                         onClick={() => setMode("fully-automatic")}
                         className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
                           mode === "fully-automatic"
-                            ? "bg-orange-500 hover:bg-orange-600 text-white"
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                             : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                         }`}
                       >
@@ -387,7 +387,7 @@ export function ProductModelForm({
                         onClick={() => setMode("semi-automatic")}
                         className={`px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 ${
                           mode === "semi-automatic"
-                            ? "bg-orange-500 hover:bg-orange-600 text-white"
+                            ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                             : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                         }`}
                       >
@@ -412,7 +412,7 @@ export function ProductModelForm({
                           }
                           className={`px-6 py-2 rounded-md text-sm font-medium ${
                             numberOfOutputs === num
-                              ? "bg-orange-500 hover:bg-orange-600 text-white"
+                              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
                               : "border text-muted-foreground bg-background hover:bg-accent hover:text-accent-foreground"
                           }`}
                           onClick={() => setNumberOfOutputs(num)}
@@ -429,7 +429,7 @@ export function ProductModelForm({
                   <Button
                     onClick={handleGenerateModels}
                     disabled={isGeneratingPrompt}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isGeneratingPrompt ? (
                       <>
@@ -480,7 +480,7 @@ export function ProductModelForm({
                   {isGeneratingPrompt ? (
                     <div className="flex items-center justify-center p-8 border-2 border-dashed border-gray-300 rounded-lg">
                       <div className="text-center">
-                        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
                         <p className="text-sm text-gray-600">
                           Generating enhanced prompt...
                         </p>
@@ -506,7 +506,7 @@ export function ProductModelForm({
                     <Button
                       onClick={() => handleImageGeneration()}
                       disabled={isGeneratingImages}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isGeneratingImages ? (
                         <>
@@ -524,7 +524,7 @@ export function ProductModelForm({
                 {mode === "fully-automatic" &&
                   enhancedPrompt &&
                   !isGeneratingImages && (
-                    <div className="text-center p-4 bg-orange-500 rounded-lg border border-orange-600">
+                    <div className="text-center p-4 bg-primary rounded-lg border border-primary">
                       <p className="text-sm text-white">
                         Auto-proceeding to image generation...
                       </p>
@@ -538,7 +538,7 @@ export function ProductModelForm({
           <div className="lg:col-span-3">
             <Card className="h-[70vh] bg-card shadow-sm border">
               <div className="p-6 h-full flex flex-col">
-                <div className="flex-1 bg-gradient-to-br from-orange-50 to-pink-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
+                <div className="flex-1 bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
                   {uploadedImageUrl ? (
                     <div className="w-full h-full flex flex-col">
                       {/* Uploaded Image */}
@@ -567,7 +567,7 @@ export function ProductModelForm({
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="text-orange-400 text-6xl mb-4">📝</div>
+                      <div className="text-primary text-6xl mb-4">📝</div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
                         Prompt Enhancement
                       </h3>
@@ -622,7 +622,7 @@ export function ProductModelForm({
                     <Button
                       onClick={handleUpdateImages}
                       disabled={isUpdatingImages || !imageUpdatePrompt.trim()}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isUpdatingImages ? (
                         <>
@@ -666,10 +666,10 @@ export function ProductModelForm({
 
               {/* Main Preview Area */}
               <div className="p-6 h-full flex flex-col">
-                <div className="flex-1 min-h-[400px] bg-gradient-to-br from-orange-50 to-pink-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
+                <div className="flex-1 min-h-[400px] bg-gradient-to-br from-rose-50 to-pink-50 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden">
                   {isGeneratingImages ? (
                     <div className="text-center">
-                      <div className="animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                      <div className="animate-spin w-12 h-12 border-4 border-rose-500 border-t-transparent rounded-full mx-auto mb-4"></div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
                         Generating Your Model Images
                       </h3>
@@ -730,7 +730,7 @@ export function ProductModelForm({
                               handleDownloadImage(imageUrl, index);
                             });
                           }}
-                          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
                         >
                           <Download className="h-4 w-4" />
                           Download All ({generatedImages.length})
@@ -739,7 +739,7 @@ export function ProductModelForm({
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="text-orange-400 text-6xl mb-4">🎨</div>
+                      <div className="text-primary text-6xl mb-4">🎨</div>
                       <h3 className="text-xl font-semibold text-gray-800 mb-2">
                         Image Generation
                       </h3>
@@ -783,7 +783,7 @@ export function ProductModelForm({
                           handleDownloadImage(imageUrl, index);
                         });
                       }}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg text-base font-semibold flex items-center justify-center gap-2"
                     >
                       <span>📥</span> Download All Images
                     </Button>
@@ -866,7 +866,7 @@ export function ProductModelForm({
                               handleDownloadImage(imageUrl, index);
                             });
                           }}
-                          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
                         >
                           <Download className="h-4 w-4" />
                           Download All ({generatedImages.length})
