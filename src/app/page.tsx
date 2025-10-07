@@ -74,7 +74,9 @@ export default function LandingPage() {
             asChild
             className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 text-lg"
           >
-            <Link href="/home">Get Started For Free →</Link>
+            <Link href="/home" className="cursor-pointer">
+              Get Started For Free →
+            </Link>
           </Button>
           <Button variant="outline" className="px-8 py-3 text-lg">
             <UserIcon className="h-5 w-5 mr-2" />
@@ -117,6 +119,18 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Documentation Link */}
+        <div className="mt-16 pt-8 border-t text-center">
+          <p className="text-muted-foreground mb-4">
+            New to Designator? Learn how to make the most of our AI tools
+          </p>
+          <Button variant="outline" asChild>
+            <Link href="/documentation" className="cursor-pointer">
+              📚 View Documentation
+            </Link>
+          </Button>
         </div>
       </section>
     </div>

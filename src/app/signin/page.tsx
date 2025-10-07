@@ -270,7 +270,7 @@ const SignInPage = () => {
             <div className="text-right">
               <a
                 href="/forgot-password"
-                className="text-sm text-rose-500 hover:text-rose-600"
+                className="text-sm text-rose-500 hover:text-rose-600 cursor-pointer"
               >
                 Forgot password?
               </a>
@@ -328,7 +328,7 @@ const SignInPage = () => {
             </span>
             <a
               href="/signup"
-              className="text-sm text-rose-500 hover:text-rose-600 font-medium"
+              className="text-sm text-rose-500 hover:text-rose-600 font-medium cursor-pointer"
             >
               Sign up
             </a>

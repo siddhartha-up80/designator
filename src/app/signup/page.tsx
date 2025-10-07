@@ -341,7 +341,7 @@ const SignUpPage = () => {
             </span>
             <a
               href="/signin"
-              className="text-sm text-rose-500 hover:text-rose-600 font-medium"
+              className="text-sm text-rose-500 hover:text-rose-600 font-medium cursor-pointer"
             >
               Sign in
             </a>

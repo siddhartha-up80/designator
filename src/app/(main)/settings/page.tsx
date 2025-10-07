@@ -243,11 +243,6 @@ export default function SettingsPage() {
                 Contact Support
                 <ExternalLink className="h-3 w-3 ml-auto" />
               </Button>
-              <Button variant="outline" className="grow justify-start">
-                <Globe className="h-4 w-4 mr-2" />
-                Community
-                <ExternalLink className="h-3 w-3 ml-auto" />
-              </Button>
             </CardContent>
           </Card>
         </div>

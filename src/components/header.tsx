@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CreditsBadge } from "@/components/credits-badge";
-import { HelpCircle, BookOpen, TrendingUp } from "lucide-react";
+import { HelpCircle, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCredits } from "@/contexts/credits-context";
 
@@ -19,6 +19,7 @@ export function Header() {
           variant="ghost"
           size="sm"
           className="gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => router.push("/documentation")}
         >
           <HelpCircle className="h-4 w-4" />
           Help

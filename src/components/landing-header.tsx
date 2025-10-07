@@ -8,7 +8,7 @@ export function LandingHeader() {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-background">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2 cursor-pointer">
         <div className="flex items-center gap-1">
           <Heart className="h-6 w-6 text-primary fill-primary" />
           <span className="text-xl font-bold text-foreground">
@@ -21,13 +21,13 @@ export function LandingHeader() {
       <nav className="hidden md:flex items-center gap-8">
         <Link
           href="/gallery"
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           Gallery
         </Link>
         <Link
           href="/buy-credits"
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           Credits
         </Link>
@@ -53,7 +53,7 @@ export function LandingHeader() {
 
       {/* Right Side Actions */}
       <div className="flex items-center gap-4">
-        <Link href="/signin">
+        <Link href="/signin" className="cursor-pointer">
           <Button
             variant="ghost"
             className="text-muted-foreground hover:text-foreground"
@@ -61,7 +61,7 @@ export function LandingHeader() {
             Sign In
           </Button>
         </Link>
-        <Link href="/signup">
+        <Link href="/signup" className="cursor-pointer">
           <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
             Sign Up
           </Button>
