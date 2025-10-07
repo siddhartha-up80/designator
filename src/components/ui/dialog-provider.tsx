@@ -140,7 +140,7 @@ export function DialogProvider({ children }: DialogProviderProps) {
       case "error":
         return <XCircle className="h-6 w-6 text-red-600" />;
       case "warning":
-        return <AlertTriangle className="h-6 w-6 text-yellow-600" />;
+        return <AlertTriangle className="h-6 w-6 text-orange-600" />;
       case "confirm":
         return config.variant === "destructive" ? (
           <Trash2 className="h-6 w-6 text-red-600" />

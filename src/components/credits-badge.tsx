@@ -33,12 +33,12 @@ export function CreditsBadge({
     <Badge
       variant="secondary"
       className={cn(
-        "gap-1.5 font-medium bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100",
+        "gap-1.5 font-medium bg-orange-500 text-white border-orange-600 hover:bg-orange-600",
         sizeClasses[size],
         className
       )}
     >
-      <Coins size={iconSizes[size]} className="text-amber-600" />
+      <Coins size={iconSizes[size]} className="text-white" />
       <span>
         {showLabel && "Credits: "}
         {credits === -1 ? "∞" : credits.toLocaleString()}
@@ -79,7 +79,7 @@ export function FeatureCreditCost({
         className
       )}
     >
-      <Coins size={iconSizes[size]} className="text-amber-600" />
+      <Coins size={iconSizes[size]} className="text-primary" />
       <span>{cost}</span>
     </Badge>
   );

@@ -524,8 +524,8 @@ export function ProductModelForm({
                 {mode === "fully-automatic" &&
                   enhancedPrompt &&
                   !isGeneratingImages && (
-                    <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
-                      <p className="text-sm text-orange-700">
+                    <div className="text-center p-4 bg-orange-500 rounded-lg border border-orange-600">
+                      <p className="text-sm text-white">
                         Auto-proceeding to image generation...
                       </p>
                     </div>

@@ -27,6 +27,18 @@ import {
   useRecentActivities,
   type Activity,
 } from "@/hooks/use-recent-activities";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { showToast } from "@/lib/toast";
 
 const aiTools = [
   {
@@ -63,7 +75,7 @@ const aiTools = [
     href: "/fashion-try-on",
     buttonText: "Try On",
     iconBg: "bg-accent/10",
-    iconColor: "text-accent-foreground",
+    iconColor: "text-primary",
     previewImage: "/images/model1.png",
     modelImages: ["/images/model1_2.png", "/images/model1_3.png"],
   },
@@ -101,7 +113,7 @@ const aiTools = [
     href: "/img-to-prompt",
     buttonText: "Analyze",
     iconBg: "bg-cyan-100",
-    iconColor: "text-cyan-500",
+    iconColor: "text-primary",
     previewImage: "/images/model7.png",
   },
 ];
@@ -127,7 +139,11 @@ const quickAccessItems = [
 export default function HomePage() {
   const router = useRouter();
   const { credits, loading: creditsLoading } = useCredits();
-  const { activities, loading: activitiesLoading } = useRecentActivities(5);
+  const {
+    activities,
+    loading: activitiesLoading,
+    refreshActivities,
+  } = useRecentActivities(5);
 
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
@@ -143,6 +159,7 @@ export default function HomePage() {
         return ImageIconLucide;
       case "ActivityIcon":
         return ActivityIcon;
+
       default:
         return ActivityIcon;
     }
@@ -170,15 +187,25 @@ export default function HomePage() {
   // Show low credit alert if credits are less than 20
   const showLowCreditAlert = credits !== null && credits < 20;
 
-  // Debug function to create sample data
-  const createSampleData = async () => {
+  // Function to clear recent activities
+  const clearRecentActivities = async () => {
     try {
-      const response = await fetch("/api/test-data", { method: "POST" });
+      const response = await fetch("/api/recent-activities/clear", {
+        method: "DELETE",
+      });
       if (response.ok) {
-        window.location.reload(); // Simple way to refresh the data
+        const data = await response.json();
+        await refreshActivities(); // Refresh the activities list
+        showToast.success(
+          "Recent activities cleared",
+          `Deleted ${data.deleted.transactions} activities and ${data.deleted.images} images`
+        );
+      } else {
+        throw new Error("Failed to clear activities");
       }
     } catch (error) {
-      console.error("Error creating sample data:", error);
+      console.error("Error clearing recent activities:", error);
+      showToast.error("Failed to clear activities", "Please try again later");
     }
   };
 
@@ -221,7 +248,7 @@ export default function HomePage() {
               "text-accent-foreground group-hover:text-accent-foreground/80",
               "text-primary group-hover:text-primary/80",
               "text-secondary group-hover:text-secondary/80",
-              "text-accent-foreground group-hover:text-accent-foreground/80",
+              "text-primary group-hover:text-primary/80",
             ];
 
             const IconComponent = tool.icon;
@@ -405,15 +432,41 @@ export default function HomePage() {
                 Recent Activity
               </h2>
               <div className="flex gap-2">
-                {/* Debug button for testing - remove in production */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={createSampleData}
-                  className="text-xs"
-                >
-                  Add Test Data
-                </Button>
+                {activities.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs text-muted-foreground hover:text-red-600 border-muted hover:border-red-200"
+                      >
+                        Clear All
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Clear Recent Activities
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete all your recent
+                          activities, including credit transactions and
+                          generated images from your gallery. This action cannot
+                          be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={clearRecentActivities}
+                          className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                          Clear All Activities
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
                 <Button
                   variant="link"
                   className="text-orange-500 font-medium p-0 hover:text-orange-600"
@@ -463,7 +516,7 @@ export default function HomePage() {
 
                       <div className="flex items-center gap-3 text-sm text-muted-foreground">
                         {activity.credits && (
-                          <span className="text-xs bg-muted px-2 py-1 rounded-lg">
+                          <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-lg font-medium">
                             -{activity.credits} credits
                           </span>
                         )}
@@ -519,22 +572,22 @@ export default function HomePage() {
 
             {/* Low Credit Alert */}
             {showLowCreditAlert && (
-              <div className="mt-8 bg-orange-50 border border-orange-200 rounded-2xl p-6">
+              <div className="mt-8 bg-orange-500 border border-orange-600 rounded-2xl p-6">
                 <div className="flex items-start gap-4">
-                  <div className="bg-orange-100 rounded-xl p-2.5">
-                    <Triangle className="h-5 w-5 text-orange-600" />
+                  <div className="bg-orange-400 rounded-xl p-2.5">
+                    <Triangle className="h-5 w-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-orange-800 mb-2 text-lg">
+                    <h3 className="font-semibold text-white mb-2 text-lg">
                       Low Credit Alert
                     </h3>
-                    <p className="text-sm text-orange-700 mb-4 leading-relaxed">
+                    <p className="text-sm text-orange-100 mb-4 leading-relaxed">
                       {creditsLoading
                         ? "Checking your credits..."
                         : `You have ${credits} credits remaining. Consider upgrading to continue creating.`}
                     </p>
                     <Button
-                      className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-6 py-2.5 h-auto rounded-xl font-medium"
+                      className="bg-white hover:bg-orange-50 text-orange-600 hover:text-orange-700 text-sm px-6 py-2.5 h-auto rounded-xl font-medium border border-orange-200"
                       onClick={() => router.push("/buy-credits")}
                       disabled={creditsLoading}
                     >

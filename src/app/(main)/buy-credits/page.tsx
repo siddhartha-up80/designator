@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react";
 import { CREDIT_PACKAGES, type CreditPackage } from "@/lib/credit-packages";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { showToast } from "@/lib/toast";
 import { useCredits } from "@/contexts/credits-context";
@@ -48,10 +55,7 @@ export default function BuyCreditsPage() {
       // Load Cashfree script
       const cashfreeLoaded = await loadCashfree();
       if (!cashfreeLoaded) {
-        showToast.error(
-          "Failed to load payment gateway",
-          "Please try again."
-        );
+        showToast.error("Failed to load payment gateway", "Please try again.");
         setLoading(false);
         setSelectedPackage(null);
         return;
@@ -83,7 +87,7 @@ export default function BuyCreditsPage() {
 
       // Open Cashfree checkout
       cashfree.checkout(checkoutOptions);
-      
+
       // Reset loading state after checkout opens
       setTimeout(() => {
         setLoading(false);
@@ -91,10 +95,7 @@ export default function BuyCreditsPage() {
       }, 1000);
     } catch (error) {
       console.error("Error initiating payment:", error);
-      showToast.error(
-        "Failed to initiate payment",
-        "Please try again."
-      );
+      showToast.error("Failed to initiate payment", "Please try again.");
       setLoading(false);
       setSelectedPackage(null);
     }
@@ -106,7 +107,8 @@ export default function BuyCreditsPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4">Buy Credits</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Purchase credits to unlock powerful AI features. All packages include bonus credits!
+          Purchase credits to unlock powerful AI features. All packages include
+          bonus credits!
         </p>
       </div>
 
@@ -199,15 +201,27 @@ export default function BuyCreditsPage() {
         <h2 className="text-xl font-semibold mb-4">💳 Payment Information</h2>
         <div className="grid md:grid-cols-2 gap-4 text-sm text-muted-foreground">
           <div>
-            <h3 className="font-medium text-foreground mb-2">✅ Secure Payment</h3>
-            <p>All payments are processed securely through Cashfree. We never store your card details.</p>
+            <h3 className="font-medium text-foreground mb-2">
+              ✅ Secure Payment
+            </h3>
+            <p>
+              All payments are processed securely through Cashfree. We never
+              store your card details.
+            </p>
           </div>
           <div>
-            <h3 className="font-medium text-foreground mb-2">🎁 Bonus Credits</h3>
-            <p>Get up to 20% bonus credits on larger packages. The more you buy, the more you save!</p>
+            <h3 className="font-medium text-foreground mb-2">
+              🎁 Bonus Credits
+            </h3>
+            <p>
+              Get up to 20% bonus credits on larger packages. The more you buy,
+              the more you save!
+            </p>
           </div>
           <div>
-            <h3 className="font-medium text-foreground mb-2">💰 Credit Costs</h3>
+            <h3 className="font-medium text-foreground mb-2">
+              💰 Credit Costs
+            </h3>
             <ul className="space-y-1 mt-2">
               <li>• Photo Generation: 25 credits</li>
               <li>• Text Prompt: 10 credits</li>
@@ -215,7 +229,9 @@ export default function BuyCreditsPage() {
             </ul>
           </div>
           <div>
-            <h3 className="font-medium text-foreground mb-2">📱 Payment Methods</h3>
+            <h3 className="font-medium text-foreground mb-2">
+              📱 Payment Methods
+            </h3>
             <p>UPI, Credit/Debit Cards, Net Banking, Wallets, and more!</p>
           </div>
         </div>
@@ -223,12 +239,14 @@ export default function BuyCreditsPage() {
 
       {/* Test Mode Banner (only show in development) */}
       {process.env.NODE_ENV === "development" && (
-        <div className="mt-8 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 max-w-4xl mx-auto">
-          <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-            🧪 Test Mode Active
-          </h3>
-          <p className="text-sm text-yellow-700 dark:text-yellow-300">
-            Use test card: <code className="bg-yellow-100 dark:bg-yellow-900/50 px-2 py-1 rounded">4111 1111 1111 1111</code> or any UPI ID for testing
+        <div className="mt-8 bg-orange-500 border border-orange-600 rounded-lg p-4 max-w-4xl mx-auto">
+          <h3 className="font-semibold text-white mb-2">🧪 Test Mode Active</h3>
+          <p className="text-sm text-orange-100">
+            Use test card:{" "}
+            <code className="bg-white text-orange-600 px-2 py-1 rounded font-medium">
+              4111 1111 1111 1111
+            </code>{" "}
+            or any UPI ID for testing
           </p>
         </div>
       )}

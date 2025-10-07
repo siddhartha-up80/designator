@@ -44,14 +44,16 @@ export function Header() {
           )}
         </div>
 
-        {/* Upgrade Button */}
-        <Button
-          onClick={() => router.push("/buy-credits")}
-          className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground gap-2"
-        >
-          <TrendingUp className="h-4 w-4" />
-          Upgrade
-        </Button>
+        {/* Upgrade Button (show only if credits <= 100) */}
+        {!loading && (credits ?? 0) <= 100 && (
+          <Button
+            onClick={() => router.push("/buy-credits")}
+            className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground gap-2"
+          >
+            <TrendingUp className="h-4 w-4" />
+            Upgrade
+          </Button>
+        )}
       </div>
     </header>
   );
