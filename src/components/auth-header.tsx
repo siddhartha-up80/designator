@@ -9,9 +9,12 @@ interface AuthHeaderProps {
 
 export function AuthHeader({ currentPage }: AuthHeaderProps) {
   return (
-    <header className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4 bg-background/95 backdrop-blur-sm">
+    <header className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-6 py-4">
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 cursor-pointer">
+      <Link
+        href="/"
+        className="flex items-center gap-2 cursor-pointer bg-white dark:bg-rose-950 rounded-md px-1 py-0.5"
+      >
         <img
           src="/designator.png"
           alt="Designator - AI Fashion Model Generator"
