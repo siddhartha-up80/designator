@@ -31,7 +31,7 @@ interface SidebarProps {
   className?: string;
 }
 
-const sidebarItems = [
+export const sidebarItems = [
   { icon: Home, label: "Home", href: "/home" },
   { icon: ImageIcon, label: "Gallery", href: "/gallery" },
   { icon: Sparkles, label: "Product Model", href: "/product-model" },
