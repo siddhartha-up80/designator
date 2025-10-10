@@ -1,0 +1,22 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /signin
+Disallow: /signup
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Host
+Host: https://designator.siddharthasingh.co.in
+
+# Sitemaps
+Sitemap: https://designator.siddharthasingh.co.in/sitemap.xml
+Sitemap: https://designator.siddharthasingh.co.in/server-sitemap-index.xml
