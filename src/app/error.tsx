@@ -24,7 +24,7 @@ export default function Error({
           <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
             <AlertTriangle className="h-8 w-8 text-red-600" />
           </div>
-          
+
           <h1 className="text-6xl font-bold text-red-500 mb-4">500</h1>
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
             Something went wrong
@@ -32,7 +32,7 @@ export default function Error({
           <p className="text-gray-600 dark:text-gray-300 mb-8">
             An unexpected error occurred. We're working to fix this issue.
           </p>
-          
+
           {error.digest && (
             <p className="text-xs text-gray-400 mb-4 font-mono bg-gray-100 dark:bg-gray-800 p-2 rounded">
               Error ID: {error.digest}
@@ -45,7 +45,7 @@ export default function Error({
             <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          
+
           <Button variant="outline" asChild className="w-full">
             <Link href="/home">
               <Home className="mr-2 h-4 w-4" />

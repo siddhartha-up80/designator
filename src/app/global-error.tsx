@@ -25,7 +25,7 @@ export default function GlobalError({
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                 <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
-              
+
               <h1 className="text-6xl font-bold text-red-500 mb-4">500</h1>
               <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 Critical Error
@@ -33,7 +33,7 @@ export default function GlobalError({
               <p className="text-gray-600 mb-8">
                 A critical error occurred. Please try refreshing the page.
               </p>
-              
+
               {error.digest && (
                 <p className="text-xs text-gray-400 mb-4 font-mono bg-gray-100 p-2 rounded">
                   Error ID: {error.digest}
@@ -46,11 +46,11 @@ export default function GlobalError({
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Try Again
               </Button>
-              
-              <Button 
-                variant="outline" 
+
+              <Button
+                variant="outline"
                 className="w-full"
-                onClick={() => window.location.href = "/"}
+                onClick={() => (window.location.href = "/")}
               >
                 Go to Home
               </Button>

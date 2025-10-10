@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { paymentService } from "@/lib/cashfree-payment-service";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
