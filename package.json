@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap",
     "start": "next start",
     "dev-prod": "npm run build && npm start",
     "lint": "next lint",
-    "update-images": "node scripts/update-images.js"
+    "update-images": "node scripts/update-images.js",
+    "sitemap": "next-sitemap",
+    "analyze": "ANALYZE=true next build",
+    "seo-audit": "next build && next start & lighthouse --only-categories=seo --output=json --output-path=./seo-audit.json http://localhost:3000"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
@@ -17,6 +20,7 @@
     "@google/genai": "^1.19.0",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.10.0",
+    "@next/bundle-analyzer": "^15.5.4",
     "@prisma/client": "^6.16.2",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -61,6 +65,7 @@
     "motion": "^12.23.16",
     "next": "14.2.25",
     "next-auth": "^5.0.0-beta.29",
+    "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.6",
     "prisma": "^6.16.2",
     "react": "^19",

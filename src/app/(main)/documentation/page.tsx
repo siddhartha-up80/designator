@@ -9,7 +9,6 @@ import {
   Sparkles,
   Camera,
   Shirt,
-  Video,
   ArrowUpCircle,
   FileImage,
   Wand2,
@@ -122,9 +121,8 @@ export default function DocumentationPage() {
                 <p className="text-muted-foreground text-lg leading-relaxed">
                   Designator is an AI-powered platform that revolutionizes
                   fashion and product photography. Create professional model
-                  images, enhance photos, generate videos, and bring your
-                  creative vision to life - all without expensive photoshoots or
-                  professional models.
+                  images, enhance photos, and bring your creative vision to life
+                  - all without expensive photoshoots or professional models.
                 </p>
                 <div className="grid md:grid-cols-3 gap-6 mt-8">
                   <div className="text-center">
@@ -136,7 +134,7 @@ export default function DocumentationPage() {
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Advanced AI models create realistic, professional-quality
-                      images and videos
+                      images
                     </p>
                   </div>
                   <div className="text-center">

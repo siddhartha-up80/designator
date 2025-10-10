@@ -6,7 +6,6 @@ import {
   Sparkles,
   Camera,
   Shirt,
-  Video,
   ArrowUpRight,
   ImageIcon,
   Settings,
