@@ -11,7 +11,7 @@
     "update-images": "node scripts/update-images.js",
     "sitemap": "next-sitemap",
     "analyze": "ANALYZE=true next build",
-    "seo-audit": "next build && next start & lighthouse --only-categories=seo --output=json --output-path=./seo-audit.json http://localhost:3000"
+    "seo-audit": "next build && next start & lighthouse --only-categories=seo --output=json --output-path=./seo-audit.json https://designator.siddharthasingh.co.in"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
