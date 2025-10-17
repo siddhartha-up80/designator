@@ -43,7 +43,7 @@ export function WorkflowSteps({
   isFirstStepCompleted = false,
 }: WorkflowStepsProps) {
   return (
-    <div className="flex gap-4 mb-8">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8 overflow-x-auto">
       {steps.map((step, index) => {
         const isActive = step.id === activeStep;
         const isDisabled = step.id !== "input" && !isFirstStepCompleted;
@@ -54,7 +54,7 @@ export function WorkflowSteps({
           <Card
             key={step.id}
             className={cn(
-              "flex-1 p-4 transition-all duration-200",
+              "flex-1 min-w-[200px] sm:min-w-0 p-3 sm:p-4 transition-all duration-200",
               isActive
                 ? "border-primary bg-primary/10"
                 : isDisabled
@@ -64,10 +64,10 @@ export function WorkflowSteps({
             )}
             onClick={() => isClickable && onStepClick(step.id)}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div
                 className={cn(
-                  "p-2 rounded-lg",
+                  "p-1.5 sm:p-2 rounded-lg shrink-0",
                   isActive
                     ? "bg-primary/15"
                     : isDisabled
@@ -77,7 +77,7 @@ export function WorkflowSteps({
               >
                 <step.icon
                   className={cn(
-                    "h-5 w-5",
+                    "h-4 w-4 sm:h-5 sm:w-5",
                     isActive
                       ? "text-primary"
                       : isDisabled
@@ -86,10 +86,10 @@ export function WorkflowSteps({
                   )}
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <h3
                   className={cn(
-                    "font-semibold text-sm",
+                    "font-semibold text-xs sm:text-sm truncate",
                     isActive
                       ? "text-primary"
                       : isDisabled
@@ -101,7 +101,7 @@ export function WorkflowSteps({
                 </h3>
                 <p
                   className={cn(
-                    "text-xs",
+                    "text-[10px] sm:text-xs truncate",
                     isActive
                       ? "text-primary"
                       : isDisabled

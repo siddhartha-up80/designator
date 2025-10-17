@@ -493,29 +493,57 @@ export default function PhotographyPage() {
   }; // Restore instantly. [web:67]
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-3 sm:p-4 md:p-6">
       <div className="mx-auto max-w-[1400px]">
-        {/* Top bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
-              <Camera className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-              Photography Studio
-              <FeatureCreditCost
-                cost={CREDIT_COSTS.PHOTO_ENHANCEMENT}
-                size="md"
-              />
-            </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
-              Upload photos and transform them with AI-powered enhancements,
-              professional style presets, and fine-tuned adjustments.
-            </p>
+        {/* Top bar - Mobile optimized */}
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <Camera className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
+                <span className="truncate">Photography Studio</span>
+                <FeatureCreditCost
+                  cost={CREDIT_COSTS.PHOTO_ENHANCEMENT}
+                  size="md"
+                />
+              </h1>
+            </div>
+
+            {/* Step-aware actions - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden sm:flex gap-2 flex-shrink-0">
+              {step === "EDIT" ? (
+                <Button variant="outline" size="sm" onClick={goToUpload}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Change photo
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={restorePrevious}
+                  disabled={!lastUploadedImage}
+                >
+                  <Repeat2 className="h-4 w-4 mr-2" />
+                  Use previous
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Step-aware actions */}
-          <div className="flex gap-2">
+          <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+            Upload photos and transform them with AI-powered enhancements,
+            professional style presets, and fine-tuned adjustments.
+          </p>
+
+          {/* Mobile-only action buttons */}
+          <div className="flex sm:hidden gap-2 mt-3">
             {step === "EDIT" ? (
-              <Button variant="outline" size="sm" onClick={goToUpload}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToUpload}
+                className="flex-1"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Change photo
               </Button>
@@ -525,6 +553,7 @@ export default function PhotographyPage() {
                 size="sm"
                 onClick={restorePrevious}
                 disabled={!lastUploadedImage}
+                className="flex-1"
               >
                 <Repeat2 className="h-4 w-4 mr-2" />
                 Use previous
@@ -533,19 +562,19 @@ export default function PhotographyPage() {
           </div>
         </div>
 
-        {/* Main layout: large center + sticky right rail */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
+        {/* Main layout: Responsive stacking */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-3 sm:gap-4">
           {/* Center column */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 order-1 lg:order-1 pb-24 lg:pb-0">
             {step === "UPLOAD" && (
               <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    <ImageIcon className="h-5 w-5" />
+                <CardHeader className="py-3 px-3 sm:px-6">
+                  <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                    <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                     Upload Photo
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 px-3 sm:px-6">
                   <ImageUpload
                     onImageUploaded={handleAfterUpload}
                     uploadedImageUrl={uploadedImage}
@@ -565,6 +594,7 @@ export default function PhotographyPage() {
                         size="sm"
                         variant="ghost"
                         onClick={restorePrevious}
+                        className="text-xs"
                       >
                         Restore last uploaded
                       </Button>
@@ -576,73 +606,112 @@ export default function PhotographyPage() {
 
             {step === "EDIT" && uploadedImage && (
               <>
-                {/* Preview card: more canvas space, compact header actions */}
+                {/* Preview card - Mobile optimized */}
                 <Card className="overflow-hidden">
-                  <div className="flex items-center justify-between px-4 pt-4">
-                    <h3 className="text-base font-medium">Preview</h3>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={goBackInHistory}
-                        disabled={currentHistoryIndex <= 0}
-                        title="Previous version"
-                      >
-                        <ArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={resetToOriginal}
-                        title="Reset to original"
-                      >
-                        <RotateCcw className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={goForwardInHistory}
-                        disabled={
-                          currentHistoryIndex >= imageHistory.length - 1
-                        }
-                        title="Next version"
-                      >
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={handleEnhance}
-                        disabled={isProcessing}
-                      >
-                        {isProcessing && processingType === "enhance" ? (
-                          <>
-                            <Zap className="h-4 w-4 mr-2 animate-spin" />
-                            Enhancing with AI...
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="h-4 w-4 mr-2" />
-                            Apply AI Enhance{" "}
-                            <span className="opacity-90">
-                              (
-                              <CostPreview
-                                baseRate={CREDIT_COSTS.PHOTO_ENHANCEMENT}
-                                quantity={1}
-                              />
-                              )
-                            </span>
-                          </>
-                        )}
-                      </Button>
+                  <div className="flex flex-wrap items-center justify-between px-3 sm:px-4 pt-3 sm:pt-4 gap-2">
+                    <h3 className="text-sm sm:text-base font-medium">
+                      Preview
+                    </h3>
+                    <div className="flex gap-1.5 sm:gap-2">
+                      {/* Desktop controls */}
+                      <div className="hidden lg:flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={goBackInHistory}
+                          disabled={currentHistoryIndex <= 0}
+                          title="Previous version"
+                        >
+                          <ArrowLeft className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={resetToOriginal}
+                          title="Reset to original"
+                        >
+                          <RotateCcw className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={goForwardInHistory}
+                          disabled={
+                            currentHistoryIndex >= imageHistory.length - 1
+                          }
+                          title="Next version"
+                        >
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleEnhance}
+                          disabled={isProcessing}
+                        >
+                          {isProcessing && processingType === "enhance" ? (
+                            <>
+                              <Zap className="h-4 w-4 mr-2 animate-spin" />
+                              Enhancing...
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="h-4 w-4 mr-2" />
+                              AI Enhance{" "}
+                              <span className="opacity-90">
+                                (
+                                <CostPreview
+                                  baseRate={CREDIT_COSTS.PHOTO_ENHANCEMENT}
+                                  quantity={1}
+                                />
+                                )
+                              </span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      {/* Mobile compact controls */}
+                      <div className="flex lg:hidden gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={goBackInHistory}
+                          disabled={currentHistoryIndex <= 0}
+                          className="h-8 w-8 p-0"
+                          title="Previous"
+                        >
+                          <ArrowLeft className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={resetToOriginal}
+                          className="h-8 w-8 p-0"
+                          title="Reset"
+                        >
+                          <RotateCcw className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={goForwardInHistory}
+                          disabled={
+                            currentHistoryIndex >= imageHistory.length - 1
+                          }
+                          className="h-8 w-8 p-0"
+                          title="Next"
+                        >
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
-                  <CardContent className="pt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CardContent className="pt-3 sm:pt-4 px-3 sm:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div className="space-y-2">
                         <Badge
                           variant="secondary"
-                          className="w-full justify-center rounded-full"
+                          className="w-full justify-center rounded-full text-xs"
                         >
                           Original
                         </Badge>
@@ -650,13 +719,16 @@ export default function PhotographyPage() {
                           <img
                             src={uploadedImage}
                             alt="Original"
-                            className="w-full h-[440px] md:h-[520px] object-contain"
+                            className="w-full h-[280px] sm:h-[440px] md:h-[520px] object-contain"
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-center gap-2">
-                          <Badge variant="default" className="rounded-full">
+                          <Badge
+                            variant="default"
+                            className="rounded-full text-xs"
+                          >
                             {isProcessing ? "Processing..." : "Enhanced"}
                           </Badge>
                           {imageHistory.length > 0 && (
@@ -670,10 +742,10 @@ export default function PhotographyPage() {
                         </div>
                         <div className="rounded-lg border bg-background">
                           {isProcessing ? (
-                            <div className="w-full h-[440px] md:h-[520px] grid place-items-center text-sm text-muted-foreground">
-                              <div className="text-center space-y-3">
-                                <Zap className="h-8 w-8 animate-spin mx-auto text-primary" />
-                                <div>
+                            <div className="w-full h-[280px] sm:h-[440px] md:h-[520px] grid place-items-center text-xs sm:text-sm text-muted-foreground">
+                              <div className="text-center space-y-3 px-4">
+                                <Zap className="h-6 w-6 sm:h-8 sm:w-8 animate-spin mx-auto text-primary" />
+                                <div className="max-w-[200px]">
                                   {processingType === "enhance"
                                     ? "Enhancing image with AI..."
                                     : processingType === "preset" &&
@@ -688,7 +760,7 @@ export default function PhotographyPage() {
                           ) : processedImage ? (
                             /* eslint-disable-next-line react/forbid-dom-props */
                             <div
-                              className="w-full h-[440px] md:h-[520px] relative"
+                              className="w-full h-[280px] sm:h-[440px] md:h-[520px] relative"
                               style={
                                 hasManualAdjustments
                                   ? { filter: getCSSFilters() }
@@ -704,7 +776,7 @@ export default function PhotographyPage() {
                           ) : uploadedImage && hasManualAdjustments ? (
                             /* eslint-disable-next-line react/forbid-dom-props */
                             <div
-                              className="w-full h-[440px] md:h-[520px] relative"
+                              className="w-full h-[280px] sm:h-[440px] md:h-[520px] relative"
                               style={{ filter: getCSSFilters() }}
                             >
                               <img
@@ -714,7 +786,7 @@ export default function PhotographyPage() {
                               />
                             </div>
                           ) : (
-                            <div className="w-full h-[440px] md:h-[520px] grid place-items-center text-sm text-muted-foreground">
+                            <div className="w-full h-[280px] sm:h-[440px] md:h-[520px] grid place-items-center text-xs sm:text-sm text-muted-foreground px-4 text-center">
                               Enhanced preview will appear here
                             </div>
                           )}
@@ -724,35 +796,44 @@ export default function PhotographyPage() {
                   </CardContent>
                 </Card>
 
-                {/* Quick Actions: condensed bar */}
+                {/* Quick Actions - Mobile optimized */}
                 <Card>
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-base">Quick Actions</CardTitle>
+                  <CardHeader className="py-3 px-3 sm:px-6">
+                    <CardTitle className="text-sm sm:text-base">
+                      Quick Actions
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="pb-4">
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <CardContent className="pb-3 sm:pb-4 px-3 sm:px-6">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={!processedImage}
+                        className="text-xs flex-1 sm:flex-none"
                       >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
+                        <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">Download</span>
+                        <span className="sm:hidden">Save</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={!processedImage}
+                        className="text-xs flex-1 sm:flex-none"
                       >
-                        <Camera className="h-4 w-4 mr-2" />
-                        Save to Gallery
+                        <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">
+                          Save to Gallery
+                        </span>
+                        <span className="sm:hidden">Gallery</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={!processedImage}
+                        className="text-xs w-full sm:w-auto"
                       >
-                        <Sparkles className="h-4 w-4 mr-2" />
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                         Generate Variations
                       </Button>
                     </div>
@@ -762,17 +843,17 @@ export default function PhotographyPage() {
             )}
           </div>
 
-          {/* Right rail: sticky, narrower, grouped */}
-          <div className="xl:sticky xl:top-4 h-fit space-y-4">
+          {/* Right rail: Settings panel - Mobile optimized */}
+          <div className="lg:sticky lg:top-4 h-fit space-y-3 sm:space-y-4 order-2 lg:order-2">
             {/* Presets */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenPresets((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5" />
+                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
                     Style Presets
                   </span>
                   {openPresets ? (
@@ -783,7 +864,7 @@ export default function PhotographyPage() {
                 </CardTitle>
               </CardHeader>
               {openPresets && (
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                   <div className="grid grid-cols-2 gap-2">
                     {presets.map((preset) => (
                       <button
@@ -816,9 +897,9 @@ export default function PhotographyPage() {
                         <div className="relative z-10 h-full w-full p-2 flex flex-col">
                           <div className="flex items-center gap-1.5 text-white/90">
                             {isProcessing && activePreset === preset.name ? (
-                              <Zap className="h-3.5 w-3.5 drop-shadow animate-spin" />
+                              <Zap className="h-3.5 w-3.5 drop-shadow animate-spin flex-shrink-0" />
                             ) : (
-                              <preset.icon className="h-3.5 w-3.5 drop-shadow" />
+                              <preset.icon className="h-3.5 w-3.5 drop-shadow flex-shrink-0" />
                             )}
                             <span className="text-[11px] font-medium truncate">
                               {isProcessing && activePreset === preset.name
@@ -844,12 +925,12 @@ export default function PhotographyPage() {
             {/* Custom Enhancement */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenCustomEnhance((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Edit3 className="h-5 w-5" />
+                    <Edit3 className="h-4 w-4 sm:h-5 sm:w-5" />
                     Custom Enhancement
                   </span>
                   {openCustomEnhance ? (
@@ -860,11 +941,11 @@ export default function PhotographyPage() {
                 </CardTitle>
               </CardHeader>
               {openCustomEnhance && (
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   <div className="space-y-3">
                     <label
                       htmlFor="custom-prompt"
-                      className="text-sm font-medium"
+                      className="text-xs sm:text-sm font-medium"
                     >
                       Describe your enhancement
                     </label>
@@ -874,13 +955,13 @@ export default function PhotographyPage() {
                       value={customEnhancePrompt}
                       onChange={(e) => setCustomEnhancePrompt(e.target.value)}
                       rows={4}
-                      className="resize-none"
+                      className="resize-none text-xs sm:text-sm"
                       disabled={step !== "EDIT" || !uploadedImage}
                     />
 
                     {/* Image Selection Checkboxes */}
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-xs sm:text-sm font-medium">
                         Source Image Selection
                       </label>
                       <div className="space-y-2">
@@ -897,7 +978,7 @@ export default function PhotographyPage() {
                           />
                           <label
                             htmlFor="use-enhanced"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
                             Use enhanced image{" "}
                             {processedImage ? "(available)" : "(not available)"}
@@ -916,7 +997,7 @@ export default function PhotographyPage() {
                           />
                           <label
                             htmlFor="use-original"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="text-xs sm:text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
                             Use original image
                           </label>
@@ -940,19 +1021,22 @@ export default function PhotographyPage() {
                       !customEnhancePrompt.trim() ||
                       isProcessing
                     }
-                    className="w-full"
+                    className="w-full text-xs sm:text-sm"
                     size="sm"
                   >
                     {isProcessing && processingType === "custom" ? (
                       <>
-                        <Zap className="h-4 w-4 mr-2 animate-spin" />
-                        Applying Custom Enhancement...
+                        <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2 animate-spin" />
+                        <span className="truncate">Applying...</span>
                       </>
                     ) : (
                       <>
-                        <Zap className="h-4 w-4 mr-2" />
-                        Apply Custom Enhancement{" "}
-                        <span className="opacity-90">
+                        <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
+                        <span className="hidden sm:inline">
+                          Apply Custom Enhancement
+                        </span>
+                        <span className="sm:hidden">Apply Custom</span>
+                        <span className="opacity-90 ml-1 hidden lg:inline">
                           (
                           <CostPreview
                             baseRate={CREDIT_COSTS.PHOTO_ENHANCEMENT}
@@ -970,12 +1054,12 @@ export default function PhotographyPage() {
             {/* Manual controls */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenManual((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                     Manual Adjustments
                   </span>
                   {openManual ? (
@@ -986,11 +1070,13 @@ export default function PhotographyPage() {
                 </CardTitle>
               </CardHeader>
               {openManual && (
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Sun className="h-4 w-4" />
-                      <span className="text-sm font-medium">Brightness</span>
+                      <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Brightness
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {brightness[0]}
                       </span>
@@ -1011,8 +1097,10 @@ export default function PhotographyPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Contrast className="h-4 w-4" />
-                      <span className="text-sm font-medium">Contrast</span>
+                      <Contrast className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Contrast
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {contrast[0]}
                       </span>
@@ -1033,8 +1121,10 @@ export default function PhotographyPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Palette className="h-4 w-4" />
-                      <span className="text-sm font-medium">Saturation</span>
+                      <Palette className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Saturation
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {saturation[0]}
                       </span>
@@ -1055,8 +1145,10 @@ export default function PhotographyPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Eye className="h-4 w-4" />
-                      <span className="text-sm font-medium">Sharpness</span>
+                      <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Sharpness
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {sharpness[0]}
                       </span>
@@ -1077,8 +1169,10 @@ export default function PhotographyPage() {
 
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <Droplets className="h-4 w-4" />
-                      <span className="text-sm font-medium">Exposure</span>
+                      <Droplets className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium">
+                        Exposure
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {exposure[0]}
                       </span>
@@ -1102,11 +1196,12 @@ export default function PhotographyPage() {
                       variant="outline"
                       size="sm"
                       onClick={resetControls}
-                      className="flex-1"
+                      className="flex-1 text-xs"
                       disabled={step !== "EDIT"}
                     >
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Reset Sliders
+                      <RotateCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                      <span className="hidden sm:inline">Reset Sliders</span>
+                      <span className="sm:hidden">Reset</span>
                     </Button>
                     <Button
                       size="sm"
@@ -1117,17 +1212,19 @@ export default function PhotographyPage() {
                         isApplyingManual ||
                         !hasManualAdjustments
                       }
-                      className="flex-1"
+                      className="flex-1 text-xs"
                     >
                       {isApplyingManual ? (
                         <>
-                          <Zap className="h-4 w-4 mr-2 animate-spin" />
-                          Applying...
+                          <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2 animate-spin" />
+                          <span className="hidden sm:inline">Applying...</span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Zap className="h-4 w-4 mr-2" />
-                          Apply Manual
+                          <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">Apply Manual</span>
+                          <span className="sm:hidden">Apply</span>
                         </>
                       )}
                     </Button>
@@ -1139,11 +1236,11 @@ export default function PhotographyPage() {
             {/* Tips */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenTips((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
-                  <span className="text-sm">Pro Tips</span>
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
+                  <span className="text-xs sm:text-sm">Pro Tips</span>
                   {openTips ? (
                     <ChevronDown className="h-4 w-4" />
                   ) : (
@@ -1152,7 +1249,7 @@ export default function PhotographyPage() {
                 </CardTitle>
               </CardHeader>
               {openTips && (
-                <CardContent className="text-xs text-muted-foreground space-y-2">
+                <CardContent className="text-xs text-muted-foreground space-y-1.5 sm:space-y-2 px-3 sm:px-6">
                   <p>
                     • Start with presets, then fine-tune with sliders for speed
                     and control.
@@ -1164,6 +1261,31 @@ export default function PhotographyPage() {
             </Card>
           </div>
         </div>
+
+        {/* Floating AI Enhance Button - Mobile only, sticky at bottom */}
+        {step === "EDIT" && uploadedImage && (
+          <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-sm border-t lg:hidden z-50">
+            <div className="max-w-[1400px] mx-auto">
+              <Button
+                className="w-full h-12 text-sm font-semibold shadow-lg"
+                onClick={handleEnhance}
+                disabled={isProcessing}
+              >
+                {isProcessing && processingType === "enhance" ? (
+                  <>
+                    <Zap className="h-4 w-4 mr-2 animate-spin" />
+                    <span className="truncate">Enhancing with AI...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="h-4 w-4 mr-2" />
+                    <span className="truncate">Apply AI Enhance</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

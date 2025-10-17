@@ -168,10 +168,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
 
-                <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
-                  Start Generating
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
+                    Start Generating
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
 
               <div className="relative">
@@ -249,10 +251,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
 
-                <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
-                  Launch Virtual Modeling
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
+                    Launch Virtual Modeling
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -302,10 +306,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
 
-                <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
-                  Generate Product Visuals
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
+                    Generate Product Visuals
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
 
               <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-950/50 dark:to-pink-950/50 rounded-2xl p-8">
@@ -397,10 +403,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
 
-                <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
-                  Start Professional Shoots
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white">
+                    Start Professional Shoots
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

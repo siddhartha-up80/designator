@@ -305,27 +305,55 @@ ${generatedPrompts
   };
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-3 sm:p-4 md:p-6">
       <div className="mx-auto max-w-[1400px]">
-        {/* Top bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
-              <FileImage className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-              Image to Prompt Generator
-              <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
-            </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
-              Transform your images into detailed text prompts for AI
-              generation. Perfect for creating consistent style descriptions and
-              training data.
-            </p>
+        {/* Top bar - Mobile optimized */}
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <FileImage className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
+                <span className="truncate">Image to Prompt</span>
+                <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
+              </h1>
+            </div>
+
+            {/* Step-aware actions - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden sm:flex gap-2 flex-shrink-0">
+              {step === "ANALYZE" ? (
+                <Button variant="outline" size="sm" onClick={goToUpload}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Change photo
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={restorePrevious}
+                  disabled={!lastUploadedImage}
+                >
+                  <Repeat2 className="h-4 w-4 mr-2" />
+                  Use previous
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Step-aware actions */}
-          <div className="flex gap-2">
+          <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+            Transform your images into detailed text prompts for AI generation.
+            Perfect for creating consistent style descriptions and training
+            data.
+          </p>
+
+          {/* Mobile-only action buttons */}
+          <div className="flex sm:hidden gap-2 mt-3">
             {step === "ANALYZE" ? (
-              <Button variant="outline" size="sm" onClick={goToUpload}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToUpload}
+                className="flex-1"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Change photo
               </Button>
@@ -335,6 +363,7 @@ ${generatedPrompts
                 size="sm"
                 onClick={restorePrevious}
                 disabled={!lastUploadedImage}
+                className="flex-1"
               >
                 <Repeat2 className="h-4 w-4 mr-2" />
                 Use previous
@@ -343,19 +372,19 @@ ${generatedPrompts
           </div>
         </div>
 
-        {/* Main layout: large center + sticky right rail */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
+        {/* Main layout: Responsive stacking */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-3 sm:gap-4">
           {/* Center column */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 order-1 lg:order-1 pb-24 lg:pb-0">
             {step === "UPLOAD" && (
               <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                    <Camera className="h-5 w-5" />
+                <CardHeader className="py-3 px-3 sm:px-6">
+                  <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                    <Camera className="h-4 w-4 sm:h-5 sm:w-5" />
                     Upload Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 px-3 sm:px-6">
                   <ImageUpload
                     onImageUploaded={handleAfterUpload}
                     uploadedImageUrl={uploadedImage}
@@ -375,6 +404,7 @@ ${generatedPrompts
                         size="sm"
                         variant="ghost"
                         onClick={restorePrevious}
+                        className="text-xs"
                       >
                         Restore last uploaded
                       </Button>
@@ -386,24 +416,27 @@ ${generatedPrompts
 
             {step === "ANALYZE" && uploadedImage && (
               <>
-                {/* Image Preview Card */}
+                {/* Image Preview Card - Mobile optimized */}
                 <Card className="overflow-hidden">
-                  <div className="flex items-center justify-between px-4 pt-4">
-                    <h3 className="text-base font-medium">Source Image</h3>
+                  <div className="flex items-center justify-between px-3 sm:px-4 pt-3 sm:pt-4 gap-2">
+                    <h3 className="text-sm sm:text-base font-medium">
+                      Source Image
+                    </h3>
+                    {/* Desktop Generate Button */}
                     <Button
                       size="sm"
                       onClick={handleAnalyzeImage}
                       disabled={isAnalyzing}
+                      className="hidden lg:flex text-xs sm:text-sm"
                     >
                       {isAnalyzing ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Generating {numberOfPrompts[0]} prompt
-                          {numberOfPrompts[0] > 1 ? "s" : ""}...
+                          <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 animate-spin" />
+                          Generating {numberOfPrompts[0]}...
                         </>
                       ) : (
                         <>
-                          <Wand2 className="h-4 w-4 mr-2" />
+                          <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                           Generate {numberOfPrompts[0]} Prompt
                           {numberOfPrompts[0] > 1 ? "s" : ""}{" "}
                           <span className="opacity-90">
@@ -419,54 +452,68 @@ ${generatedPrompts
                     </Button>
                   </div>
 
-                  <CardContent className="pt-4">
+                  <CardContent className="pt-3 sm:pt-4 px-3 sm:px-6">
                     <div className="rounded-lg border bg-background">
                       <img
                         src={uploadedImage}
                         alt="Source"
-                        className="w-full h-[400px] md:h-[500px] object-contain"
+                        className="w-full h-[250px] sm:h-[400px] md:h-[500px] object-contain"
                       />
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Quick Actions: condensed bar */}
+                {/* Quick Actions: condensed bar - Mobile optimized */}
                 <Card>
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-base">
+                  <CardHeader className="py-3 px-3 sm:px-6">
+                    <CardTitle className="text-sm sm:text-base">
                       {selectedPrompts.size > 0
                         ? "Selected Actions"
                         : "Quick Actions"}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="pb-4">
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <CardContent className="pb-3 sm:pb-4 px-3 sm:px-6">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {selectedPrompts.size > 0 ? (
                         <>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={copySelectedPrompts}
+                            className="text-xs flex-1 sm:flex-none"
                           >
-                            <Copy className="h-4 w-4 mr-2" />
-                            Copy Selected ({selectedPrompts.size})
+                            <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">
+                              Copy Selected ({selectedPrompts.size})
+                            </span>
+                            <span className="sm:hidden">
+                              Copy ({selectedPrompts.size})
+                            </span>
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={downloadSelectedPrompts}
+                            className="text-xs flex-1 sm:flex-none"
                           >
-                            <Download className="h-4 w-4 mr-2" />
-                            Export Selected
+                            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">
+                              Export Selected
+                            </span>
+                            <span className="sm:hidden">Export</span>
                           </Button>
                           <Button
                             variant="default"
                             size="sm"
                             onClick={useInImageGeneration}
                             disabled={selectedPrompts.size !== 1}
+                            className="text-xs w-full sm:w-auto"
                           >
-                            <Sparkles className="h-4 w-4 mr-2" />
-                            Use in Image Generation
+                            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">
+                              Use in Image Generation
+                            </span>
+                            <span className="sm:hidden">Use in Generator</span>
                           </Button>
                         </>
                       ) : (
@@ -476,9 +523,11 @@ ${generatedPrompts
                             size="sm"
                             disabled={generatedPrompts.length === 0}
                             onClick={downloadAsTextFile}
+                            className="text-xs flex-1 sm:flex-none"
                           >
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
+                            <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                            <span className="hidden sm:inline">Download</span>
+                            <span className="sm:hidden">Save</span>
                           </Button>
                           <Button
                             variant="outline"
@@ -489,20 +538,13 @@ ${generatedPrompts
                                 generatedPrompts.join("\n\n---\n\n");
                               copyToClipboard(allPrompts);
                             }}
+                            className="text-xs flex-1 sm:flex-none"
                           >
-                            <Copy className="h-4 w-4 mr-2" />
+                            <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                             Copy All
                           </Button>
                         </>
                       )}
-                      {/* <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setStep("UPLOAD")}
-                      >
-                        <Camera className="h-4 w-4 mr-2" />
-                        New Image
-                      </Button> */}
                     </div>
                     {selectedPrompts.size > 1 && (
                       <p className="text-xs text-muted-foreground mt-2">
@@ -515,32 +557,36 @@ ${generatedPrompts
               </>
             )}
 
-            {/* Copy Success Display */}
+            {/* Copy Success Display - Mobile optimized */}
             {copySuccess && (
-              <Card className="border-green-200 bg-green-50">
-                <CardContent className="pt-6">
+              <Card className="border-green-200 bg-green-50 dark:bg-green-950/20">
+                <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6">
                   <div className="flex items-center gap-2 text-green-600">
                     <Copy className="h-4 w-4" />
-                    <span className="font-medium">{copySuccess}</span>
+                    <span className="font-medium text-sm">{copySuccess}</span>
                   </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Error Display */}
+            {/* Error Display - Mobile optimized */}
             {error && (
-              <Card className="border-red-200 bg-red-50">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-2 text-red-600">
-                    <Tag className="h-4 w-4" />
-                    <span className="font-medium">Error</span>
+              <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
+                <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6">
+                  <div className="flex items-start gap-2 text-red-600">
+                    <Tag className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium text-sm">Error</span>
+                      <p className="text-xs sm:text-sm mt-1 break-words">
+                        {error}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-red-600 mt-2">{error}</p>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setError("")}
-                    className="mt-3"
+                    className="mt-3 text-xs"
                   >
                     Dismiss
                   </Button>
@@ -548,26 +594,27 @@ ${generatedPrompts
               </Card>
             )}
 
-            {/* Generated Prompts */}
+            {/* Generated Prompts - Mobile optimized */}
             {generatedPrompts.length > 0 && (
               <Card ref={promptsRef}>
-                <CardHeader className="py-3">
-                  <CardTitle className="flex items-center justify-between text-base">
+                <CardHeader className="py-3 px-3 sm:px-6">
+                  <CardTitle className="flex items-center justify-between text-sm sm:text-base flex-wrap gap-2">
                     <span className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5" />
+                      <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
                       Generated Prompts
                       {selectedPrompts.size > 0 && (
-                        <Badge variant="secondary">
+                        <Badge variant="secondary" className="text-xs">
                           {selectedPrompts.size} selected
                         </Badge>
                       )}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1.5 sm:gap-2">
                       {selectedPrompts.size > 0 ? (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={clearSelection}
+                          className="text-xs h-8"
                         >
                           Clear Selection
                         </Button>
@@ -576,6 +623,7 @@ ${generatedPrompts
                           variant="outline"
                           size="sm"
                           onClick={selectAllPrompts}
+                          className="text-xs h-8"
                         >
                           Select All
                         </Button>
@@ -588,38 +636,42 @@ ${generatedPrompts
                             generatedPrompts.join("\n\n---\n\n");
                           copyToClipboard(allPrompts);
                         }}
+                        className="text-xs h-8"
                       >
-                        <Copy className="h-3 w-3 mr-1" />
-                        Copy All
+                        <Copy className="h-3 w-3 sm:mr-1" />
+                        <span className="hidden sm:inline">Copy All</span>
                       </Button>
                     </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   {generatedPrompts.map((prompt, index) => (
                     <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Checkbox
                             checked={selectedPrompts.has(index)}
                             onCheckedChange={() => togglePromptSelection(index)}
-                            className="mt-1 border border-solid border-primary"
+                            className="mt-1 border border-solid border-primary flex-shrink-0"
                           />
-                          <Badge variant="outline">Variation {index + 1}</Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Variation {index + 1}
+                          </Badge>
                         </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => copyToClipboard(prompt)}
+                          className="text-xs h-8 px-2 sm:px-3"
                         >
-                          <Copy className="h-3 w-3 mr-1" />
-                          Copy
+                          <Copy className="h-3 w-3 sm:mr-1" />
+                          <span className="hidden sm:inline">Copy</span>
                         </Button>
                       </div>
                       <Textarea
                         value={prompt}
                         readOnly
-                        className={`min-h-[100px] resize-none transition-all ${
+                        className={`min-h-[100px] resize-none transition-all text-xs sm:text-sm ${
                           selectedPrompts.has(index)
                             ? "ring-2 ring-primary/50 border-primary/50"
                             : ""
@@ -632,17 +684,17 @@ ${generatedPrompts
             )}
           </div>
 
-          {/* Right rail: sticky, narrower, grouped */}
-          <div className="xl:sticky xl:top-4 h-fit space-y-4">
+          {/* Right rail: Settings panel - Mobile optimized */}
+          <div className="lg:sticky lg:top-4 h-fit space-y-3 sm:space-y-4 order-2 lg:order-2">
             {/* Prompt Style Selection */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenPromptStyles((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
+                    <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
                     Prompt Styles
                   </span>
                   {openPromptStyles ? (
@@ -653,22 +705,22 @@ ${generatedPrompts
                 </CardTitle>
               </CardHeader>
               {openPromptStyles && (
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                   <div className="space-y-2">
                     {promptStyles.map((style) => (
                       <div
                         key={style.id}
-                        className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                        className={`p-2.5 sm:p-3 border-2 rounded-lg cursor-pointer transition-all ${
                           selectedStyle === style.id
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
                         }`}
                         onClick={() => setSelectedStyle(style.id)}
                       >
-                        <div className="font-medium text-sm mb-1">
+                        <div className="font-medium text-xs sm:text-sm mb-0.5 sm:mb-1">
                           {style.name}
                         </div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-[11px] sm:text-xs text-muted-foreground">
                           {style.description}
                         </div>
                       </div>
@@ -676,10 +728,10 @@ ${generatedPrompts
                   </div>
 
                   {/* Number of Prompts Slider */}
-                  <div className="mt-4 pt-4 border-t space-y-3">
+                  <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t space-y-2 sm:space-y-3">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      <span className="text-sm font-medium">
+                      <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="text-xs sm:text-sm font-medium">
                         Number of Prompts
                       </span>
                       <span className="text-xs text-muted-foreground ml-auto">
@@ -705,21 +757,23 @@ ${generatedPrompts
             {/* Analysis Results */}
             {analysisResult && (
               <Card>
-                <CardHeader className="py-3">
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Tag className="h-5 w-5" />
+                <CardHeader className="py-3 px-3 sm:px-6">
+                  <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                    <Tag className="h-4 w-4 sm:h-5 sm:w-5" />
                     Key Elements
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-3 sm:px-6">
                   <div className="space-y-2">
                     <Badge
                       variant="secondary"
-                      className="w-full justify-center"
+                      className="w-full justify-center text-xs"
                     >
                       Analysis Complete
                     </Badge>
-                    <p className="text-sm">{analysisResult}</p>
+                    <p className="text-xs sm:text-sm break-words">
+                      {analysisResult}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -728,12 +782,12 @@ ${generatedPrompts
             {/* Quick Actions */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenCustomSettings((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                     {selectedPrompts.size > 0 ? "Selected Actions" : "Actions"}
                   </span>
                   {openCustomSettings ? (
@@ -744,34 +798,34 @@ ${generatedPrompts
                 </CardTitle>
               </CardHeader>
               {openCustomSettings && (
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-6">
                   {selectedPrompts.size > 0 ? (
                     <>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         onClick={copySelectedPrompts}
                       >
-                        <Copy className="h-4 w-4 mr-2" />
+                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Copy Selected Prompts ({selectedPrompts.size})
                       </Button>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         onClick={downloadSelectedPrompts}
                       >
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Export Selected as Text File
                       </Button>
                       <Button
                         variant={
                           selectedPrompts.size === 1 ? "default" : "outline"
                         }
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         disabled={selectedPrompts.size !== 1}
                         onClick={useInImageGeneration}
                       >
-                        <Sparkles className="h-4 w-4 mr-2" />
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Use in Image Generation
                       </Button>
                       {selectedPrompts.size > 1 && (
@@ -784,7 +838,7 @@ ${generatedPrompts
                     <>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         disabled={generatedPrompts.length === 0}
                         onClick={() => {
                           const allPrompts =
@@ -792,24 +846,24 @@ ${generatedPrompts
                           copyToClipboard(allPrompts);
                         }}
                       >
-                        <Copy className="h-4 w-4 mr-2" />
+                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Copy All Prompts
                       </Button>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         disabled={generatedPrompts.length === 0}
                         onClick={downloadAsTextFile}
                       >
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Export as Text File
                       </Button>
                       <Button
                         variant="outline"
-                        className="w-full justify-start"
+                        className="w-full justify-start text-xs sm:text-sm h-9"
                         disabled={generatedPrompts.length === 0}
                       >
-                        <Sparkles className="h-4 w-4 mr-2" />
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-2" />
                         Select a prompt first
                       </Button>
                     </>
@@ -820,25 +874,25 @@ ${generatedPrompts
 
             {/* Features */}
             <Card>
-              <CardHeader className="py-3">
-                <CardTitle className="text-base">Features</CardTitle>
+              <CardHeader className="py-3 px-3 sm:px-6">
+                <CardTitle className="text-sm sm:text-base">Features</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm">
+              <CardContent className="px-3 sm:px-6">
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
-                    <Wand2 className="h-4 w-4 text-primary" />
+                    <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                     <span>AI-powered analysis</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-primary" />
+                    <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                     <span>Multiple prompt variations</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Palette className="h-4 w-4 text-primary" />
+                    <Palette className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                     <span>Style-specific descriptions</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-primary" />
+                    <Tag className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
                     <span>Element identification</span>
                   </div>
                 </div>
@@ -848,11 +902,11 @@ ${generatedPrompts
             {/* Tips */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenTips((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
-                  <span className="text-sm">Pro Tips</span>
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
+                  <span className="text-xs sm:text-sm">Pro Tips</span>
                   {openTips ? (
                     <ChevronDown className="h-4 w-4" />
                   ) : (
@@ -861,7 +915,7 @@ ${generatedPrompts
                 </CardTitle>
               </CardHeader>
               {openTips && (
-                <CardContent className="text-xs text-muted-foreground space-y-2">
+                <CardContent className="text-xs text-muted-foreground space-y-1.5 sm:space-y-2 px-3 sm:px-6">
                   <p>• High-quality images produce better prompts</p>
                   <p>• Use "Technical Details" for precise descriptions</p>
                   <p>• "Commercial Use" is great for product descriptions</p>
@@ -872,6 +926,37 @@ ${generatedPrompts
             </Card>
           </div>
         </div>
+
+        {/* Floating Generate Button - Mobile only, sticky at bottom */}
+        {step === "ANALYZE" && uploadedImage && (
+          <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-sm border-t lg:hidden z-50">
+            <div className="max-w-[1400px] mx-auto">
+              <Button
+                className="w-full h-12 text-sm font-semibold shadow-lg"
+                onClick={handleAnalyzeImage}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <span className="truncate">
+                      Generating {numberOfPrompts[0]} prompt
+                      {numberOfPrompts[0] > 1 ? "s" : ""}...
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    <span className="truncate">
+                      Generate {numberOfPrompts[0]} Prompt
+                      {numberOfPrompts[0] > 1 ? "s" : ""}
+                    </span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

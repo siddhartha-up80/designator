@@ -16,7 +16,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-auto pt-16 md:pt-0">{children}</main>
+        <main className="flex-1 overflow-auto pt-0 md:pt-16">{children}</main>
       </div>
     </div>
   );

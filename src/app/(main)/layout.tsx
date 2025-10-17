@@ -19,7 +19,7 @@ export default function HomeLayout({
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
-          <main className="flex-1 overflow-auto pt-16 md:pt-0">{children}</main>
+          <main className="flex-1 overflow-auto pt-0 md:pt-2">{children}</main>
         </div>
       </div>
     </CreditsProvider>

@@ -164,13 +164,21 @@ export const SidebarLink = ({
   link: Links;
   className?: string;
 }) => {
-  const { open, animate } = useSidebar();
+  const { open, animate, setOpen } = useSidebar();
   const pathname = usePathname();
   const isActive = pathname === link.href;
+
+  const handleClick = () => {
+    // Close sidebar on mobile when a link is clicked
+    if (window.innerWidth < 768) {
+      setOpen(false);
+    }
+  };
 
   return (
     <Link
       href={link.href}
+      onClick={handleClick}
       className={cn(
         "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md transition-colors cursor-pointer",
         isActive

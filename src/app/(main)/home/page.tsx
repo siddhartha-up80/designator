@@ -421,8 +421,8 @@ export default function HomePage() {
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent Activity */}
-          <div className="bg-card rounded-3xl p-8 border">
-            <div className="flex items-center justify-between mb-6">
+          <div className="bg-card rounded-3xl p-6 sm:p-8 border">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
               <h2 className="text-2xl font-semibold text-card-foreground">
                 Recent Activity
               </h2>
@@ -484,7 +484,7 @@ export default function HomePage() {
                   return (
                     <div
                       key={activity.id}
-                      className="flex items-center gap-4 p-4 hover:bg-accent hover:text-accent-foreground rounded-2xl transition-colors"
+                      className="flex items-center gap-4 p-3 sm:p-4 hover:bg-accent hover:text-accent-foreground rounded-2xl transition-colors flex-wrap"
                     >
                       <div className="bg-muted rounded-xl p-3 flex-shrink-0">
                         <IconComponent className="h-5 w-5 text-muted-foreground" />
@@ -509,7 +509,7 @@ export default function HomePage() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <div className="w-full sm:w-auto mt-2 sm:mt-0 ml-0 sm:ml-auto flex flex-col sm:flex-row items-start sm:items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
                         {activity.credits && (
                           <span className="text-xs bg-rose-500 text-white px-2 py-1 rounded-lg font-medium">
                             -{activity.credits} credits
@@ -517,7 +517,9 @@ export default function HomePage() {
                         )}
                         <div className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          <span>{formatTimeAgo(activity.createdAt)}</span>
+                          <span className="text-xs">
+                            {formatTimeAgo(activity.createdAt)}
+                          </span>
                         </div>
                       </div>
                     </div>

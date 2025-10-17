@@ -50,18 +50,24 @@ const StatCard: React.FC<StatCardProps> = ({
 
   return (
     <Card className="relative overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold mt-1">{value}</p>
+      <CardContent className="p-3 sm:p-4 md:p-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
+              {title}
+            </p>
+            <p className="text-xl sm:text-2xl font-bold mt-0.5 sm:mt-1 truncate">
+              {value}
+            </p>
             {subtitle && (
-              <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 sm:mt-1 truncate">
+                {subtitle}
+              </p>
             )}
             {trend && trendValue && (
-              <div className="flex items-center mt-2">
+              <div className="flex items-center mt-1 sm:mt-2">
                 <TrendingUp
-                  className={`h-3 w-3 mr-1 ${
+                  className={`h-3 w-3 mr-1 flex-shrink-0 ${
                     trend === "up"
                       ? "text-green-500"
                       : trend === "down"
@@ -69,14 +75,16 @@ const StatCard: React.FC<StatCardProps> = ({
                       : "text-gray-500"
                   }`}
                 />
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground truncate">
                   {trendValue}
                 </span>
               </div>
             )}
           </div>
-          <div className={`p-3 rounded-full ${colorClasses[color]}`}>
-            <Icon className="h-6 w-6" />
+          <div
+            className={`p-2 sm:p-3 rounded-full flex-shrink-0 ${colorClasses[color]}`}
+          >
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
         </div>
       </CardContent>
@@ -89,23 +97,23 @@ const UsageStatistics: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Summary skeleton */}
         <Card className="animate-pulse">
-          <CardContent className="p-6">
-            <div className="space-y-4">
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-between">
-                <div className="space-y-2">
-                  <div className="h-5 bg-muted rounded w-48"></div>
-                  <div className="h-4 bg-muted rounded w-32"></div>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="h-4 sm:h-5 bg-muted rounded w-32 sm:w-48"></div>
+                  <div className="h-3 sm:h-4 bg-muted rounded w-24 sm:w-32"></div>
                 </div>
-                <div className="h-6 w-20 bg-muted rounded-full"></div>
+                <div className="h-5 sm:h-6 w-16 sm:w-20 bg-muted rounded-full"></div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="text-center space-y-1">
-                    <div className="h-8 bg-muted rounded w-12 mx-auto"></div>
-                    <div className="h-3 bg-muted rounded w-16 mx-auto"></div>
+                    <div className="h-6 sm:h-8 bg-muted rounded w-10 sm:w-12 mx-auto"></div>
+                    <div className="h-2.5 sm:h-3 bg-muted rounded w-12 sm:w-16 mx-auto"></div>
                   </div>
                 ))}
               </div>
@@ -114,17 +122,17 @@ const UsageStatistics: React.FC = () => {
         </Card>
 
         {/* Stats grid skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
+              <CardContent className="p-3 sm:p-4 md:p-6">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-2 flex-1">
-                    <div className="h-4 bg-muted rounded w-3/4"></div>
-                    <div className="h-8 bg-muted rounded w-1/2"></div>
-                    <div className="h-3 bg-muted rounded w-2/3"></div>
+                  <div className="space-y-1.5 sm:space-y-2 flex-1">
+                    <div className="h-3 sm:h-4 bg-muted rounded w-3/4"></div>
+                    <div className="h-6 sm:h-8 bg-muted rounded w-1/2"></div>
+                    <div className="h-2.5 sm:h-3 bg-muted rounded w-2/3"></div>
                   </div>
-                  <div className="h-12 w-12 bg-muted rounded-full"></div>
+                  <div className="h-10 w-10 sm:h-12 sm:w-12 bg-muted rounded-full"></div>
                 </div>
               </CardContent>
             </Card>
@@ -134,14 +142,14 @@ const UsageStatistics: React.FC = () => {
         {/* Additional skeletons */}
         {[1, 2, 3].map((i) => (
           <Card key={`extra-${i}`} className="animate-pulse">
-            <CardHeader>
-              <div className="h-6 bg-muted rounded w-48"></div>
+            <CardHeader className="p-3 sm:p-4 md:p-6">
+              <div className="h-5 sm:h-6 bg-muted rounded w-32 sm:w-48"></div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="h-4 bg-muted rounded w-full"></div>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-4 bg-muted rounded w-1/2"></div>
+            <CardContent className="p-3 sm:p-4 md:p-6 pt-0">
+              <div className="space-y-2 sm:space-y-3">
+                <div className="h-3 sm:h-4 bg-muted rounded w-full"></div>
+                <div className="h-3 sm:h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-3 sm:h-4 bg-muted rounded w-1/2"></div>
               </div>
             </CardContent>
           </Card>
@@ -153,12 +161,17 @@ const UsageStatistics: React.FC = () => {
   if (error) {
     return (
       <Card>
-        <CardContent className="p-6 text-center">
-          <div className="text-muted-foreground mb-4">
+        <CardContent className="p-4 sm:p-6 text-center">
+          <div className="text-muted-foreground mb-3 sm:mb-4 text-xs sm:text-sm">
             Failed to load statistics: {error}
           </div>
-          <Button onClick={refetch} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button
+            onClick={refetch}
+            variant="outline"
+            size="sm"
+            className="text-xs sm:text-sm h-8 sm:h-9"
+          >
+            <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
             Retry
           </Button>
         </CardContent>
@@ -191,48 +204,57 @@ const UsageStatistics: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Summary Overview */}
       <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/10">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold">Your Designator Journey</h3>
-              <p className="text-sm text-muted-foreground">
+        <CardContent className="p-3 sm:p-4 md:p-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm sm:text-base md:text-lg font-semibold truncate">
+                Your Designator Journey
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
                 Member since {statistics.overview.accountAge}
               </p>
             </div>
-            <Badge variant="outline" className="bg-background">
+            <Badge
+              variant="outline"
+              className="bg-background flex-shrink-0 text-xs sm:text-sm h-6 sm:h-7 px-2 sm:px-3"
+            >
               {statistics.overview.currentCredits} Credits
             </Badge>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-primary">
                 {statistics.overview.totalImages}
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
                 Total Creations
               </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-primary">
                 {statistics.overview.totalCreditsSpent}
               </div>
-              <div className="text-xs text-muted-foreground">Credits Used</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
+                Credits Used
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-600">
                 {statistics.insights.efficiencyScore}%
               </div>
-              <div className="text-xs text-muted-foreground">Efficiency</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
+                Efficiency
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold text-orange-600">
                 {statistics.overview.recentActivity}
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-[10px] sm:text-xs text-muted-foreground">
                 Recent Activity
               </div>
             </div>
@@ -241,7 +263,7 @@ const UsageStatistics: React.FC = () => {
       </Card>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
           title="Images Generated"
           value={statistics.overview.totalImages}
@@ -274,21 +296,23 @@ const UsageStatistics: React.FC = () => {
 
       {/* Feature Usage */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            Feature Usage Breakdown
+        <CardHeader className="p-3 sm:p-4 md:p-6">
+          <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+            <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+            <span className="truncate">Feature Usage Breakdown</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Camera className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm font-medium">Fashion Try-on</span>
+        <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                  <Camera className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium truncate">
+                    Fashion Try-on
+                  </span>
                 </div>
-                <span className="text-sm font-bold">
+                <span className="text-xs sm:text-sm font-bold flex-shrink-0">
                   {statistics.usage.fashionTryons}
                 </span>
               </div>
@@ -298,16 +322,18 @@ const UsageStatistics: React.FC = () => {
                     Math.max(statistics.overview.totalImages, 1)) *
                   100
                 }
-                className="h-2"
+                className="h-1.5 sm:h-2"
               />
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm font-medium">AI Photography</span>
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                  <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium truncate">
+                    AI Photography
+                  </span>
                 </div>
-                <span className="text-sm font-bold">
+                <span className="text-xs sm:text-sm font-bold flex-shrink-0">
                   {statistics.usage.photosEnhanced}
                 </span>
               </div>
@@ -317,16 +343,18 @@ const UsageStatistics: React.FC = () => {
                     Math.max(statistics.overview.totalImages, 1)) *
                   100
                 }
-                className="h-2"
+                className="h-1.5 sm:h-2"
               />
             </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-green-500" />
-                  <span className="text-sm font-medium">Prompt Generation</span>
+            <div className="space-y-1.5 sm:space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                  <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium truncate">
+                    Prompt Generation
+                  </span>
                 </div>
-                <span className="text-sm font-bold">
+                <span className="text-xs sm:text-sm font-bold flex-shrink-0">
                   {statistics.usage.promptsCreated}
                 </span>
               </div>
@@ -336,7 +364,7 @@ const UsageStatistics: React.FC = () => {
                     Math.max(statistics.overview.totalImages, 1)) *
                   100
                 }
-                className="h-2"
+                className="h-1.5 sm:h-2"
               />
             </div>
           </div>
@@ -344,57 +372,71 @@ const UsageStatistics: React.FC = () => {
       </Card>
 
       {/* Insights */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Usage Insights
+          <CardHeader className="p-3 sm:p-4 md:p-6">
+            <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+              <span className="truncate">Usage Insights</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-3">
+          <CardContent className="space-y-2.5 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6 pt-0">
+            <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                 {React.createElement(
                   getFeatureIcon(statistics.insights.favoriteFeature),
                   {
-                    className: "h-5 w-5 text-primary",
+                    className:
+                      "h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0",
                   }
                 )}
-                <div>
-                  <p className="text-sm font-medium">Favorite Feature</p>
-                  <p className="text-xs text-muted-foreground">Most used</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium truncate">
+                    Favorite Feature
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                    Most used
+                  </p>
                 </div>
               </div>
-              <Badge variant="secondary">
+              <Badge
+                variant="secondary"
+                className="flex-shrink-0 text-xs max-w-[120px] truncate"
+              >
                 {statistics.insights.favoriteFeature}
               </Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">Most Active Day</p>
-                  <p className="text-xs text-muted-foreground">Peak usage</p>
+            <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium truncate">
+                    Most Active Day
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                    Peak usage
+                  </p>
                 </div>
               </div>
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="flex-shrink-0 text-xs">
                 {statistics.insights.mostActiveDay}
               </Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Zap className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-sm font-medium">Daily Average</p>
-                  <p className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/50 rounded-lg gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium truncate">
+                    Daily Average
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                     Credits per day
                   </p>
                 </div>
               </div>
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="flex-shrink-0 text-xs">
                 {statistics.insights.avgDailyUsage}
               </Badge>
             </div>
@@ -402,17 +444,17 @@ const UsageStatistics: React.FC = () => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-primary" />
-              Efficiency Score
+          <CardHeader className="p-3 sm:p-4 md:p-6">
+            <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+              <Award className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+              <span className="truncate">Efficiency Score</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-center space-y-4">
+          <CardContent className="p-3 sm:p-4 md:p-6 pt-0">
+            <div className="text-center space-y-3 sm:space-y-4">
               <div className="relative">
                 <div
-                  className={`text-4xl font-bold ${
+                  className={`text-3xl sm:text-4xl font-bold ${
                     efficiency >= 80
                       ? "text-green-500"
                       : efficiency >= 60
@@ -422,17 +464,17 @@ const UsageStatistics: React.FC = () => {
                 >
                   {efficiency}%
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                   Images per credit spent
                 </p>
               </div>
 
               <Progress
                 value={efficiency}
-                className={`h-3 ${getEfficiencyColor(efficiency)}`}
+                className={`h-2 sm:h-3 ${getEfficiencyColor(efficiency)}`}
               />
 
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
                 {efficiency >= 80
                   ? "Excellent efficiency! You're making great use of your credits."
                   : efficiency >= 60
@@ -448,40 +490,44 @@ const UsageStatistics: React.FC = () => {
 
       {/* Weekly Trend Chart */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Monthly Usage Trend
+        <CardHeader className="p-3 sm:p-4 md:p-6">
+          <CardTitle className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+            <span className="truncate">Monthly Usage Trend</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+        <CardContent className="p-3 sm:p-4 md:p-6 pt-0">
+          <div className="space-y-3 sm:space-y-4">
             {Object.entries(statistics.monthlyTrend).length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                 {Object.entries(statistics.monthlyTrend)
                   .slice(-6)
                   .map(([month, credits]) => (
                     <div
                       key={month}
-                      className="text-center p-3 bg-muted/50 rounded-lg"
+                      className="text-center p-2 sm:p-3 bg-muted/50 rounded-lg"
                     >
-                      <div className="text-xs text-muted-foreground mb-1">
+                      <div className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1 truncate">
                         {new Date(month + "-01").toLocaleDateString("en", {
                           month: "short",
                           year: "2-digit",
                         })}
                       </div>
-                      <div className="font-semibold">{credits}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-semibold text-sm sm:text-base">
+                        {credits}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
                         credits
                       </div>
                     </div>
                   ))}
               </div>
             ) : (
-              <div className="text-center text-muted-foreground py-8">
-                <BarChart3 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>Start creating to see your usage trends!</p>
+              <div className="text-center text-muted-foreground py-6 sm:py-8">
+                <BarChart3 className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-xs sm:text-sm">
+                  Start creating to see your usage trends!
+                </p>
               </div>
             )}
           </div>

@@ -23,16 +23,16 @@ export default function ProductModelPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Page Title */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-semibold flex items-center gap-2">
-            <Package className="h-6 w-6 text-primary" />
-            Product Model Generator
+        <div className="mb-3 sm:mb-4">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-semibold flex flex-wrap items-center gap-2">
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span>Product Model Generator</span>
             <FeatureCreditCost cost={CREDIT_COSTS.PHOTO_GENERATION} size="md" />
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-xs sm:text-sm mt-1">
             Generate professional model images wearing your products
           </p>
         </div>

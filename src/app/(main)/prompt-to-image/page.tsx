@@ -323,32 +323,60 @@ export default function PromptToImagePage() {
   };
 
   return (
-    <div className="p-4 sm:p-6">
+    <div className="p-3 sm:p-4 md:p-6">
       <div className="mx-auto max-w-[1400px]">
-        {/* Top bar */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-semibold flex items-center gap-2">
-              <Wand2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-              Prompt to Image Generator
-              <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
-            </h1>
-            <p className="text-muted-foreground text-xs sm:text-sm">
-              Generate stunning images from text prompts or transform existing
-              images with AI. Create artwork, photos, and designs with advanced
-              AI models.
-            </p>
+        {/* Top bar - Mobile optimized */}
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-semibold flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <Wand2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
+                <span className="truncate">Prompt to Image</span>
+                <FeatureCreditCost cost={CREDIT_COSTS.TEXT_PROMPT} size="md" />
+              </h1>
+            </div>
+
+            {/* Step-aware actions - Hidden on mobile, shown on tablet+ */}
+            <div className="hidden sm:flex gap-2 flex-shrink-0">
+              {step === "GENERATE" ? (
+                <Button variant="outline" size="sm" onClick={goToInput}>
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  New Generation
+                </Button>
+              ) : (
+                <Button variant="outline" size="sm" onClick={resetAll}>
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reset All
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Step-aware actions */}
-          <div className="flex gap-2">
+          <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+            Generate stunning images from text prompts or transform existing
+            images with AI. Create artwork, photos, and designs with advanced AI
+            models.
+          </p>
+
+          {/* Mobile-only action buttons */}
+          <div className="flex sm:hidden gap-2 mt-3">
             {step === "GENERATE" ? (
-              <Button variant="outline" size="sm" onClick={goToInput}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToInput}
+                className="flex-1"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 New Generation
               </Button>
             ) : (
-              <Button variant="outline" size="sm" onClick={resetAll}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetAll}
+                className="flex-1"
+              >
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Reset All
               </Button>
@@ -356,23 +384,23 @@ export default function PromptToImagePage() {
           </div>
         </div>
 
-        {/* Main layout: large center + sticky right rail */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
+        {/* Main layout: Responsive stacking */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-3 sm:gap-4">
           {/* Center column */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 order-1 lg:order-1 pb-24 lg:pb-0">
             {step === "INPUT" && (
               <>
-                {/* Text Prompt Input - Updated to include multi-image upload */}
+                {/* Text Prompt Input - Mobile optimized - Now at top */}
                 <Card>
-                  <CardHeader className="py-3">
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <FileText className="h-5 w-5" />
+                  <CardHeader className="py-3 px-3 sm:px-6">
+                    <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                      <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                       Text & Image Input
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-xs sm:text-sm font-medium">
                         Describe what you want to generate
                       </label>
                       <Textarea
@@ -380,14 +408,14 @@ export default function PromptToImagePage() {
                         value={textPrompt}
                         onChange={(e) => setTextPrompt(e.target.value)}
                         rows={4}
-                        className="resize-none"
+                        className="resize-none text-sm"
                       />
                     </div>
 
                     {/* Multi-Image Upload */}
                     <div className="space-y-2">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <ImageIcon className="h-4 w-4" />
+                      <label className="text-xs sm:text-sm font-medium flex items-center gap-2">
+                        <ImageIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         Reference Images (Optional)
                         {uploadedImages.length > 0 && (
                           <Badge variant="secondary" className="text-xs">
@@ -410,7 +438,7 @@ export default function PromptToImagePage() {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">
+                      <label className="text-xs sm:text-sm font-medium">
                         Negative Prompt (Optional)
                       </label>
                       <Textarea
@@ -418,7 +446,7 @@ export default function PromptToImagePage() {
                         value={negativePrompt}
                         onChange={(e) => setNegativePrompt(e.target.value)}
                         rows={2}
-                        className="resize-none"
+                        className="resize-none text-sm"
                       />
                       <p className="text-xs text-muted-foreground">
                         Describe what you want to avoid in the generated image
@@ -427,9 +455,9 @@ export default function PromptToImagePage() {
                   </CardContent>
                 </Card>
 
-                {/* Generate Button */}
-                <Card>
-                  <CardContent className="pt-6 space-y-3">
+                {/* Generate Button - Desktop only (inline) */}
+                <Card className="hidden lg:block">
+                  <CardContent className="pt-6 pb-6 space-y-3 px-6">
                     <Button
                       className="w-full h-12 text-base font-semibold"
                       onClick={handleGenerate}
@@ -441,15 +469,19 @@ export default function PromptToImagePage() {
                       {isGenerating ? (
                         <>
                           <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                          Generating {numberOfImages[0]} image
-                          {numberOfImages[0] > 1 ? "s" : ""}...
+                          <span className="truncate">
+                            Generating {numberOfImages[0]} image
+                            {numberOfImages[0] > 1 ? "s" : ""}...
+                          </span>
                         </>
                       ) : (
                         <>
                           <Wand2 className="h-5 w-5 mr-2" />
-                          Generate {numberOfImages[0]} Image
-                          {numberOfImages[0] > 1 ? "s" : ""}{" "}
-                          <span className="opacity-90">
+                          <span className="truncate">
+                            Generate {numberOfImages[0]} Image
+                            {numberOfImages[0] > 1 ? "s" : ""}
+                          </span>
+                          <span className="opacity-90 ml-1">
                             (
                             <CostPreview
                               baseRate={CREDIT_COSTS.TEXT_PROMPT}
@@ -482,39 +514,45 @@ export default function PromptToImagePage() {
 
             {step === "GENERATE" && (
               <>
-                {/* Input Preview Card */}
+                {/* Input Preview Card - Mobile optimized */}
                 <Card className="overflow-hidden">
-                  <div className="flex items-center justify-between px-4 pt-4">
-                    <h3 className="text-base font-medium">Input Used</h3>
+                  <div className="flex items-center justify-between px-3 sm:px-4 pt-3 sm:pt-4">
+                    <h3 className="text-sm sm:text-base font-medium">
+                      Input Used
+                    </h3>
                     <Button
                       size="sm"
                       onClick={handleGenerate}
                       disabled={isGenerating}
+                      className="text-xs sm:text-sm"
                     >
                       {isGenerating ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Generating...
+                          <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 animate-spin" />
+                          <span className="hidden sm:inline">
+                            Generating...
+                          </span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Wand2 className="h-4 w-4 mr-2" />
+                          <Wand2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                           Regenerate
                         </>
                       )}
                     </Button>
                   </div>
 
-                  <CardContent className="pt-4">
-                    <div className="space-y-4">
+                  <CardContent className="pt-3 sm:pt-4 px-3 sm:px-6">
+                    <div className="space-y-3 sm:space-y-4">
                       {textPrompt && (
-                        <div className="p-4 bg-muted/50 rounded-lg">
-                          <p className="text-sm leading-relaxed">
+                        <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
+                          <p className="text-xs sm:text-sm leading-relaxed break-words">
                             {textPrompt}
                           </p>
                           {negativePrompt && (
-                            <div className="mt-3 pt-3 border-t">
-                              <p className="text-xs text-muted-foreground">
+                            <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t">
+                              <p className="text-xs text-muted-foreground break-words">
                                 <strong>Negative:</strong> {negativePrompt}
                               </p>
                             </div>
@@ -531,7 +569,7 @@ export default function PromptToImagePage() {
                             {uploadedImages.map((image) => (
                               <div
                                 key={image.id}
-                                className="w-20 h-20 rounded-lg overflow-hidden border bg-background"
+                                className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border bg-background"
                               >
                                 <img
                                   src={image.url}
@@ -547,24 +585,24 @@ export default function PromptToImagePage() {
                   </CardContent>
                 </Card>
 
-                {/* Generated Images */}
+                {/* Generated Images - Mobile optimized */}
                 {generatedImages.length > 0 && (
                   <Card>
-                    <CardHeader className="py-3">
-                      <CardTitle className="flex items-center justify-between text-base">
+                    <CardHeader className="py-3 px-3 sm:px-6">
+                      <CardTitle className="flex items-center justify-between text-sm sm:text-base flex-wrap gap-2">
                         <span className="flex items-center gap-2">
-                          <ImageIcon className="h-5 w-5" />
+                          <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                           Generated Images ({generatedImages.length})
                         </span>
-                        <Badge variant="secondary">
+                        <Badge variant="secondary" className="text-xs">
                           {selectedStyle.charAt(0).toUpperCase() +
                             selectedStyle.slice(1)}{" "}
                           Style
                         </Badge>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <CardContent className="px-3 sm:px-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {generatedImages.map((imageUrl, index) => (
                           <div key={index} className="space-y-2">
                             <div className="relative group rounded-lg overflow-hidden border">
@@ -573,7 +611,8 @@ export default function PromptToImagePage() {
                                 alt={`Generated ${index + 1}`}
                                 className="w-full h-full object-cover"
                               />
-                              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              {/* Desktop hover overlay */}
+                              <div className="hidden sm:flex absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-2">
                                 <Button
                                   size="sm"
                                   variant="secondary"
@@ -593,25 +632,33 @@ export default function PromptToImagePage() {
                                 </Button>
                               </div>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <Badge variant="outline">Image {index + 1}</Badge>
-                              <div className="flex gap-2">
+                            {/* Mobile action buttons below image */}
+                            <div className="flex items-center justify-between gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                Image {index + 1}
+                              </Badge>
+                              <div className="flex gap-1.5 sm:gap-2">
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="text-green-600 border-green-600 hover:bg-green-50"
+                                  className="text-green-600 border-green-600 hover:bg-green-50 text-xs h-8 px-2 sm:px-3"
                                   onClick={() => saveToGallery(imageUrl, index)}
                                 >
-                                  <Save className="h-3 w-3 mr-1" />
-                                  Gallery
+                                  <Save className="h-3 w-3 sm:mr-1" />
+                                  <span className="hidden sm:inline">
+                                    Gallery
+                                  </span>
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
+                                  className="text-xs h-8 px-2 sm:px-3"
                                   onClick={() => downloadImage(imageUrl, index)}
                                 >
-                                  <Download className="h-3 w-3 mr-1" />
-                                  Download
+                                  <Download className="h-3 w-3 sm:mr-1" />
+                                  <span className="hidden sm:inline">
+                                    Download
+                                  </span>
                                 </Button>
                               </div>
                             </div>
@@ -622,52 +669,63 @@ export default function PromptToImagePage() {
                   </Card>
                 )}
 
-                {/* Quick Actions */}
+                {/* Quick Actions - Mobile optimized */}
                 <Card>
-                  <CardHeader className="py-3">
-                    <CardTitle className="text-base">Quick Actions</CardTitle>
+                  <CardHeader className="py-3 px-3 sm:px-6">
+                    <CardTitle className="text-sm sm:text-base">
+                      Quick Actions
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="pb-4">
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <CardContent className="pb-3 sm:pb-4 px-3 sm:px-6">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={generatedImages.length === 0}
-                        className="text-green-600 border-green-600 hover:bg-green-50"
+                        className="text-green-600 border-green-600 hover:bg-green-50 text-xs flex-1 sm:flex-none"
                         onClick={saveAllToGallery}
                       >
-                        <Save className="h-4 w-4 mr-2" />
-                        Save All to Gallery
+                        <Save className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        <span className="hidden sm:inline">
+                          Save All to Gallery
+                        </span>
+                        <span className="sm:hidden">Save All</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={generatedImages.length === 0}
+                        className="text-xs flex-1 sm:flex-none"
                         onClick={() => {
                           generatedImages.forEach((url, i) =>
                             downloadImage(url, i)
                           );
                         }}
                       >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download All
+                        <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        <span className="hidden sm:inline">Download All</span>
+                        <span className="sm:hidden">Download</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         disabled={!textPrompt}
                         onClick={copyPrompt}
+                        className="text-xs"
                       >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy Prompt
+                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        <span className="hidden sm:inline">Copy Prompt</span>
+                        <span className="sm:hidden">Copy</span>
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setStep("INPUT")}
+                        className="text-xs"
                       >
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        New Generation
+                        <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                        <span className="hidden sm:inline">New Generation</span>
+                        <span className="sm:hidden">New</span>
                       </Button>
                     </div>
                   </CardContent>
@@ -675,20 +733,26 @@ export default function PromptToImagePage() {
               </>
             )}
 
-            {/* Error Display */}
+            {/* Error Display - Mobile optimized */}
             {error && (
-              <Card className="border-red-200 bg-red-50">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-2 text-red-600">
-                    <Zap className="h-4 w-4" />
-                    <span className="font-medium">Generation Error</span>
+              <Card className="border-red-200 bg-red-50 dark:bg-red-950/20">
+                <CardContent className="pt-4 sm:pt-6 px-3 sm:px-6">
+                  <div className="flex items-start gap-2 text-red-600">
+                    <Zap className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <span className="font-medium text-sm">
+                        Generation Error
+                      </span>
+                      <p className="text-xs sm:text-sm mt-1 break-words">
+                        {error}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-red-600 mt-2">{error}</p>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setError("")}
-                    className="mt-3"
+                    className="mt-3 text-xs"
                   >
                     Dismiss
                   </Button>
@@ -697,17 +761,17 @@ export default function PromptToImagePage() {
             )}
           </div>
 
-          {/* Right rail: sticky, narrower, grouped */}
-          <div className="xl:sticky xl:top-4 h-fit space-y-4">
+          {/* Right rail: Settings panel - Mobile optimized with order */}
+          <div className="lg:sticky lg:top-4 h-fit space-y-3 sm:space-y-4 order-2 lg:order-2">
             {/* Style Selection */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenStyles((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Palette className="h-5 w-5" />
+                    <Palette className="h-4 w-4 sm:h-5 sm:w-5" />
                     Image Style
                   </span>
                   {openStyles ? (
@@ -718,8 +782,8 @@ export default function PromptToImagePage() {
                 </CardTitle>
               </CardHeader>
               {openStyles && (
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2">
+                <CardContent className="px-3 sm:px-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
                     {imageStyles.map((style) => (
                       <button
                         key={style.id}
@@ -743,18 +807,18 @@ export default function PromptToImagePage() {
                         {/* Content */}
                         <div className="relative z-10 h-full w-full p-2 flex flex-col">
                           <div className="mt-auto">
-                            <div className="text-white text-xs font-medium mb-1">
+                            <div className="text-white text-xs font-medium mb-0.5 sm:mb-1">
                               {style.name}
                             </div>
-                            <p className="text-white/80 text-[10px] leading-tight">
+                            <p className="text-white/80 text-[10px] leading-tight line-clamp-2">
                               {style.description}
                             </p>
                           </div>
                         </div>
                         {/* Selection indicator */}
                         {selectedStyle === style.id && (
-                          <div className="absolute top-2 right-2">
-                            <div className="w-3 h-3 bg-primary rounded-full border-2 border-white" />
+                          <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
+                            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full border-2 border-white" />
                           </div>
                         )}
                       </button>
@@ -767,12 +831,12 @@ export default function PromptToImagePage() {
             {/* Generation Settings */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenSettings((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
                     Settings
                   </span>
                   {openSettings ? (
@@ -783,11 +847,13 @@ export default function PromptToImagePage() {
                 </CardTitle>
               </CardHeader>
               {openSettings && (
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   {/* Aspect Ratio */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Aspect Ratio</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <label className="text-xs sm:text-sm font-medium">
+                      Aspect Ratio
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 gap-1.5 sm:gap-2">
                       {aspectRatios.map((ratio) => (
                         <button
                           key={ratio.id}
@@ -798,8 +864,8 @@ export default function PromptToImagePage() {
                               : "border-border hover:border-primary/50"
                           }`}
                         >
-                          {ratio.name}
-                          <div className="text-[10px] text-muted-foreground mt-1">
+                          <div className="font-medium">{ratio.name}</div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5">
                             {ratio.ratio}
                           </div>
                         </button>
@@ -810,8 +876,8 @@ export default function PromptToImagePage() {
                   {/* Number of Images */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <ImageIcon className="h-4 w-4" />
-                      <span className="text-sm font-medium">
+                      <ImageIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <span className="text-xs sm:text-sm font-medium">
                         Number of Images
                       </span>
                       <span className="text-xs text-muted-foreground ml-auto">
@@ -837,12 +903,12 @@ export default function PromptToImagePage() {
             {/* Advanced Settings */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenAdvanced((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
                   <span className="flex items-center gap-2">
-                    <Zap className="h-5 w-5" />
+                    <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
                     Advanced
                   </span>
                   {openAdvanced ? (
@@ -853,11 +919,11 @@ export default function PromptToImagePage() {
                 </CardTitle>
               </CardHeader>
               {openAdvanced && (
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 px-3 sm:px-6">
                   {/* Guidance Scale */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">
+                      <span className="text-xs sm:text-sm font-medium">
                         Guidance Scale
                       </span>
                       <span className="text-xs text-muted-foreground ml-auto">
@@ -880,7 +946,7 @@ export default function PromptToImagePage() {
                   {/* Steps */}
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">
+                      <span className="text-xs sm:text-sm font-medium">
                         Inference Steps
                       </span>
                       <span className="text-xs text-muted-foreground ml-auto">
@@ -906,11 +972,11 @@ export default function PromptToImagePage() {
             {/* Tips */}
             <Card>
               <CardHeader
-                className="py-3 cursor-pointer select-none"
+                className="py-3 px-3 sm:px-6 cursor-pointer select-none"
                 onClick={() => setOpenTips((v) => !v)}
               >
-                <CardTitle className="flex items-center justify-between text-base">
-                  <span className="text-sm">Pro Tips</span>
+                <CardTitle className="flex items-center justify-between text-sm sm:text-base">
+                  <span className="text-xs sm:text-sm">Pro Tips</span>
                   {openTips ? (
                     <ChevronDown className="h-4 w-4" />
                   ) : (
@@ -919,7 +985,7 @@ export default function PromptToImagePage() {
                 </CardTitle>
               </CardHeader>
               {openTips && (
-                <CardContent className="text-xs text-muted-foreground space-y-2">
+                <CardContent className="text-xs text-muted-foreground space-y-1.5 sm:space-y-2 px-3 sm:px-6">
                   <p>• Be specific and descriptive in your prompts</p>
                   <p>
                     • Use art style keywords like "photorealistic", "oil
@@ -933,6 +999,52 @@ export default function PromptToImagePage() {
             </Card>
           </div>
         </div>
+
+        {/* Floating Generate Button - Mobile only, sticky at bottom */}
+        {step === "INPUT" && (
+          <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-sm border-t lg:hidden z-50">
+            <div className="max-w-[1400px] mx-auto flex gap-2">
+              <Button
+                className="flex-1 h-12 text-sm font-semibold shadow-lg"
+                onClick={handleGenerate}
+                disabled={
+                  isGenerating ||
+                  (!textPrompt.trim() && uploadedImages.length === 0)
+                }
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <span className="truncate">
+                      Generating {numberOfImages[0]}...
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-4 w-4 mr-2" />
+                    <span className="truncate">
+                      Generate {numberOfImages[0]} Image
+                      {numberOfImages[0] > 1 ? "s" : ""}
+                    </span>
+                  </>
+                )}
+              </Button>
+              {(textPrompt.trim() ||
+                uploadedImages.length > 0 ||
+                negativePrompt.trim()) && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-12 w-12 flex-shrink-0"
+                  onClick={resetAll}
+                  disabled={isGenerating}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

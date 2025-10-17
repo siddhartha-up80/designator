@@ -91,36 +91,36 @@ export function ImageUpload({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">
+      <CardHeader className="p-3 sm:p-6">
+        <CardTitle className="text-sm sm:text-base md:text-lg font-semibold">
           Upload Product Image
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
         {uploadedImageUrl ? (
           <div className="relative">
             <img
               src={uploadedImageUrl}
               alt="Uploaded product"
-              className="w-full max-h-96 object-contain rounded-lg bg-muted"
+              className="w-full max-h-64 sm:max-h-80 md:max-h-96 object-contain rounded-lg bg-muted"
             />
             <Button
               variant="destructive"
               size="sm"
-              className="absolute top-2 right-2"
+              className="absolute top-1 sm:top-2 right-1 sm:right-2 h-7 w-7 sm:h-8 sm:w-8 p-0"
               onClick={clearImage}
             >
-              <X className="h-4 w-4" />
+              <X className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
-            <div className="absolute bottom-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-sm flex items-center gap-1">
-              <Check className="h-3 w-3" />
+            <div className="absolute bottom-1 sm:bottom-2 left-1 sm:left-2 bg-green-500 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs md:text-sm flex items-center gap-1">
+              <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               Uploaded
             </div>
           </div>
         ) : (
           <div
             className={cn(
-              "border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
+              "border-2 border-dashed rounded-lg p-4 sm:p-6 md:p-8 text-center transition-colors cursor-pointer",
               isDragOver
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50",
@@ -131,27 +131,29 @@ export function ImageUpload({
             onDrop={handleDrop}
             onClick={() => document.getElementById("file-input")?.click()}
           >
-            <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <Upload className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
 
             {isUploading ? (
               <div className="space-y-2">
-                <div className="text-sm font-medium">
+                <div className="text-xs sm:text-sm font-medium">
                   Uploading... {uploadProgress}%
                 </div>
-                <div className="w-full bg-muted rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-1.5 sm:h-2">
                   <div
-                    className="bg-primary h-2 rounded-full transition-all duration-300"
+                    className="bg-primary h-1.5 sm:h-2 rounded-full transition-all duration-300"
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
               </div>
             ) : (
               <>
-                <Button className="mb-2">Choose Image</Button>
-                <p className="text-sm text-muted-foreground">
+                <Button className="mb-2 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
+                  Choose Image
+                </Button>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Click to browse, drag & drop, or paste
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
                   Supports JPG, PNG, WebP (max 10MB)
                 </p>
               </>

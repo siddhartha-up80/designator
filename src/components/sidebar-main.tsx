@@ -160,7 +160,13 @@ export function Sidebar({ className }: SidebarProps) {
           <div>
             {session?.user ? (
               <div
-                onClick={() => setProfileDialogOpen(true)}
+                onClick={() => {
+                  setProfileDialogOpen(true);
+                  // Close mobile sidebar when opening profile dialog
+                  if (isMobile) {
+                    setOpen(false);
+                  }
+                }}
                 className="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-muted transition-colors group"
               >
                 {session.user.image ? (
