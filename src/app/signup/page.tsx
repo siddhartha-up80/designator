@@ -136,12 +136,12 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-screen flex overflow-hidden relative">
+    <div className="min-h-screen flex flex-col md:flex-row md:h-screen overflow-hidden relative">
       {/* Auth Header */}
       <AuthHeader currentPage="signup" />
 
-      {/* Left side - Carousel */}
-      <div className="flex-1 relative overflow-hidden bg-gradient-to-br from-rose-100 via-rose-50 to-pink-50">
+      {/* Carousel Section - Top on mobile, Left on desktop */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-rose-100 via-rose-50 to-pink-50 h-[70vh] md:h-screen md:flex-1">
         {/* Carousel container */}
         <div className="relative w-full h-full">
           {/* Main carousel image */}
@@ -169,7 +169,7 @@ const SignUpPage = () => {
               <button
                 onClick={prevSlide}
                 aria-label="Previous image"
-                className="absolute left-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 p-2 md:p-2 rounded-full bg-transparent backdrop-blur-xs hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 <ChevronLeft className="w-5 h-5 text-foreground group-hover:text-rose-500 transition-colors duration-300" />
               </button>
@@ -177,7 +177,7 @@ const SignUpPage = () => {
               <button
                 onClick={nextSlide}
                 aria-label="Next image"
-                className="absolute right-6 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-transparent backdrop-blur-xs  hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer"
+                className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 p-2 md:p-2 rounded-full bg-transparent backdrop-blur-xs hover:border-rose-400 hover:bg-rose-500/10 transition-all duration-300 group cursor-pointer touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 <ChevronRight className="w-5 h-5 text-foreground group-hover:text-rose-500 transition-colors duration-300" />
               </button>
@@ -186,14 +186,14 @@ const SignUpPage = () => {
 
           {/* Thumbnail navigation */}
           {!loading && carouselImages.length > 1 && (
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+            <div className="absolute bottom-4 md:bottom-6 left-1/2 transform -translate-x-1/2">
               <div className="flex space-x-2">
                 {carouselImages.slice(0, 5).map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
                     aria-label={`Go to slide ${index + 1}`}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 touch-manipulation ${
                       currentSlide === index
                         ? "bg-rose-500 scale-110"
                         : "bg-background/60 hover:bg-background/80"
@@ -206,12 +206,12 @@ const SignUpPage = () => {
 
           {/* Thumbnail preview in bottom left */}
           {!loading && carouselImages.length > 0 && (
-            <div className="absolute bottom-6 left-6">
-              <div className="w-28 h-28 rounded-lg overflow-hidden border-8 border-gray-600/40 shadow-lg bg-background">
+            <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6">
+              <div className="w-20 h-20 md:w-28 md:h-28 rounded-lg overflow-hidden border-4 md:border-8 border-gray-600/40 shadow-lg bg-background">
                 <img
                   src={carouselImages[currentSlide].productSrc}
                   alt={`Product for ${carouselImages[currentSlide].alt}`}
-                  className="w-full h-full object-cover p-1"
+                  className="w-full h-full object-cover p-0.5 md:p-1"
                 />
               </div>
             </div>
@@ -219,12 +219,14 @@ const SignUpPage = () => {
         </div>
       </div>
 
-      {/* Right side - Sign Up Form */}
-      <div className="flex-1 flex items-center justify-center bg-background p-8 overflow-y-auto pt-24">
-        <div className="w-full max-w-md my-8">
+      {/* Sign Up Form Section - Bottom on mobile, Right on desktop */}
+      <div className="flex-1 flex items-center justify-center bg-background px-4 py-6 md:p-8 overflow-y-auto md:pt-24 min-h-[30vh] md:min-h-0">
+        <div className="w-full max-w-md my-4 md:my-8">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-rose-500 mb-2">Sign Up</h1>
+          <div className="text-center mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold text-rose-500 mb-2">
+              Sign Up
+            </h1>
             <p className="text-gray-600 text-sm">
               Create your Designator account
             </p>
@@ -309,7 +311,7 @@ const SignUpPage = () => {
             onClick={handleGoogleSignUp}
             disabled={isSubmitting}
             variant="outline"
-            className="w-full py-3 px-4 border hover:bg-accent text-muted-foreground hover:text-accent-foreground font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 md:py-3 px-4 border hover:bg-accent text-muted-foreground hover:text-accent-foreground font-medium rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[48px]"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -335,13 +337,13 @@ const SignUpPage = () => {
           </Button>
 
           {/* Sign In Link */}
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center pb-4 md:pb-0">
             <span className="text-sm text-gray-600">
               Already have an account?{" "}
             </span>
             <a
               href="/signin"
-              className="text-sm text-rose-500 hover:text-rose-600 font-medium cursor-pointer"
+              className="text-sm text-rose-500 hover:text-rose-600 font-medium cursor-pointer touch-manipulation inline-flex items-center justify-center min-h-[44px]"
             >
               Sign in
             </a>
