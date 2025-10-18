@@ -5,10 +5,14 @@ import { getCreditPackage, calculateTotalCredits } from "./credit-packages";
 // Cashfree API configuration
 const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID!;
 const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY!;
-const CASHFREE_API_URL =
-  process.env.NODE_ENV === "production"
+
+// Determine API URL based on credentials or explicit environment variable
+// If secret key contains 'prod', use production API, otherwise sandbox
+const isProductionKey = CASHFREE_SECRET_KEY?.includes('_prod_');
+const CASHFREE_API_URL = process.env.CASHFREE_API_URL || 
+  (isProductionKey
     ? "https://api.cashfree.com/pg"
-    : "https://sandbox.cashfree.com/pg";
+    : "https://sandbox.cashfree.com/pg");
 
 export const paymentService = {
   /**
@@ -122,6 +126,9 @@ export const paymentService = {
       if (!response.ok) {
         const error = await response.json();
         console.error("Cashfree order creation failed:", error);
+        console.error("API URL:", CASHFREE_API_URL);
+        console.error("App ID:", CASHFREE_APP_ID ? "Set" : "Missing");
+        console.error("Secret Key:", CASHFREE_SECRET_KEY ? `Set (${isProductionKey ? 'Production' : 'Sandbox'})` : "Missing");
         return { success: false, error: "Failed to create order" };
       }
 
@@ -214,6 +221,26 @@ export const paymentService = {
         };
       }
 
+      // Check if this paymentId is already used by another payment (race condition prevention)
+      if (orderStatus.cf_order_id) {
+        const existingPaymentWithSameId = await prisma.payment.findUnique({
+          where: { cashfreePaymentId: orderStatus.cf_order_id },
+        });
+
+        if (
+          existingPaymentWithSameId &&
+          existingPaymentWithSameId.id !== payment.id
+        ) {
+          console.error(
+            `Payment ID ${orderStatus.cf_order_id} already exists for a different payment record`
+          );
+          return {
+            success: false,
+            error: "Payment ID already exists",
+          };
+        }
+      }
+
       // Update payment record with cashfreePaymentId if not already set
       // Use upsert pattern to avoid unique constraint errors
       const updateData: any = {
@@ -225,10 +252,31 @@ export const paymentService = {
         updateData.cashfreePaymentId = orderStatus.cf_order_id;
       }
 
-      await prisma.payment.update({
-        where: { id: payment.id },
-        data: updateData,
-      });
+      try {
+        await prisma.payment.update({
+          where: { id: payment.id },
+          data: updateData,
+        });
+      } catch (updateError: any) {
+        // Handle unique constraint error gracefully (race condition with webhook)
+        if (updateError.code === "P2002") {
+          console.log(
+            `Payment ${orderStatus.cf_order_id} already updated by webhook (race condition handled)`
+          );
+          // Just update status if needed
+          const currentPayment = await prisma.payment.findUnique({
+            where: { id: payment.id },
+          });
+          if (currentPayment?.status !== "SUCCESS") {
+            await prisma.payment.update({
+              where: { id: payment.id },
+              data: { status: "SUCCESS" },
+            });
+          }
+        } else {
+          throw updateError;
+        }
+      }
 
       // Add credits to user account
       const result = await creditsService.addCredits(

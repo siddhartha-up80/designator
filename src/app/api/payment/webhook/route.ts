@@ -67,14 +67,50 @@ async function handlePaymentSuccess(data: any) {
       return;
     }
 
+    // Check if this paymentId is already used (race condition prevention)
+    if (paymentId) {
+      const existingPaymentWithSameId = await prisma.payment.findUnique({
+        where: { cashfreePaymentId: paymentId },
+      });
+      
+      if (existingPaymentWithSameId && existingPaymentWithSameId.id !== payment.id) {
+        console.error(
+          `Payment ID ${paymentId} already exists for a different payment record`
+        );
+        return;
+      }
+    }
+
     // Update payment record
-    await prisma.payment.update({
-      where: { id: payment.id },
-      data: {
-        cashfreePaymentId: paymentId,
-        status: "SUCCESS",
-      },
-    });
+    try {
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          cashfreePaymentId: paymentId,
+          status: "SUCCESS",
+        },
+      });
+    } catch (updateError: any) {
+      // Handle unique constraint error gracefully (race condition with callback)
+      if (updateError.code === "P2002") {
+        console.log(
+          `Payment ${paymentId} already updated (race condition handled)`
+        );
+        // Check if payment was already successful
+        const updatedPayment = await prisma.payment.findUnique({
+          where: { id: payment.id },
+        });
+        if (updatedPayment?.status !== "SUCCESS") {
+          // Update status only
+          await prisma.payment.update({
+            where: { id: payment.id },
+            data: { status: "SUCCESS" },
+          });
+        }
+      } else {
+        throw updateError;
+      }
+    }
 
     // Add credits to user
     const result = await creditsService.addCredits(
