@@ -33,8 +33,62 @@ export const paymentService = {
       }
 
       const amount = pkg.price; // Cashfree uses rupees, not paise
-      const orderId = `order_${userId}_${Date.now()}`;
       const totalCredits = calculateTotalCredits(packageId);
+
+      // Generate a unique order ID
+      const orderId = `order_${userId}_${Date.now()}_${Math.random()
+        .toString(36)
+        .substring(7)}`;
+
+      // Check for recent pending orders (within last 5 minutes) to prevent duplicate orders
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      const recentPendingOrders = await prisma.payment.findMany({
+        where: {
+          userId,
+          status: "PENDING",
+          createdAt: { gte: fiveMinutesAgo },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      // Filter by packageId in the notes
+      const recentPendingOrder = recentPendingOrders.find(
+        (order) => (order.notes as any)?.packageId === packageId
+      );
+
+      // If there's a recent pending order, return it instead of creating a new one
+      if (recentPendingOrder) {
+        // Try to get the session ID from Cashfree
+        try {
+          const cashfreeResponse = await fetch(
+            `${CASHFREE_API_URL}/orders/${recentPendingOrder.cashfreeOrderId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "x-client-id": CASHFREE_APP_ID,
+                "x-client-secret": CASHFREE_SECRET_KEY,
+                "x-api-version": "2023-08-01",
+              },
+            }
+          );
+
+          if (cashfreeResponse.ok) {
+            const cashfreeOrder = await cashfreeResponse.json();
+            if (cashfreeOrder.payment_session_id) {
+              return {
+                success: true,
+                sessionId: cashfreeOrder.payment_session_id,
+                orderId: recentPendingOrder.cashfreeOrderId,
+                amount: recentPendingOrder.amount / 100,
+              };
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching existing order from Cashfree:", error);
+          // Continue to create a new order if we can't fetch the existing one
+        }
+      }
 
       // Create Cashfree order
       const orderData = {
@@ -73,23 +127,30 @@ export const paymentService = {
 
       const order = await response.json();
 
-      // Save order to database
-      await prisma.payment.create({
-        data: {
-          userId,
-          cashfreeOrderId: orderId,
-          amount: amount * 100, // Store in paise for consistency
-          credits: totalCredits,
-          currency: "INR",
-          status: "PENDING",
-          notes: {
-            packageId,
-            packageName: pkg.name,
-            baseCredits: pkg.credits,
-            bonusCredits: pkg.bonus,
-          },
-        },
+      // Check if payment record already exists (to handle retries)
+      const existingPayment = await prisma.payment.findUnique({
+        where: { cashfreeOrderId: orderId },
       });
+
+      // Save order to database only if it doesn't exist
+      if (!existingPayment) {
+        await prisma.payment.create({
+          data: {
+            userId,
+            cashfreeOrderId: orderId,
+            amount: amount * 100, // Store in paise for consistency
+            credits: totalCredits,
+            currency: "INR",
+            status: "PENDING",
+            notes: {
+              packageId,
+              packageName: pkg.name,
+              baseCredits: pkg.credits,
+              bonusCredits: pkg.bonus,
+            },
+          },
+        });
+      }
 
       return {
         success: true,
@@ -153,13 +214,20 @@ export const paymentService = {
         };
       }
 
-      // Update payment record
+      // Update payment record with cashfreePaymentId if not already set
+      // Use upsert pattern to avoid unique constraint errors
+      const updateData: any = {
+        status: "SUCCESS",
+      };
+
+      // Only update cashfreePaymentId if it's not already set
+      if (!payment.cashfreePaymentId && orderStatus.cf_order_id) {
+        updateData.cashfreePaymentId = orderStatus.cf_order_id;
+      }
+
       await prisma.payment.update({
         where: { id: payment.id },
-        data: {
-          cashfreePaymentId: orderStatus.cf_order_id,
-          status: "SUCCESS",
-        },
+        data: updateData,
       });
 
       // Add credits to user account
