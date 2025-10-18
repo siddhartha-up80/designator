@@ -8,8 +8,9 @@ const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY!;
 
 // Determine API URL based on credentials or explicit environment variable
 // If secret key contains 'prod', use production API, otherwise sandbox
-const isProductionKey = CASHFREE_SECRET_KEY?.includes('_prod_');
-const CASHFREE_API_URL = process.env.CASHFREE_API_URL || 
+const isProductionKey = CASHFREE_SECRET_KEY?.includes("_prod_");
+const CASHFREE_API_URL =
+  process.env.CASHFREE_API_URL ||
   (isProductionKey
     ? "https://api.cashfree.com/pg"
     : "https://sandbox.cashfree.com/pg");
@@ -128,7 +129,12 @@ export const paymentService = {
         console.error("Cashfree order creation failed:", error);
         console.error("API URL:", CASHFREE_API_URL);
         console.error("App ID:", CASHFREE_APP_ID ? "Set" : "Missing");
-        console.error("Secret Key:", CASHFREE_SECRET_KEY ? `Set (${isProductionKey ? 'Production' : 'Sandbox'})` : "Missing");
+        console.error(
+          "Secret Key:",
+          CASHFREE_SECRET_KEY
+            ? `Set (${isProductionKey ? "Production" : "Sandbox"})`
+            : "Missing"
+        );
         return { success: false, error: "Failed to create order" };
       }
 

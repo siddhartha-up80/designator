@@ -72,8 +72,11 @@ async function handlePaymentSuccess(data: any) {
       const existingPaymentWithSameId = await prisma.payment.findUnique({
         where: { cashfreePaymentId: paymentId },
       });
-      
-      if (existingPaymentWithSameId && existingPaymentWithSameId.id !== payment.id) {
+
+      if (
+        existingPaymentWithSameId &&
+        existingPaymentWithSameId.id !== payment.id
+      ) {
         console.error(
           `Payment ID ${paymentId} already exists for a different payment record`
         );
