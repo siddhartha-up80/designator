@@ -12,7 +12,17 @@ export function middleware(req: NextRequest) {
   const isLoggedIn = !!sessionToken;
 
   // Public routes that don't require authentication
-  const publicRoutes = ["/", "/signin", "/signup"];
+  const publicRoutes = [
+    "/",
+    "/signin",
+    "/signup",
+    "/contact",
+    "/terms",
+    "/refunds",
+    "/faq",
+    "/showcase",
+    "/buy-credits",
+  ];
   const isPublicRoute = publicRoutes.includes(pathname);
   const isAuthRoute = pathname.startsWith("/api/auth");
 

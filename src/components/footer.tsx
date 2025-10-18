@@ -95,6 +95,28 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
+          {/* Legal */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-lg">Legal</h4>
+            <ul className="space-y-3 text-sm text-gray-200">
+              <li>
+                <Link href="/terms" className="hover:text-white">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/refunds" className="hover:text-white">
+                  Refunds & Cancellations
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-white">
+                  Contact Us
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="border-t border-gray-700 mt-12 pt-8">
