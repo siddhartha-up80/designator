@@ -147,22 +147,34 @@ export const paymentService = {
 
       // Save order to database only if it doesn't exist
       if (!existingPayment) {
-        await prisma.payment.create({
-          data: {
-            userId,
-            cashfreeOrderId: orderId,
-            amount: amount * 100, // Store in paise for consistency
-            credits: totalCredits,
-            currency: "INR",
-            status: "PENDING",
-            notes: {
-              packageId,
-              packageName: pkg.name,
-              baseCredits: pkg.credits,
-              bonusCredits: pkg.bonus,
+        try {
+          await prisma.payment.create({
+            data: {
+              userId,
+              cashfreeOrderId: orderId,
+              amount: amount * 100, // Store in paise for consistency
+              credits: totalCredits,
+              currency: "INR",
+              status: "PENDING",
+              notes: {
+                packageId,
+                packageName: pkg.name,
+                baseCredits: pkg.credits,
+                bonusCredits: pkg.bonus,
+              },
             },
-          },
-        });
+          });
+        } catch (createError: any) {
+          // Handle unique constraint error gracefully (race condition)
+          if (createError.code === "P2002") {
+            console.log(
+              `Payment record for order ${orderId} already exists (race condition handled)`
+            );
+            // Payment already created, continue with the flow
+          } else {
+            throw createError;
+          }
+        }
       }
 
       return {
@@ -229,14 +241,14 @@ export const paymentService = {
 
       // Check if this paymentId is already used by another payment (race condition prevention)
       if (orderStatus.cf_order_id) {
-        const existingPaymentWithSameId = await prisma.payment.findUnique({
-          where: { cashfreePaymentId: orderStatus.cf_order_id },
+        const existingPaymentWithSameId = await prisma.payment.findFirst({
+          where: {
+            cashfreePaymentId: orderStatus.cf_order_id,
+            id: { not: payment.id },
+          },
         });
 
-        if (
-          existingPaymentWithSameId &&
-          existingPaymentWithSameId.id !== payment.id
-        ) {
+        if (existingPaymentWithSameId) {
           console.error(
             `Payment ID ${orderStatus.cf_order_id} already exists for a different payment record`
           );

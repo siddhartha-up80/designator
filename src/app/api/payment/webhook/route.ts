@@ -69,14 +69,14 @@ async function handlePaymentSuccess(data: any) {
 
     // Check if this paymentId is already used (race condition prevention)
     if (paymentId) {
-      const existingPaymentWithSameId = await prisma.payment.findUnique({
-        where: { cashfreePaymentId: paymentId },
+      const existingPaymentWithSameId = await prisma.payment.findFirst({
+        where: {
+          cashfreePaymentId: paymentId,
+          id: { not: payment.id },
+        },
       });
 
-      if (
-        existingPaymentWithSameId &&
-        existingPaymentWithSameId.id !== payment.id
-      ) {
+      if (existingPaymentWithSameId) {
         console.error(
           `Payment ID ${paymentId} already exists for a different payment record`
         );

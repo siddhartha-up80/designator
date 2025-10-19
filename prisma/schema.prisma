@@ -126,7 +126,7 @@ model Payment {
   id                String        @id @default(auto()) @map("_id") @db.ObjectId
   userId            String        @db.ObjectId
   cashfreeOrderId   String        @unique
-  cashfreePaymentId String?       @unique
+  cashfreePaymentId String? // Removed @unique constraint to allow multiple null values
   amount            Int // Amount in paise (₹100 = 10000 paise)
   credits           Int // Credits purchased
   currency          String        @default("INR")
@@ -139,6 +139,7 @@ model Payment {
 
   @@index([userId, createdAt])
   @@index([status])
+  @@index([cashfreePaymentId]) // Add index for lookups without unique constraint
 }
 
 // Payment status enum
