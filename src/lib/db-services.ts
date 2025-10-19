@@ -8,7 +8,7 @@ export const userService = {
         email: data.email,
         name: data.name,
         image: data.avatar,
-        credits: 50, // Default signup bonus
+        credits: 0, // Credits will be initialized by creditsService
       },
     });
   },

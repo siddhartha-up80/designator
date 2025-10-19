@@ -55,7 +55,7 @@ export function ProductModelForm({
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [imageUpdatePrompt, setImageUpdatePrompt] = useState("");
   const [isUpdatingImages, setIsUpdatingImages] = useState(false);
-  const [numberOfOutputs, setNumberOfOutputs] = useState(2);
+  const [numberOfOutputs, setNumberOfOutputs] = useState(1);
 
   const handleImageUpload = (imageUrl: string) => {
     setUploadedImageUrl(imageUrl);

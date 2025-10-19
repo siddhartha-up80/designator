@@ -213,13 +213,21 @@ export const creditsService = {
    * Initialize credits for new user
    */
   async initializeNewUserCredits(userId: string): Promise<void> {
+    const creditsToAdd = PLAN_CONFIGS.FREE.credits;
+    console.log(
+      `💰 Adding ${creditsToAdd} signup bonus credits to user:`,
+      userId
+    );
+
     await this.addCredits(
       userId,
-      PLAN_CONFIGS.FREE.credits,
+      creditsToAdd,
       "SIGNUP_BONUS",
       "Welcome bonus - Free credits for new users",
       { initialBonus: true }
     );
+
+    console.log(`✅ Successfully added ${creditsToAdd} credits`);
   },
 
   /**

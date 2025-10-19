@@ -85,11 +85,11 @@ async function handleImgToPrompt(
     }
 
     // Return fake response in development mode
-    if (devResponseHelpers.isDevelopment) {
-      return NextResponse.json(
-        devResponseHelpers.getFakeImageToPromptResponse(numberOfPrompts)
-      );
-    }
+    // if (devResponseHelpers.isDevelopment) {
+    //   return NextResponse.json(
+    //     devResponseHelpers.getFakeImageToPromptResponse(numberOfPrompts)
+    //   );
+    // }
 
     // Validate environment variable
     if (!process.env.GEMINI_API_KEY) {

@@ -11,7 +11,11 @@
     "update-images": "node scripts/update-images.js",
     "sitemap": "next-sitemap",
     "analyze": "ANALYZE=true next build",
-    "seo-audit": "next build && next start & lighthouse --only-categories=seo --output=json --output-path=./seo-audit.json https://designator.siddharthasingh.co.in"
+    "seo-audit": "next build && next start & lighthouse --only-categories=seo --output=json --output-path=./seo-audit.json https://designator.siddharthasingh.co.in",
+    "cleanup:users": "node scripts/cleanup-users.js",
+    "view:users": "node scripts/view-users.js",
+    "check:user": "node scripts/check-user-credits.js",
+    "fix:user": "node scripts/fix-user-credits.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

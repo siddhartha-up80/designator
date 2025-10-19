@@ -71,8 +71,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Initialize credits for new users
       if (isNewUser && user.id) {
         try {
+          console.log(
+            "🆕 New user detected! Initializing credits for:",
+            user.email
+          );
           const { creditsService } = await import("@/lib/credits-service");
+
+          // Check if credits were already initialized to prevent duplicate initialization
+          const { prisma } = await import("@/lib/prisma");
+          const existingTransactions = await prisma.creditTransaction.findFirst(
+            {
+              where: {
+                userId: user.id,
+                type: "SIGNUP_BONUS",
+              },
+            }
+          );
+
+          if (existingTransactions) {
+            console.log("⚠️ Credits already initialized for user:", user.email);
+            return;
+          }
+
           await creditsService.initializeNewUserCredits(user.id);
+          console.log(
+            "✅ Successfully initialized 50 credits for:",
+            user.email
+          );
         } catch (error) {
           console.error("Failed to initialize credits for new user:", error);
         }

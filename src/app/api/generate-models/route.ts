@@ -54,11 +54,11 @@ async function handleGenerateModels(
     }
 
     // Return fake response in development mode
-    if (devResponseHelpers.isDevelopment) {
-      return NextResponse.json(
-        await devResponseHelpers.getFakeModelGenerationResponse(numberOfOutputs)
-      );
-    }
+    // if (devResponseHelpers.isDevelopment) {
+    //   return NextResponse.json(
+    //     await devResponseHelpers.getFakeModelGenerationResponse(numberOfOutputs)
+    //   );
+    // }
 
     let base64ImageData = imageData;
     let base64ReferenceImageData = null;
@@ -158,7 +158,7 @@ async function handleGenerateModels(
       try {
         // Generate content using Gemini's image generation model
         const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash-image-preview",
+          model: "gemini-2.5-flash-image",
           contents: imagePrompt,
         });
 
