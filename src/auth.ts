@@ -68,13 +68,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signIn({ user, account, profile, isNewUser }) {
+      // Free credits disabled - users start with 0 credits
       // Initialize credits for new users
       if (isNewUser && user.id) {
+        console.log(
+          "🆕 New user detected:",
+          user.email,
+          "- No free credits given (free credits disabled)"
+        );
+        // Signup bonus is disabled - users get 0 credits
+        /*
         try {
-          console.log(
-            "🆕 New user detected! Initializing credits for:",
-            user.email
-          );
           const { creditsService } = await import("@/lib/credits-service");
 
           // Check if credits were already initialized to prevent duplicate initialization
@@ -101,6 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         } catch (error) {
           console.error("Failed to initialize credits for new user:", error);
         }
+        */
       }
     },
     async signOut() {},

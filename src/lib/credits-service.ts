@@ -11,7 +11,7 @@ export const CREDIT_COSTS = {
 export const PLAN_CONFIGS = {
   FREE: {
     name: "Free",
-    credits: 50,
+    credits: 0, // No free credits
     price: 0,
   },
   PRO: {
