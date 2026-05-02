@@ -18,11 +18,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://designator.siddharthasingh.co.in"), // Replace with your actual domain
   title: {
     default:
-      "Designator - AI Fashion Model Generator | Virtual Try-On Technology",
-    template: "%s | Designator - AI Fashion Models",
+      "Designator - AI Fashion Model Generator | Virtual Try-On & Product Photography",
+    template: "%s | Designator",
   },
   description:
-    "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers. Generate high-quality model photos in minutes.",
+    "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers.",
   keywords: [
     "AI fashion models",
     "virtual try-on",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "fashion tech",
     "AI clothing models",
   ],
-  authors: [{ name: "Designator Team" }],
+  authors: [{ name: "Designator" }],
   creator: "Designator",
   publisher: "Designator",
   formatDetection: {
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     url: "https://designator.siddharthasingh.co.in",
     siteName: "Designator",
     title:
-      "Designator - AI Fashion Model Generator | Virtual Try-On Technology",
+      "Designator - AI Fashion Model Generator | Virtual Try-On & Product Photography",
     description:
       "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers.",
     images: [
@@ -62,17 +62,17 @@ export const metadata: Metadata = {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Designator AI Fashion Model Generator",
+        alt: "Designator - AI Fashion Model Generator",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Designator - AI Fashion Model Generator",
+    title: "Designator - AI Fashion Model Generator | Virtual Try-On",
     description:
-      "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology.",
+      "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers.",
     images: ["/images/twitter-image.jpg"],
-    creator: "@designator_ai",
+    creator: "@designator",
   },
   robots: {
     index: true,
@@ -146,6 +146,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        
       </head>
       <body className={`${inter.variable} antialiased`}>
         <ThemeProvider

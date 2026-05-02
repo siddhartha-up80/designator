@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Designator - AI Fashion Model Generator",
     short_name: "Designator",
     description:
-      "Generate stunning AI fashion models wearing your product designs with advanced virtual try-on technology",
+      "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

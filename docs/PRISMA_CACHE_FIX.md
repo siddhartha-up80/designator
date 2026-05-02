@@ -1,9 +1,11 @@
 # Vercel Prisma Cache Fix - Force Prisma Client Regeneration
 
 ## Problem
+
 Even though the code is updated with `credits: 0`, Vercel is still using an **old cached Prisma Client** that has the old schema with `@default(50)`.
 
 ## Root Cause
+
 - Prisma generates a client during build time based on `schema.prisma`
 - Vercel caches the `node_modules/@prisma/client` folder
 - Even with new code, the cached Prisma Client still has the old default value
@@ -35,6 +37,7 @@ Let me verify and add it if missing.
 ### Step 3: Force Redeploy with Cache Cleared
 
 After clearing cache:
+
 1. Go to **Deployments** tab
 2. Click on the latest deployment
 3. Click **"Redeploy"**
@@ -71,12 +74,14 @@ This ensures Prisma generates fresh client every time.
 Sometimes forcing a Prisma version change clears the cache:
 
 1. Update `package.json`:
+
    ```json
    "@prisma/client": "^6.16.3",  // Bump from 6.16.2
    "prisma": "^6.16.3"
    ```
 
 2. Run locally:
+
    ```bash
    npm install
    npm run build
@@ -94,15 +99,18 @@ Sometimes forcing a Prisma version change clears the cache:
 ### After Deployment Completes:
 
 1. **Check Vercel Logs** (Runtime Logs):
+
    - Go to **Deployments** → Click latest → **Logs**
    - Sign up with a new account
    - Look for: `"🆕 New user detected: [email] - No free credits given"`
 
 2. **Check Build Logs**:
+
    - Should show: `Generated Prisma Client`
    - Verify no cache hit messages for Prisma
 
 3. **Test on Production**:
+
    - Sign up with a completely new Google account
    - Check profile - should show **0 credits**
 
@@ -118,6 +126,7 @@ Sometimes forcing a Prisma version change clears the cache:
 ## Why This Happens
 
 Vercel's caching strategy:
+
 1. **Dependencies cache** (`node_modules`) - includes `@prisma/client`
 2. **Build cache** - includes generated files
 3. **Prisma Client** is generated once and cached
@@ -150,6 +159,7 @@ Vercel will use `vercel-build` if it exists instead of `build`.
 ## Immediate Action Required
 
 **Option A: Manual (Fastest)**
+
 1. ✅ Go to Vercel Dashboard
 2. ✅ Settings → General → Clear Build Cache
 3. ✅ Deployments → Redeploy (uncheck "Use existing cache")
@@ -157,6 +167,7 @@ Vercel will use `vercel-build` if it exists instead of `build`.
 5. ✅ Test with new Google account
 
 **Option B: Code Change (Safest)**
+
 1. ✅ Update Prisma comment in schema.prisma
 2. ✅ Add vercel-build script
 3. ✅ Commit and push

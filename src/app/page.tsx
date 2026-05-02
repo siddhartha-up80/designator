@@ -29,8 +29,9 @@ export default function LandingPage() {
     "@context": "https://schema.org",
     "@type": ["WebApplication", "SoftwareApplication"],
     name: "Designator",
+    alternateName: "Designator - AI Fashion Model Generator",
     description:
-      "AI-powered fashion model generator that creates stunning virtual try-on experiences instantly",
+      "Create stunning AI fashion models wearing your products instantly. Professional virtual try-on technology for brands, designers & marketers.",
     applicationCategory: "DesignApplication",
     operatingSystem: "Web Browser",
     url: "https://designator.siddharthasingh.co.in",

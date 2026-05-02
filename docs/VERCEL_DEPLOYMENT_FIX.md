@@ -1,9 +1,11 @@
 # Fix Vercel Deployment - 0 Free Credits
 
 ## Problem
+
 Vercel deployment is still giving new users 50 credits instead of 0 credits.
 
 ## Cause
+
 The latest code changes are committed and pushed (commit: `b7a6079 remove free credits`), but Vercel hasn't rebuilt the application yet with the new changes.
 
 ## Solution
@@ -36,6 +38,7 @@ The latest code changes are committed and pushed (commit: `b7a6079 remove free c
 ## Verification After Deployment
 
 ### Check 1: Verify the deployed code
+
 1. Go to your Vercel deployment URL
 2. Check browser console/network tab
 3. Sign up with a new Google account
@@ -44,17 +47,20 @@ The latest code changes are committed and pushed (commit: `b7a6079 remove free c
 Expected: **0 credits**
 
 ### Check 2: Check Vercel build logs
+
 1. Go to Vercel Dashboard → Deployments
 2. Click on the latest deployment
 3. Check the **Build Logs**
 4. Look for:
-   - "Building..." 
+   - "Building..."
    - "Compiling..."
    - "Build completed"
 5. Verify the commit hash matches: `b7a6079`
 
 ### Check 3: Verify environment variables
+
 Ensure Vercel has the correct environment variables:
+
 - `DATABASE_URL` (MongoDB connection)
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
@@ -64,6 +70,7 @@ Ensure Vercel has the correct environment variables:
 ## What Changed (in commit b7a6079)
 
 ### File 1: `src/lib/credits-service.ts`
+
 ```typescript
 // BEFORE
 FREE: {
@@ -81,6 +88,7 @@ FREE: {
 ```
 
 ### File 2: `src/auth.ts`
+
 ```typescript
 // BEFORE
 await creditsService.initializeNewUserCredits(user.id);
@@ -93,6 +101,7 @@ await creditsService.initializeNewUserCredits(user.id);
 ## Database Considerations
 
 ### Important: Existing users keep their credits
+
 - Users who already signed up with 50 credits will keep those credits
 - Only NEW users (after deployment) will get 0 credits
 
@@ -106,13 +115,11 @@ node scripts/reset-all-credits-to-zero.js
 ```
 
 Or manually:
+
 1. Connect to MongoDB Atlas
 2. Run this query:
    ```javascript
-   db.User.updateMany(
-     { plan: "FREE" },
-     { $set: { credits: 0 } }
-   )
+   db.User.updateMany({ plan: "FREE" }, { $set: { credits: 0 } });
    ```
 
 ## Troubleshooting
@@ -120,18 +127,22 @@ Or manually:
 ### If Vercel still shows 50 credits after redeployment:
 
 1. **Clear Vercel cache**:
+
    - Settings → General → Clear Build Cache
    - Redeploy
 
 2. **Check if Prisma schema was migrated**:
+
    - Vercel runs `prisma generate` during build
    - Check build logs for Prisma generation
 
 3. **Verify the deployed commit**:
+
    - In Vercel Dashboard → Deployment
    - Check "Source" or "Commit" - should show `b7a6079`
 
 4. **Hard refresh the browser**:
+
    - Ctrl + Shift + R (Windows/Linux)
    - Cmd + Shift + R (Mac)
    - Or use incognito mode
@@ -143,6 +154,7 @@ Or manually:
 ## Expected Behavior After Fix
 
 ### New User Signup Flow:
+
 1. User signs up with Google
 2. Server logs: "🆕 New user detected: email@example.com - No free credits given (free credits disabled)"
 3. User created with 0 credits
@@ -150,6 +162,7 @@ Or manually:
 5. User must purchase credits to use features
 
 ### Verification Commands:
+
 ```bash
 # View all users and their credits
 npm run view:users
@@ -177,6 +190,7 @@ npm run check:user email@example.com
 ---
 
 **Need Help?**
+
 - Check Vercel build logs for errors
 - Verify environment variables are set
 - Test locally with `npm run build` first
